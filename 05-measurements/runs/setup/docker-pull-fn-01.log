@@ -1,0 +1,68 @@
+﻿# docker pull xpkg.upbound.io/crossplane-contrib/function-auto-ready:v0.4.0
+# start=2026-10-17T14:50:19.5368820-05:00 duration=7.47s exit=0
+v0.4.0: Pulling from crossplane-contrib/function-auto-ready
+0baecf37abee: Pulling fs layer
+bfb59b82a9b6: Pulling fs layer
+efa9d1d5d3a2: Pulling fs layer
+a62778643d56: Pulling fs layer
+7c12895b777b: Pulling fs layer
+3214acf345c0: Pulling fs layer
+5664b15f108b: Pulling fs layer
+0bab15eea81d: Pulling fs layer
+4aa0ea1413d3: Pulling fs layer
+da7816fa955e: Pulling fs layer
+a62778643d56: Waiting
+9aee425378d2: Pulling fs layer
+393fa49365e1: Pulling fs layer
+7c12895b777b: Waiting
+3214acf345c0: Waiting
+35206885f41a: Pulling fs layer
+5664b15f108b: Waiting
+393fa49365e1: Waiting
+9aee425378d2: Waiting
+0bab15eea81d: Waiting
+da7816fa955e: Waiting
+4aa0ea1413d3: Waiting
+35206885f41a: Waiting
+bfb59b82a9b6: Download complete
+0baecf37abee: Download complete
+0baecf37abee: Pull complete
+bfb59b82a9b6: Pull complete
+a62778643d56: Verifying Checksum
+a62778643d56: Download complete
+efa9d1d5d3a2: Download complete
+7c12895b777b: Verifying Checksum
+7c12895b777b: Download complete
+3214acf345c0: Verifying Checksum
+3214acf345c0: Download complete
+5664b15f108b: Verifying Checksum
+5664b15f108b: Download complete
+0bab15eea81d: Verifying Checksum
+0bab15eea81d: Download complete
+4aa0ea1413d3: Verifying Checksum
+4aa0ea1413d3: Download complete
+efa9d1d5d3a2: Pull complete
+a62778643d56: Pull complete
+7c12895b777b: Pull complete
+3214acf345c0: Pull complete
+da7816fa955e: Verifying Checksum
+da7816fa955e: Download complete
+5664b15f108b: Pull complete
+9aee425378d2: Download complete
+0bab15eea81d: Pull complete
+4aa0ea1413d3: Pull complete
+da7816fa955e: Pull complete
+9aee425378d2: Pull complete
+35206885f41a: Download complete
+393fa49365e1: Verifying Checksum
+393fa49365e1: Download complete
+393fa49365e1: Pull complete
+35206885f41a: Pull complete
+Digest: sha256:552956a386af149235a04db9c55316716b2ecb1507b2b874b53bbf84bb2451fa
+Status: Downloaded newer image for xpkg.upbound.io/crossplane-contrib/function-auto-ready:v0.4.0
+xpkg.upbound.io/crossplane-contrib/function-auto-ready:v0.4.0
+
+What's Next?
+  1. Sign in to your Docker account → docker login
+  2. View a summary of image vulnerabilities and recommendations → docker scout quickview xpkg.upbound.io/crossplane-contrib/function-auto-ready:v0.4.0
+

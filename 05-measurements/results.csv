@@ -1,0 +1,4 @@
+﻿timestamp,scenario,step,iteration,duration_s,exit_code,output_chars,output_tokens_est,note
+2026-10-17T14:50:14.0887472-05:00,setup,cli-version-2.5,1,3.16,0,48,12,"CLI 2.5.0 contra core v2.3.3"
+2026-10-17T14:50:17.3433467-05:00,setup,cli-version-2.2,1,2.17,0,48,12,"CLI 2.2.6 (antes)"
+2026-10-17T14:50:19.5368820-05:00,setup,docker-pull-fn,1,7.47,0,2248,562,"pull funcion via Docker Desktop (CA corporativa via trust store Windows)"
