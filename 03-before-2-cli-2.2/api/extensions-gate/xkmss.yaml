@@ -1,0 +1,139 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: xkmss.aws.platform.nequi.com
+spec:
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionUpdatePolicy: Automatic
+  group: aws.platform.nequi.com
+  names:
+    kind: XKMS
+    plural: xkmss
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              parameters:
+                properties:
+                  bia:
+                    default: false
+                    type: boolean
+                  capacity:
+                    type: string
+                  country:
+                    enum:
+                    - co
+                    - gt
+                    - ts
+                    type: string
+                  deployment:
+                    enum:
+                    - jarvis
+                    type: string
+                  env:
+                    enum:
+                    - dev
+                    - qa
+                    - pdn
+                    - sbx
+                    - stg
+                    type: string
+                  externalAliasName:
+                    description: 'Nombre real del alias (formato alias/xxx) = external-name
+                      del Alias.
+
+                      '
+                    type: string
+                  externalKeyId:
+                    description: 'ID real de la KMS key (UUID) = crossplane.io/external-name
+                      del managed resource Key. Requerido para adoptar una key existente.
+
+                      '
+                    type: string
+                  key:
+                    properties:
+                      deletionWindowInDays:
+                        default: 10
+                        maximum: 30
+                        minimum: 7
+                        type: integer
+                      description:
+                        type: string
+                      enableKeyRotation:
+                        default: false
+                        type: boolean
+                      keySpec:
+                        default: SYMMETRIC_DEFAULT
+                        enum:
+                        - SYMMETRIC_DEFAULT
+                        - RSA_2048
+                        - RSA_3072
+                        - RSA_4096
+                        - HMAC_256
+                        - ECC_NIST_P256
+                        - ECC_NIST_P384
+                        - ECC_NIST_P521
+                        - ECC_SECG_P256K1
+                        type: string
+                      keyUsage:
+                        default: ENCRYPT_DECRYPT
+                        enum:
+                        - ENCRYPT_DECRYPT
+                        - SIGN_VERIFY
+                        type: string
+                      name:
+                        type: string
+                      policy:
+                        type: string
+                      tags:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  managementPolicies:
+                    description: Se propaga a Key y Alias. ["Observe"] para adoptar
+                      en solo-lectura.
+                    items:
+                      type: string
+                    type: array
+                  providerConfigRef:
+                    properties:
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  region:
+                    default: us-east-1
+                    type: string
+                  serviceid:
+                    default: NEQ0169
+                    type: string
+                  standardName:
+                    default: false
+                    type: boolean
+                required:
+                - key
+                - capacity
+                - country
+                - providerConfigRef
+                type: object
+            type: object
+          status:
+            properties:
+              atProvider:
+                properties:
+                  keyArn:
+                    type: string
+                type: object
+            type: object
+        type: object
+    served: true
+

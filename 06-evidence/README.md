@@ -12,6 +12,21 @@ Guardar las imágenes en `06-evidence/img/` con el nombre indicado.
 | E4 | Adopción: claim real `adopt-kms-test` verificado offline (10/10) y variante insegura detectada (crearía en vez de adoptar) | `replay.py 4` | `img/E4-adopcion-offline.png` |
 | E5 | Llave KMS de la 1.ª corrida en `PendingDeletion` (limpieza) | Consola AWS → KMS → Customer managed keys → `a1fc7105-51dd-4c07-8ea3-09bc672cf2b7` | `img/E5-kms-pending-deletion.png` |
 
-Siguientes (caso API desplegable): E6 render/validate/contrato del caso nuevo · E7 KIND `project run` ·
-E8 XR Ready en EKS + `crossplane resource trace` · E9 API en consola AWS (API Gateway, stage, logs, alarmas) ·
-E10 matriz de defectos · E11 limpieza.
+### Caso API desplegable
+
+| ID | Qué muestra | Cómo reproducir | Imagen |
+|---|---|---|---|
+| E6 | Compuerta local CLI 2.5: rechaza la composición de Antes (colisión multi-instancia) y aprueba la de Después, sin cluster | `replay.py 5` (~2 min) | `img/E6-compuerta-antes.png`, `img/E6b-compuerta-despues.png` |
+| E7 | `crossplane project run`: control plane local KIND con Configuration, funciones (incl. Python) y XRD instalados | `replay.py 6` | `img/E7-project-run-kind.png` |
+| E8 | Después en EKS: árbol completo Ready (`crossplane resource trace`) y la API respondiendo HTTP 200 | `replay.py 7` | `img/E8-trace-eks.png` |
+| E9 | Consola AWS (ver lista abajo) | Consola | `img/E9-*.png` |
+| E10 | Matriz de detección de 11 defectos: CLI 2.2 = 6/11, CLI 2.5 + compuerta = 11/11 | `replay.py 8` | `img/E10-matriz-defectos.png` |
+| E11 | Limpieza (al final, con tu confirmación) | — | `img/E11-limpieza.png` |
+
+#### E9 · Consola AWS (región us-east-1, cuenta Sandbox 634614730521)
+- **API Gateway** → APIs → `apigw-jarvis-co-cbopoccli2-dev` → Resources (`/health` GET) y Stages → `dev` (pestaña *Logs/tracing*: access logs al log group). Imagen `E9a-apigw.png`.
+  (La de Antes es `apigw-jarvis-co-cbopoccli1-dev`, misma estructura.)
+- **CloudWatch** → Log groups → `/aws/apigateway/access-jarvis-co-cbopoccli2-dev`: retención 14 días y *KMS key ID* asignada; abrir un log stream para ver el JSON de acceso. Imagen `E9b-logs-kms.png`.
+- **CloudWatch** → Alarms → `alarm-jarvis-co-cbopoccli2-dev-5xx` y `-latency` en estado OK. Imagen `E9c-alarmas.png`.
+- **KMS** → Customer managed keys → alias `alias-jarvis-co-cbopoccli2-dev`: rotación automática habilitada y tags estándar. Imagen `E9d-kms.png`.
+- **Tags** (cualquiera de los anteriores): `serviceid=NEQ0169`, `capacity=jarvis`, `country=co`, `env=dev`, `deployment=jarvis`, `owner`, `poc`. Imagen `E9e-tags.png`.

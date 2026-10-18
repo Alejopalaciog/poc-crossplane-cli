@@ -1,0 +1,16 @@
+﻿# .venv\Scripts\python 05-measurements\defects.py
+# start=2026-10-17T22:27:32.6991250-05:00 duration=546.22s exit=0
+D01 | 2.2: validate       (  2.5s) | 2.5: validate esquemas (providers + XRDs)     ( 33.1s) | Campo con nombre errado en un bloque general (endpointTypes)
+D02 | 2.2: validate       (  3.7s) | 2.5: validate esquemas (providers + XRDs)     ( 42.3s) | Tipo errado en recurso AWS (threshold texto)
+D03 | 2.2: validate       (  3.2s) | 2.5: validate esquemas (providers + XRDs)     ( 36.7s) | Falta un campo requerido del bloque general (confidentiality)
+D04 | 2.2: validate       (  2.7s) | 2.5: validate esquemas (providers + XRDs)     ( 34.7s) | Valor fuera de catálogo en la solicitud (country: colombia)
+D05 | 2.2: render         (  1.9s) | 2.5: render plataforma (simulado)             (  2.1s) | Plantilla go-template rota (falta {{- end }})
+D06 | 2.2: no detectado   (  3.0s) | 2.5: contrato de negocio                      ( 51.5s) | Falta el tag serviceid en el stage
+D07 | 2.2: no detectado   ( 18.0s) | 2.5: contrato de negocio                      ( 73.2s) | Retención de logs de 1 día
+D08 | 2.2: no detectado   (  4.1s) | 2.5: contrato de negocio                      ( 45.4s) | Nombre de alarma sin 'cbo' (guardarraíl IAM)
+D09 | 2.2: validate       (  4.8s) | 2.5: render anidado XKMS                      (112.0s) | apiVersion errada en un bloque general (v1alpha2)
+D10 | 2.2: no detectado   (  4.5s) | 2.5: validate esquemas (providers + XRDs)     ( 33.8s) | Stage emitido sin esperar el deployment (referencia rota)
+D11 | 2.2: no detectado   (  2.5s) | 2.5: multi-instancia (sin colisiones)         ( 30.0s) | Claves de recursos no únicas por instancia (colisión entre APIs)
+
+Detectados antes del cluster: CLI 2.2 = 6/11 · CLI 2.5 + compuerta = 11/11
+

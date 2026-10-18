@@ -91,3 +91,4 @@
 2026-10-17T22:21:15.9359589-05:00,after,observe-cluster,2,131.6,2,4572,1143,"Despues: iteracion 2 en cluster"
 2026-10-17T22:23:36.3040183-05:00,after,observe-cluster,3,137.59,0,2267,567,"Despues: convergencia iteracion 2"
 2026-10-17T22:28:05.9869617-05:00,after,project-run,2,234.11,0,2469,618,"project run KIND (version 2.3.3 sin v)"
+2026-10-17T22:27:32.6991250-05:00,defects,defect-matrix,2,546.22,0,1677,420,"matriz v2: compuerta con pasadas intermedias + multi-instancia, 11 defectos"
