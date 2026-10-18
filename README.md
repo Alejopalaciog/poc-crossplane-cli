@@ -20,7 +20,7 @@ típicos (CLI 2.2: 6; hoy: 0 antes del cluster), encontró **4 bugs latentes** e
 | `04-after-cli-2.5/` | Después: proyecto CLI 2.5 (go-templating y Python), auditoría de bloques generales, demo de adopción |
 | `05-measurements/` | Scripts de medición, compuerta, contratos, defectos, créditos y `results.csv` |
 | `06-evidence/` | Índice de evidencias y `replay.py` para reproducirlas |
-| `07-presentation/` | Presentación ejecutiva: `presentacion-manual.html` (autocontenida; `build.py` la regenera desde `template.html`) |
+| `07-presentation/` | Presentación ejecutiva en dos versiones: `presentacion-manual.html` (HTML autocontenido, scroll) y `beatdeck/` (interactiva por beats: `npm install && npm run present`) |
 | `08-wiki/` | Documentación técnica para la wiki de Azure |
 | `future/` | Plan (no ejecutado) de skill Kiro con la compuerta |
 

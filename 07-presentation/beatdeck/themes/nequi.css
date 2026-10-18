@@ -1,0 +1,36 @@
+/*
+ * Tema Nequi sobre el tema neutro: fondo morado oscuro de marca, acento magenta, Poppins.
+ * Mismos tokens que neutral.css: solo cambian marca y tipografía. Todo local (npm), nada remoto.
+ */
+@import './neutral.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/poppins/800.css';
+
+:root {
+  --bg: #200020;
+  --surface: #2c0a2c;
+  --ink: #ffffff;
+  --ink-2: rgba(255, 233, 245, 0.72);
+  --ink-3: rgba(255, 233, 245, 0.42);
+  --hair: rgba(255, 255, 255, 0.14);
+  --hair-strong: rgba(255, 255, 255, 0.22);
+
+  --accent: #da0081;
+  --accent-strong: #ff5db5;
+  --ok: #3ccf91;
+  --warning: #ffbd2e;
+  --fault: #ff5f6e;
+
+  --font-sans: 'Poppins', system-ui, sans-serif;
+}
+
+/* Poppins es más ancha que Inter: tracking algo menos cerrado y peso de marca. */
+.t-statement { font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; }
+.t-editorial { font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; }
+.t-numeral { font-weight: 800; letter-spacing: -0.04em; color: var(--accent-strong); }
+
+.mag { color: var(--accent-strong); }
+.soft { color: var(--ink-2); }

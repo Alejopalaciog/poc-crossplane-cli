@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crossplane CLI 2.5 en Nequi — PoC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#200020; --ink2:#3a0a3a; --mag:#DA0081; --mag-d:#b00068; --soft:#FFE9F5; --lila:#F6EEFA;
+  --line:#ead7e6; --ok:#0fa578; --warn:#e8930c; --bad:#d6324a; --txt:#2a1a2a; --mut:#7a6a7a;
+  --f:'Poppins','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+body{font-family:var(--f);color:var(--txt);background:#fff;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--mag);font-weight:600}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:var(--soft);color:var(--mag-d);padding:1px 7px;border-radius:6px}
+.dark code{background:rgba(255,255,255,.12);color:#ffc2e5}
+.bar{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:50;background:rgba(32,0,32,.92);backdrop-filter:blur(8px);color:#fff}
+.logo{font-weight:800;font-size:26px;letter-spacing:-1px;color:#fff}
+.logo i{color:var(--mag);font-style:normal}
+.bar .sec{font-size:13px;font-weight:500;opacity:.85}
+.prog{position:fixed;top:56px;left:0;height:3px;background:var(--mag);width:0;z-index:51;transition:width .2s}
+.dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:7px;z-index:50}
+.dots a{width:9px;height:9px;border-radius:50%;background:rgba(218,0,129,.28);border:1px solid rgba(218,0,129,.6);display:block}
+.dots a.on{background:var(--mag);transform:scale(1.35)}
+.s{min-height:100vh;padding:96px 7vw 56px;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;position:relative}
+.s.dark{background:var(--ink);color:#fff}
+.s.lila{background:var(--lila)}
+.s.soft{background:var(--soft)}
+.wrap{max-width:1180px;margin:0 auto;width:100%}
+h1{font-size:clamp(40px,6.4vw,84px);line-height:1.02;font-weight:800;letter-spacing:-2px}
+h2{font-size:clamp(28px,3.6vw,46px);line-height:1.1;font-weight:700;letter-spacing:-1px;margin-bottom:10px}
+h3{font-size:18px;font-weight:700;margin-bottom:6px}
+.lead{font-size:clamp(16px,1.5vw,20px);color:var(--mut);max-width:62ch;margin-bottom:28px}
+.dark .lead{color:#d9bfd6}
+.tag{display:inline-block;font-size:13px;font-weight:600;background:var(--mag);color:#fff;padding:5px 14px;border-radius:99px;margin-bottom:16px}
+.tag.o{background:transparent;border:1.5px solid var(--mag);color:var(--mag)}
+.mag{color:var(--mag)}
+.div{background:linear-gradient(135deg,var(--mag) 0%,#8f0a73 55%,var(--ink) 100%);color:#fff}
+.div .big{font-size:clamp(90px,16vw,220px);font-weight:800;line-height:.9;opacity:.22;letter-spacing:-6px}
+.div h2{font-size:clamp(34px,5vw,64px)}
+.div p{font-size:18px;max-width:52ch;opacity:.92}
+.g{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}
+.lila .card,.soft .card{border-color:transparent;box-shadow:0 6px 24px rgba(32,0,32,.06)}
+.dark .card{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14)}
+.card .ic{font-size:30px;margin-bottom:8px;display:block}
+.card p{font-size:14.5px;color:var(--mut)}
+.dark .card p{color:#d9bfd6}
+.card.hl{background:var(--mag);border-color:var(--mag);color:#fff}
+.card.hl p{color:#ffe0f1}
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:6px 0 20px;row-gap:10px}
+.node{background:#fff;border:2px solid var(--mag);color:var(--ink);border-radius:16px;padding:12px 16px;font-weight:600;font-size:14px;text-align:center;min-width:110px;display:flex;flex-direction:column;justify-content:center}
+.node small{display:block;font-weight:400;color:var(--mut);font-size:11.5px}
+.node.off{border-color:#c7b3c4;border-style:dashed;color:#9a8699;background:#faf5fa}
+.node.new{background:var(--mag);color:#fff}
+.node.new small{color:#ffd5ec}
+.dark .node{background:rgba(255,255,255,.08);color:#fff;border-color:#ff5db5}
+.dark .node small{color:#d9bfd6}
+.dark .node.new{background:var(--mag);border-color:var(--mag)}
+.arr{align-self:center;padding:0 7px;color:var(--mag);font-weight:800;font-size:20px}
+table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.t th{background:var(--ink);color:#fff;text-align:left;padding:11px 14px;font-weight:600;font-size:13px}
+.t td{padding:10px 14px;border-top:1px solid var(--line);vertical-align:top}
+.t tr:nth-child(even) td{background:#fdf7fb}
+.t td:first-child{font-weight:600}
+.dark .t{border-color:rgba(255,255,255,.15);color:var(--txt)}
+.b{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.b.ok{background:#d9f5ec;color:#07785a}.b.wa{background:#fdeccc;color:#9a5d00}.b.ba{background:#fcdce1;color:#a3192f}.b.gr{background:#ece3ee;color:#5a4a5a}.b.mg{background:var(--soft);color:var(--mag-d)}
+.stat{text-align:left}
+.stat b{display:block;font-size:clamp(36px,4.4vw,58px);font-weight:800;color:var(--mag);line-height:1;letter-spacing:-1.5px}
+.dark .stat b{color:#ff5db5}
+.stat span{font-size:14px;color:var(--mut);display:block;margin-top:6px}
+.dark .stat span{color:#d9bfd6}
+.fig{background:#fff;border-radius:18px;border:1px solid var(--line);padding:10px;cursor:zoom-in;overflow:hidden}
+.fig img{width:100%;display:block;border-radius:10px}
+.fig figcaption{font-size:12.5px;color:var(--mut);padding:8px 6px 2px}
+.dark .fig{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06)}
+.dark .fig figcaption{color:#d9bfd6}
+#lb{position:fixed;inset:0;background:rgba(20,0,20,.92);display:none;align-items:center;justify-content:center;z-index:100;cursor:zoom-out;padding:24px}
+#lb img{max-width:100%;max-height:100%;border-radius:10px;background:#fff}
+#lb.on{display:flex}
+.step{display:flex;gap:16px;align-items:flex-start;background:#fff;border-radius:16px;padding:14px 18px;border:1px solid var(--line)}
+.step .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--mag);color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px}
+.step p{font-size:14px;color:var(--mut)}
+.step b{font-size:15.5px}
+.dark .step{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14)}
+.dark .step p{color:#d9bfd6}
+.tl{position:relative;display:grid;gap:12px;padding-left:34px}
+.tl::before{content:"";position:absolute;left:12px;top:6px;bottom:6px;width:3px;background:var(--mag);border-radius:3px;opacity:.35}
+.tl .it{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 18px}
+.tl .it::before{content:"";position:absolute;left:-29px;top:18px;width:15px;height:15px;border-radius:50%;background:var(--mag);border:3px solid #fff;box-shadow:0 0 0 2px var(--mag)}
+.tl .it small{display:block;color:var(--mag);font-weight:700;font-size:12px;letter-spacing:.3px}
+.tl .it p{font-size:13.5px;color:var(--mut)}
+.tl .it b{font-size:15px}
+.dark .tl .it{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14)}
+.dark .tl .it p{color:#d9bfd6}
+.dark .tl .it small{color:#ff5db5}
+.quote{font-size:clamp(20px,2.3vw,30px);font-weight:600;line-height:1.3;letter-spacing:-.5px;max-width:30ch}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px}
+.foot{font-size:12.5px;color:var(--mut);margin-top:14px}
+.dark .foot{color:#bfa0bb}
+.links a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--mag);border-radius:99px;padding:8px 16px;font-size:13.5px;text-decoration:none;margin:0 8px 8px 0}
+.links a:hover{background:var(--mag);color:#fff}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+/* barras (una serie: magnitud) */
+.hb .row{display:grid;grid-template-columns:190px 1fr 70px;align-items:center;gap:12px;margin:12px 0;font-size:14.5px}
+.hb .lab{font-weight:600}
+.hb .lab small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.hb .trk{background:#f0e2ee;border-radius:4px;height:22px;position:relative}
+.hb .fill{height:100%;border-radius:0 4px 4px 0;background:var(--mag);min-width:4px}
+.hb .fill.ref{background:#b8a3b5}
+.hb .val{font-weight:800;font-size:20px;color:var(--ink);text-align:right}
+.dark .hb .trk{background:rgba(255,255,255,.12)}
+.dark .hb .val{color:#fff}
+.dark .hb .lab small{color:#d9bfd6}
+.hb .row:hover .fill{filter:brightness(1.1)}
+.mx td,.mx th{font-size:13px}
+.mx td:nth-child(n+3),.mx th:nth-child(n+3){text-align:center}
+.mx .k{font-weight:400;color:var(--mut);font-size:12px;display:block}
+.note{border-left:4px solid var(--mag);background:#fff;border-radius:0 14px 14px 0;padding:12px 16px;font-size:14px;color:var(--txt)}
+.dark .note{background:rgba(255,255,255,.07);color:#fff}
+@media(max-width:900px){.g2,.g3,.g4,.hero-grid{grid-template-columns:1fr}.dots{display:none}.s{padding:84px 5vw 40px}.bar .sec{display:none}.hb .row{grid-template-columns:120px 1fr 54px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.bar,.dots,.prog{display:none}.s{min-height:auto;page-break-after:always}}
+a:focus-visible,.fig:focus-visible{outline:3px solid var(--mag);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="bar"><span class="logo">nequi<i>.</i></span><span class="sec" id="secname">Crossplane CLI 2.5</span></div>
+<div class="prog" id="prog"></div>
+<nav class="dots" id="dots" aria-label="Navegación"></nav>
+<div id="lb" role="dialog" aria-label="Imagen ampliada"><img alt=""></div>
+
+<!-- 1 PORTADA -->
+<section class="s dark" data-sec="Portada" id="portada">
+ <div class="wrap hero-grid">
+  <div>
+   <span class="tag">COE · Cloud Platform · PoC 3</span>
+   <h1>Crossplane<br><span class="mag">CLI 2.5</span> en Nequi</h1>
+   <p class="lead" style="margin-top:22px">¿Construimos y migramos composiciones más rápido, con menos errores y menos créditos de AI? Lo probamos en EKS y AWS reales.</p>
+   <div class="pill-row"><span class="b mg">Antes vs. después, medido</span><span class="b mg">AI construye · persona verifica</span><span class="b mg">Migración Terraform → Crossplane</span></div>
+  </div>
+  <div class="card" style="text-align:center;padding:34px">
+   <div class="stat"><b>11/11</b><span>errores típicos detectados antes de tocar el cluster (hoy: 0)</span></div>
+   <hr style="border:0;border-top:1px solid rgba(255,255,255,.15);margin:18px 0">
+   <div class="stat"><b>~30 %</b><span>de los créditos de AI frente al flujo actual*</span></div>
+   <hr style="border:0;border-top:1px solid rgba(255,255,255,.15);margin:18px 0">
+   <div class="stat"><b>4</b><span>bugs ocultos encontrados en bloques que ya usamos</span></div>
+   <p class="foot">* estimado con datos medidos, cuando la validación local cubre el error</p>
+  </div>
+ </div>
+</section>
+
+<!-- 2 CONTEXTO -->
+<section class="s lila" data-sec="Contexto" id="contexto">
+ <div class="wrap">
+  <span class="tag">Contexto</span>
+  <h2>Hoy, para saber si algo funciona, hay que desplegarlo</h2>
+  <p class="lead">Estamos migrando de Terraform a Crossplane con ~65 composiciones, construidas en gran parte con AI. No hay forma de probarlas sin aplicarlas al cluster.</p>
+  <div class="flow">
+   <div class="node">Persona pide<small>"necesito una API"</small></div><div class="arr">→</div>
+   <div class="node">AI escribe<small>cientos de líneas YAML</small></div><div class="arr">→</div>
+   <div class="node">Aplicar al cluster<small>compartido</small></div><div class="arr">→</div>
+   <div class="node">Esperar 2–3 min<small>Crossplane + AWS</small></div><div class="arr">→</div>
+   <div class="node off">Leer eventos<small>y adivinar</small></div><div class="arr">↺</div>
+  </div>
+  <div class="g g3">
+   <div class="card"><span class="ic">⏱️</span><h3>Lento</h3><p>Cada vuelta de prueba toma minutos y ocupa el cluster compartido.</p></div>
+   <div class="card"><span class="ic">💸</span><h3>Caro en créditos</h3><p>La AI gasta turnos esperando y leyendo eventos largos del cluster.</p></div>
+   <div class="card"><span class="ic">🙈</span><h3>Errores invisibles</h3><p>Algunos errores no fallan: se despliega "bien" pero sin tags, con mala retención o con campos ignorados.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 3 QUE BUSCAMOS -->
+<section class="s dark" data-sec="Qué buscamos" id="buscamos">
+ <div class="wrap">
+  <span class="tag">Qué buscamos</span>
+  <h2>Cuatro preguntas</h2>
+  <p class="lead">La CLI 2.5 promete un ciclo nuevo: previsualizar, validar y probar en la máquina antes de desplegar. ¿Es cierto para nosotros?</p>
+  <div class="g g2">
+   <div class="card hl"><span class="ic">🎯</span><h3>¿Menos errores?</h3><p>¿Detecta antes del cluster lo que hoy descubrimos tarde?</p></div>
+   <div class="card hl" style="background:#8f0a73;border-color:#8f0a73"><span class="ic">⚡</span><h3>¿Más rápido y más barato?</h3><p>¿Menos tiempo por vuelta y menos créditos de AI?</p></div>
+   <div class="card"><span class="ic">🔁</span><h3>¿Ayuda a la migración?</h3><p>¿Le aporta a nuestra skill de adopción Terraform → Crossplane?</p></div>
+   <div class="card"><span class="ic">⚖️</span><h3>¿Qué cuesta?</h3><p>Fricciones, riesgos y trabajo extra: también se miden.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 4 QUE TRAE -->
+<section class="s soft" data-sec="La CLI 2.5" id="cli">
+ <div class="wrap">
+  <span class="tag">Qué trae la CLI 2.5</span>
+  <h2>Un "taller" local para composiciones</h2>
+  <p class="lead">Y desde la v2.4 funciona con nuestro Crossplane actual (v2.3): <b>no hay que actualizar el cluster</b>.</p>
+  <div class="g g4">
+   <div class="card"><span class="ic">👀</span><h3>Previsualizar</h3><p><code>render</code>: muestra qué recursos AWS crearía, sin desplegar.</p></div>
+   <div class="card"><span class="ic">✅</span><h3>Validar</h3><p><code>validate</code>: compara contra los esquemas reales de AWS.</p></div>
+   <div class="card"><span class="ic">🧱</span><h3>Generar</h3><p>XRD desde un esquema simple; funciones en Python/Go con autocompletado.</p></div>
+   <div class="card"><span class="ic">📦</span><h3>Empaquetar y probar</h3><p>Paquete versionado y Crossplane local en un comando.</p></div>
+  </div>
+  <p class="foot">v2.3 (may-2026) modelo de proyecto · v2.4 (jun) independiente del core · v2.5 (ago) mejoras de esquemas y validación. La mayoría de comandos nuevos son Beta.</p>
+ </div>
+</section>
+
+<!-- DIVISOR -->
+<section class="s div" data-sec="La prueba" id="d1">
+ <div class="wrap"><div class="big">01</div><h2 style="margin-top:-40px">La prueba</h2><p>Mismo requerimiento, tres formas de trabajar, en el cluster y la cuenta AWS reales.</p></div>
+</section>
+
+<!-- 5 LA PRUEBA -->
+<section class="s" data-sec="La prueba" id="prueba">
+ <div class="wrap">
+  <span class="tag">La prueba</span>
+  <h2>"Necesito exponer una API con los estándares Nequi"</h2>
+  <p class="lead">La AI construye una composición de plataforma que reutiliza nuestros bloques generales. 17 recursos en total.</p>
+  <div class="flow">
+   <div class="node new">Solicitud<small>servicio, país, ambiente</small></div><div class="arr">→</div>
+   <div class="node">API REST<small>bloque general</small></div><div class="arr">+</div>
+   <div class="node">/health<small>bloque general</small></div><div class="arr">+</div>
+   <div class="node">Llave KMS<small>bloque general</small></div><div class="arr">+</div>
+   <div class="node">Logs cifrados<small>retención por ambiente</small></div><div class="arr">+</div>
+   <div class="node">Alarmas<small>5XX y latencia</small></div>
+  </div>
+  <table class="t">
+   <tr><th>Escenario</th><th>Cómo se trabaja</th><th>Cómo se valida</th></tr>
+   <tr><td>Antes · hoy</td><td>AI + YAML</td><td>Aplicar al cluster y leer eventos</td></tr>
+   <tr><td>Antes · CLI 2.2</td><td>AI + YAML + CLI vieja</td><td>Previsualizar y validar básico, luego cluster</td></tr>
+   <tr><td style="color:var(--mag)">Después · CLI 2.5</td><td>AI + proyecto CLI 2.5</td><td><b>Compuerta local</b> completa, luego cluster</td></tr>
+  </table>
+ </div>
+</section>
+
+<!-- 6 CONCEPTO COMPUERTA -->
+<section class="s lila" data-sec="La compuerta" id="compuerta">
+ <div class="wrap">
+  <span class="tag">El concepto</span>
+  <h2>Una compuerta local antes del cluster</h2>
+  <p class="lead">Construida sobre la CLI 2.5. En ~20 segundos, en la máquina de la persona o de la AI, sin tocar AWS:</p>
+  <div class="flow">
+   <div class="node new">AI escribe<small>composición</small></div><div class="arr">→</div>
+   <div class="node">Simula el despliegue<small>paso a paso</small></div><div class="arr">→</div>
+   <div class="node">Revisa y valida<small>bloques + esquemas AWS</small></div><div class="arr">→</div>
+   <div class="node">Reglas de negocio<small>tags, cifrado, naming</small></div><div class="arr">→</div>
+   <div class="node">2 equipos a la vez<small>sin choques</small></div><div class="arr">→</div>
+   <div class="node new">✅ Recién ahí<small>al cluster</small></div>
+  </div>
+  <div class="g g2">
+   <div class="card"><h3>Lo que aporta la CLI</h3><p>Previsualizar (incluso los bloques internos y funciones privadas), simular estados y validar contra los esquemas de AWS.</p></div>
+   <div class="card"><h3>Lo que aportamos nosotros</h3><p>Las reglas de negocio y la prueba de convivencia entre equipos. La CLI lo hace posible; el criterio es nuestro.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 7 AI + HUMANO -->
+<section class="s dark" data-sec="AI + persona" id="contrato">
+ <div class="wrap">
+  <span class="tag">AI construye · persona verifica</span>
+  <h2>El estándar Nequi, convertido en reglas que se ejecutan</h2>
+  <p class="lead">Nadie tiene que leer 400 líneas de plantilla para saber si lo que hizo la AI cumple. La compuerta lo responde en un segundo.</p>
+  <div class="g g3">
+   <div class="card"><span class="ic">🏷️</span><h3>Identidad</h3><p>serviceid, capacidad, país, ambiente y deployment en todo.</p></div>
+   <div class="card"><span class="ic">🔐</span><h3>Seguridad</h3><p>Logs cifrados con llave propia y rotación activa.</p></div>
+   <div class="card"><span class="ic">📜</span><h3>Cumplimiento</h3><p>Retención: 14 días no productivo, 90 en producción.</p></div>
+   <div class="card"><span class="ic">🚦</span><h3>Observabilidad</h3><p>Alarmas de errores y latencia apuntando a la API.</p></div>
+   <div class="card"><span class="ic">🧭</span><h3>Guardarraíles</h3><p>Nombres que respetan los permisos reales del entorno.</p></div>
+   <div class="card hl"><span class="ic">✔️</span><h3>11 / 11 reglas</h3><p>Resultado legible por cualquier persona, en cada cambio.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- DIVISOR -->
+<section class="s div" data-sec="Resultados" id="d2">
+ <div class="wrap"><div class="big">02</div><h2 style="margin-top:-40px">Resultados</h2><p>Medidos con cronómetro, en el cluster EKS y la cuenta AWS de pruebas.</p></div>
+</section>
+
+<!-- 8 DETECCION -->
+<section class="s" data-sec="Resultados · errores" id="errores">
+ <div class="wrap">
+  <span class="tag">Menos errores</span>
+  <h2>Errores típicos detectados antes de tocar el cluster</h2>
+  <p class="lead">Se inyectaron 11 errores reales y frecuentes, uno a uno, sobre la composición final.</p>
+  <div class="hb" role="img" aria-label="Errores detectados antes del cluster: hoy 0, CLI 2.2 6, CLI 2.5 con compuerta 11 de 11">
+   <div class="row" title="Hoy: 0 de 11 antes del cluster"><span class="lab">Hoy<small>solo cluster</small></span><span class="trk"><span class="fill ref" style="width:0;min-width:0;display:block"></span></span><span class="val">0</span></div>
+   <div class="row" title="CLI 2.2: 6 de 11"><span class="lab">CLI 2.2</span><span class="trk"><span class="fill ref" style="width:54.5%;display:block"></span></span><span class="val">6</span></div>
+   <div class="row" title="CLI 2.5 + compuerta: 11 de 11"><span class="lab">CLI 2.5<small>+ compuerta</small></span><span class="trk"><span class="fill" style="width:100%;display:block"></span></span><span class="val">11</span></div>
+  </div>
+  <div class="g g3" style="margin-top:22px">
+   <div class="card"><h3>3 errores invisibles hoy</h3><p>Sin tag de costeo, retención de 1 día, campo mal escrito ignorado: se despliegan "bien" y nadie se entera.</p></div>
+   <div class="card"><h3>Errores de convivencia</h3><p>Dos equipos con el mismo endpoint chocan. Hoy aparece cuando llega el segundo equipo.</p></div>
+   <div class="card"><h3>Errores de orden</h3><p>Un recurso creado antes que su dependencia. Hoy: minutos de reintentos en AWS.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 9 MATRIZ -->
+<section class="s lila" data-sec="Resultados · errores" id="matriz">
+ <div class="wrap">
+  <span class="tag">Detalle</span>
+  <h2>¿Dónde se descubre cada error?</h2>
+  <table class="t mx">
+   <tr><th>#</th><th>Error</th><th>Hoy</th><th>CLI 2.2</th><th>CLI 2.5 + compuerta</th></tr>
+   <tr><td>1</td><td>Campo mal escrito en un bloque</td><td><span class="b ba">Nunca</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>2</td><td>Tipo de dato errado</td><td><span class="b wa">Minutos</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>3</td><td>Falta un dato obligatorio</td><td><span class="b wa">~1 min</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>4</td><td>Valor fuera de catálogo</td><td><span class="b ok">Inmediato</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>5</td><td>Plantilla rota</td><td><span class="b wa">Al reconciliar</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>6</td><td>Falta tag de costeo</td><td><span class="b ba">Nunca</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>7</td><td>Retención de logs de 1 día</td><td><span class="b ba">Nunca</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>8</td><td>Nombre fuera de los permisos</td><td><span class="b wa">Minutos</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>9</td><td>Versión de bloque errada</td><td><span class="b wa">Al reconciliar</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>10</td><td>Recurso antes que su dependencia</td><td><span class="b wa">Minutos</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
+   <tr><td>11</td><td>Choque entre dos equipos</td><td><span class="b wa">Al llegar el 2.º</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
+  </table>
+  <p class="foot">"Hoy" se documenta con el comportamiento de Kubernetes/Crossplane y los errores reales vistos en la PoC (no se desplegaron los 11 a AWS).</p>
+ </div>
+</section>
+
+<!-- 10 TIEMPO -->
+<section class="s" data-sec="Resultados · tiempo" id="tiempo">
+ <div class="wrap">
+  <span class="tag">Más rápido</span>
+  <h2>Cada vuelta de prueba: de minutos a segundos</h2>
+  <div class="g g2" style="align-items:center">
+   <div>
+    <div class="hb" role="img" aria-label="Segundos por vuelta: cluster 127 a 206, compuerta local 15">
+     <div class="row" title="Vuelta en el cluster: 127–206 s medidos"><span class="lab">En el cluster<small>apply y esperar</small></span><span class="trk"><span class="fill ref" style="width:100%;display:block"></span></span><span class="val">~160 s</span></div>
+     <div class="row" title="Compuerta local con contenedores calientes: ~15 s"><span class="lab">Compuerta local<small>en la máquina</small></span><span class="trk"><span class="fill" style="width:9%;display:block"></span></span><span class="val">~15 s</span></div>
+    </div>
+    <p class="foot">Medido: 127, 144 y 206 s en el cluster; 15–30 s la compuerta (100 s la primera vez, descargando imágenes).</p>
+   </div>
+   <div class="tl">
+    <div class="it"><small>HOY · ~14 MIN</small><b>3 vueltas en el cluster</b><p>Cada error se descubre en AWS, tras esperar y leer eventos.</p></div>
+    <div class="it"><small>CLI 2.5 · ~5–7 MIN</small><b>2 vueltas locales + 1 despliegue</b><p>Los errores se corrigen en la máquina; el cluster solo confirma.</p></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 11 CREDITOS -->
+<section class="s soft" data-sec="Resultados · créditos" id="creditos">
+ <div class="wrap">
+  <span class="tag">Menos créditos de AI</span>
+  <h2>Lo caro no es escribir: es esperar al cluster</h2>
+  <p class="lead">Cada turno de la AI vuelve a enviar todo el contexto. Menos turnos esperando y diagnosticando = menos créditos.</p>
+  <div class="hb" role="img" aria-label="Créditos relativos: hoy 100, CLI 2.2 77, CLI 2.5 con compuerta 30">
+   <div class="row" title="Hoy: 28 turnos, 100 %"><span class="lab">Hoy<small>28 turnos</small></span><span class="trk"><span class="fill ref" style="width:100%;display:block"></span></span><span class="val">100 %</span></div>
+   <div class="row" title="CLI 2.2: 22 turnos, 77 %"><span class="lab">CLI 2.2<small>22 turnos</small></span><span class="trk"><span class="fill ref" style="width:77%;display:block"></span></span><span class="val">77 %</span></div>
+   <div class="row" title="CLI 2.5 + compuerta: 11 turnos, 30 %"><span class="lab">CLI 2.5<small>11 turnos</small></span><span class="trk"><span class="fill" style="width:30%;display:block"></span></span><span class="val">30 %</span></div>
+  </div>
+  <div class="note" style="margin-top:20px"><b>Ojo:</b> en la corrida real, un error no cubierto por la primera versión de la compuerta se escapó al cluster y el costo volvió a ~100 %. <b>El ahorro existe solo si la compuerta cubre el tipo de error</b>; por eso cada error nuevo se convierte en una regla.</div>
+  <p class="foot">Estimación con datos medidos (iteraciones, esperas, tamaño del feedback) y supuestos explícitos (contexto 15k tokens, consulta cada 30 s). No es la factura de Kiro.</p>
+ </div>
+</section>
+
+<!-- 12 BUGS -->
+<section class="s dark" data-sec="Hallazgos" id="bugs">
+ <div class="wrap">
+  <span class="tag">Hallazgo inesperado</span>
+  <h2>4 bugs ocultos en bloques que ya usamos</h2>
+  <p class="lead">Aparecieron al reutilizar nuestros bloques generales en un camino nuevo. La CLI 2.5 encuentra los 4 en segundos, sin desplegar.</p>
+  <div class="g g4">
+   <div class="card"><span class="ic">👤</span><h3>Roles IAM</h3><p>Envía un valor vacío a AWS: no se puede crear un rol sin "boundary".</p></div>
+   <div class="card"><span class="ic">📄</span><h3>Log groups</h3><p>Usa un campo que no existe: no se pueden crear log groups nuevos.</p></div>
+   <div class="card"><span class="ic">🔌</span><h3>Integraciones</h3><p>No soporta integraciones de prueba (MOCK).</p></div>
+   <div class="card hl"><span class="ic">💥</span><h3>Choque entre equipos</h3><p>Dos APIs con el mismo endpoint en el mismo espacio colisionan.</p></div>
+  </div>
+  <p class="foot">Solo se revisaron 5 de 34 bloques generales: vale la pena pasar la compuerta por todo el catálogo.</p>
+ </div>
+</section>
+
+<!-- 13 EVIDENCIA -->
+<section class="s" data-sec="Evidencia" id="evidencia">
+ <div class="wrap">
+  <span class="tag">Evidencia</span>
+  <h2>La misma compuerta, antes y después</h2>
+  <div class="g g2" style="margin-top:10px;align-items:start">
+   <figure class="fig"><img src="{{img:5.png}}" alt="Compuerta local: rechaza la composición de Antes por colisión y aprueba la de Después"><figcaption>Compuerta local: rechaza "Antes" (choque entre equipos) y aprueba "Después" en ~29 s, sin cluster.</figcaption></figure>
+   <figure class="fig"><img src="{{img:8.png}}" alt="Matriz de detección de defectos"><figcaption>Matriz de detección: CLI 2.2 = 6/11 · CLI 2.5 + compuerta = 11/11.</figcaption></figure>
+  </div>
+  <p class="foot">Clic en una imagen para ampliarla.</p>
+ </div>
+</section>
+
+<!-- 14 DESPLIEGUE REAL -->
+<section class="s soft" data-sec="Evidencia" id="real">
+ <div class="wrap">
+  <span class="tag">Funciona de verdad</span>
+  <h2>Desplegado en EKS y AWS: la API responde</h2>
+  <div class="g g3" style="margin-top:10px;align-items:start">
+   <figure class="fig"><img src="{{img:7.png}}" alt="Árbol de recursos Ready y API respondiendo HTTP 200"><figcaption>17 recursos Ready y <code>/health</code> respondiendo HTTP 200.</figcaption></figure>
+   <figure class="fig"><img src="{{img:aws2.png}}" alt="Stage dev con access logs activos"><figcaption>Stage con access logs activos.</figcaption></figure>
+   <figure class="fig"><img src="{{img:aws5.png}}" alt="Evento de access log"><figcaption>Cada llamada queda registrada (cifrada con llave propia).</figcaption></figure>
+   <figure class="fig"><img src="{{img:aws4.png}}" alt="Log group con KMS y retención"><figcaption>Retención por ambiente y cifrado KMS.</figcaption></figure>
+   <figure class="fig"><img src="{{img:aws6.png}}" alt="Alarmas 5XX y latencia en OK"><figcaption>Alarmas de errores y latencia.</figcaption></figure>
+   <figure class="fig"><img src="{{img:aws8.png}}" alt="Tags estándar en la llave KMS"><figcaption>Tags estándar de gobierno.</figcaption></figure>
+  </div>
+ </div>
+</section>
+
+<!-- 15 MIGRACION -->
+<section class="s" data-sec="Migración" id="migracion">
+ <div class="wrap">
+  <span class="tag">Migración Terraform → Crossplane</span>
+  <h2>Evita el error más caro: crear en vez de adoptar</h2>
+  <p class="lead">Nuestra skill de adopción trabaja después de desplegar. La CLI le agrega un paso <b>antes del PR</b>.</p>
+  <div class="flow">
+   <div class="node">AI edita el claim<small>cierra el gap</small></div><div class="arr">→</div>
+   <div class="node new">Verificación offline<small>CLI 2.5 · ~4 s · NUEVO</small></div><div class="arr">→</div>
+   <div class="node">PR / Argo</div><div class="arr">→</div>
+   <div class="node">Skill: gap y preflight<small>sobre el cluster</small></div><div class="arr">→</div>
+   <div class="node">Persona activa<small>gate humano</small></div>
+  </div>
+  <div class="g" style="grid-template-columns:1fr 1fr 1.6fr;align-items:start">
+   <div class="card"><div class="stat"><b>10/10</b><span>claim real de adopción: correcto</span></div></div>
+   <div class="card"><div class="stat"><b style="color:var(--bad)">6/10</b><span>si la AI olvida una línea: <strong style="color:var(--txt)">crearía una llave nueva</strong> con permiso de borrar, en vez de adoptar la existente</span></div></div>
+   <figure class="fig"><img src="{{img:4.png}}" alt="Verificación offline del claim de adopción"><figcaption>Claim real verificado y variante insegura detectada antes del PR.</figcaption></figure>
+  </div>
+  <p class="foot">La CLI no reemplaza la skill: el análisis de brechas necesita el estado real de AWS. Se complementan.</p>
+ </div>
+</section>
+
+<!-- 16 ROLES -->
+<section class="s lila" data-sec="Valor por rol" id="roles">
+ <div class="wrap">
+  <span class="tag">No solo para quien crea composiciones</span>
+  <h2>Valor por rol</h2>
+  <div class="g g3">
+   <div class="card"><span class="ic">🧑‍💻</span><h3>Equipos de producto</h3><p>Ven qué recursos AWS crearía su solicitud antes de pedirla.</p></div>
+   <div class="card"><span class="ic">🔎</span><h3>Revisores de PR</h3><p>Revisan un resultado claro, no cientos de líneas de plantilla.</p></div>
+   <div class="card"><span class="ic">🛡️</span><h3>Seguridad y gobierno</h3><p>Estándares que se ejecutan en cada cambio, no un documento.</p></div>
+   <div class="card"><span class="ic">🛠️</span><h3>Plataforma / SRE</h3><p>Árbol completo de recursos y auditoría de los bloques generales.</p></div>
+   <div class="card"><span class="ic">🔁</span><h3>Migración</h3><p>Menos riesgo de recrear o borrar recursos existentes.</p></div>
+   <div class="card hl"><span class="ic">🤖</span><h3>Agentes AI</h3><p>Feedback corto y claro: menos turnos, menos créditos.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 17 BALANCE -->
+<section class="s" data-sec="Balance" id="balance">
+ <div class="wrap">
+  <span class="tag">Balance</span>
+  <h2>Lo bueno, lo que cuesta y el ojo</h2>
+  <div class="g g3" style="align-items:start">
+   <div class="card"><h3 style="color:var(--ok)">✅ Lo bueno</h3><p>• Errores detectados en segundos, sin cluster<br>• Estándares de negocio ejecutables<br>• Sin actualizar el cluster<br>• Encontró bugs reales escondidos<br>• Funciones en Python con autocompletado</p></div>
+   <div class="card"><h3 style="color:var(--warn)">🧩 Lo que cuesta</h3><p>• Funciones Python no compilan en Windows (sí en WSL)<br>• Algunos valores por defecto no calzan con nuestro estándar<br>• Bloques generales deben publicarse como paquete<br>• Docker obligatorio<br>• Comandos en Beta</p></div>
+   <div class="card"><h3 style="color:var(--bad)">⚠️ Ojo</h3><p>• La compuerta solo ve lo que cubre: un error no cubierto vuelve al costo de hoy<br>• Permisos reales de AWS solo se ven en el cluster<br>• El cluster sigue siendo la verificación final</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- DIVISOR -->
+<section class="s div" data-sec="Pasos a seguir" id="d3">
+ <div class="wrap"><div class="big">03</div><h2 style="margin-top:-40px">Pasos a seguir</h2><p>Adoptar por partes: primero lo que más valor da con menos esfuerzo.</p></div>
+</section>
+
+<!-- 18 HOJA DE RUTA -->
+<section class="s dark" data-sec="Pasos a seguir" id="ruta">
+ <div class="wrap">
+  <span class="tag">Hoja de ruta</span>
+  <h2>Veredicto: sí, por fases</h2>
+  <div class="tl" style="margin-top:12px">
+   <div class="it"><small>FASE 1 · SPRINT ACTUAL</small><b>CLI 2.5 + compuerta local en los repos</b><p>Paso obligatorio antes de cada PR de composiciones. Corregir los 4 bugs encontrados.</p></div>
+   <div class="it"><small>FASE 2 · SIGUIENTE SPRINT</small><b>Compuerta en Azure Pipelines y sobre todo el catálogo</b><p>Paso offline en la skill de migración Terraform → Crossplane.</p></div>
+   <div class="it"><small>FASE 3 · TRIMESTRE</small><b>Bloques generales como paquete versionado + skill de Kiro con compuerta</b><p>Dependencias claras entre repos, autocompletado, menos créditos.</p></div>
+   <div class="it"><small>FASE 4 · EVALUACIÓN</small><b>Funciones tipadas para composiciones grandes</b><p>Cuando el equipo trabaje en WSL / devcontainer o el build se haga en CI.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 19 CIERRE -->
+<section class="s dark" data-sec="Cierre" id="cierre">
+ <div class="wrap">
+  <span class="tag">En una frase</span>
+  <p class="quote">La CLI 2.5 nos deja <span class="mag">probar antes de desplegar</span>: la AI construye, la compuerta verifica el estándar en segundos y el cluster solo confirma.</p>
+  <div class="g g3" style="margin-top:32px">
+   <div class="stat"><b>11/11</b><span>errores antes del cluster</span></div>
+   <div class="stat"><b>~15 s</b><span>por vuelta (antes ~160 s)</span></div>
+   <div class="stat"><b>~30 %</b><span>créditos de AI (estimado)</span></div>
+  </div>
+  <p class="foot" style="margin-top:28px">Repositorio de la PoC: <code>poc-crossplane-cli</code> · Documentación técnica: <code>08-wiki/</code> · Evidencias: <code>06-evidence/</code></p>
+ </div>
+</section>
+
+<script>
+const secs=[...document.querySelectorAll('.s')];
+const dots=document.getElementById('dots');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.setAttribute('aria-label',s.dataset.sec);dots.appendChild(a)});
+const da=[...dots.children];
+function upd(){
+  const y=window.scrollY+window.innerHeight/2;
+  let cur=0;secs.forEach((s,i)=>{if(s.offsetTop<=y)cur=i});
+  da.forEach((d,i)=>d.classList.toggle('on',i===cur));
+  document.getElementById('secname').textContent=secs[cur].dataset.sec;
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.width=(h>0?window.scrollY/h*100:0)+'%';
+  return cur;
+}
+addEventListener('scroll',upd,{passive:true});upd();
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();const c=upd();secs[Math.min(c+1,secs.length-1)].scrollIntoView()}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();const c=upd();secs[Math.max(c-1,0)].scrollIntoView()}
+});
+const lb=document.getElementById('lb');
+document.querySelectorAll('.fig img').forEach(im=>im.addEventListener('click',()=>{lb.querySelector('img').src=im.src;lb.classList.add('on')}));
+lb.addEventListener('click',()=>lb.classList.remove('on'));
+addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
+</script>
+</body>
+</html>
