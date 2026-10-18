@@ -1,0 +1,128 @@
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  name: adopt-kms-cbo-ts-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: kms.aws.m.upbound.io/v1beta1
+      kind: Alias
+      name: alias-cbo-ts-complete-dev
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: kms.aws.m.upbound.io/v1beta1
+      kind: Key
+      name: key-cbo-ts-complete-dev
+      namespace: sharedservices-jarvis-dev
+  parameters:
+    capacity: cbo
+    country: ts
+    deployment: jarvis
+    env: dev
+    externalAliasName: alias/key-cbo-ts-complete-dev
+    externalKeyId: 0a195fad-46db-4ed2-9752-42eab9fa1c30
+    key:
+      description: prueba CODI C-KMS-009 y C-KMS-010
+      enableKeyRotation: true
+      keySpec: SYMMETRIC_DEFAULT
+      keyUsage: ENCRYPT_DECRYPT
+      name: complete
+      tags:
+        availability: low
+        bia: "false"
+        branch: feat/jgalcara
+        map-migrated: migEJKUAQ5U8C
+        owner: terraform_team
+        pci: "false"
+        repository: NequiTI/tsTerraformExamples_base_IaC:Api-SQS/KMS
+        sox: "false"
+        tfmodule: terraform_kms_mod/kms:v3.2.2
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    serviceid: NEQ1442
+status:
+  atProvider:
+    keyArn: ""
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: kms-alias, kms-key'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: kms.aws.m.upbound.io/v1beta1
+kind: Alias
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms-alias
+  labels:
+    crossplane.io/composite: adopt-kms-cbo-ts-dev
+  name: alias-cbo-ts-complete-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XKMS
+    name: adopt-kms-cbo-ts-dev
+    uid: 68deb184-ed04-5ba1-9c12-17b4593d04b0
+spec:
+  forProvider:
+    region: us-east-1
+    targetKeyIdRef:
+      name: key-cbo-ts-complete-dev
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: kms.aws.m.upbound.io/v1beta1
+kind: Key
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms-key
+  labels:
+    crossplane.io/composite: adopt-kms-cbo-ts-dev
+  name: key-cbo-ts-complete-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XKMS
+    name: adopt-kms-cbo-ts-dev
+    uid: 68deb184-ed04-5ba1-9c12-17b4593d04b0
+spec:
+  forProvider:
+    customerMasterKeySpec: SYMMETRIC_DEFAULT
+    deletionWindowInDays: 10
+    description: prueba CODI C-KMS-009 y C-KMS-010
+    enableKeyRotation: true
+    keyUsage: ENCRYPT_DECRYPT
+    region: us-east-1
+    tags:
+      availability: low
+      bia: "false"
+      branch: feat/jgalcara
+      capacity: cbo
+      country: ts
+      deployment: jarvis
+      env: dev
+      map-migrated: migEJKUAQ5U8C
+      owner: terraform_team
+      pci: "false"
+      repository: NequiTI/tsTerraformExamples_base_IaC:Api-SQS/KMS
+      serviceid: NEQ1442
+      sox: "false"
+      tfmodule: terraform_kms_mod/kms:v3.2.2
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

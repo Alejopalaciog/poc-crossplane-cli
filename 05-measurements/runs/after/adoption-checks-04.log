@@ -1,0 +1,15 @@
+﻿# .venv\Scripts\python 05-measurements\adoption_checks.py 04-after-cli-2.5\adoption-demo\render-sin-policies.yaml
+# start=2026-10-17T19:26:04.4286639-05:00 duration=0.25s exit=1
+FAIL  AD-01 sin Delete         Alias/alias-cbo-ts-complete-dev                         policies=None
+PASS  AD-02 propagación        Alias/alias-cbo-ts-complete-dev                         claim=None mr=None
+FAIL  AD-03 external-name      Alias/alias-cbo-ts-complete-dev                         SIN external-name -> intentará CREAR
+PASS  AD-04 render íntegro     Alias/alias-cbo-ts-complete-dev                         ok
+PASS  AD-05 deployment=jarvis  Alias/alias-cbo-ts-complete-dev                         deployment=None
+FAIL  AD-01 sin Delete         Key/key-cbo-ts-complete-dev                             policies=None
+PASS  AD-02 propagación        Key/key-cbo-ts-complete-dev                             claim=None mr=None
+FAIL  AD-03 external-name      Key/key-cbo-ts-complete-dev                             SIN external-name -> intentará CREAR
+PASS  AD-04 render íntegro     Key/key-cbo-ts-complete-dev                             ok
+PASS  AD-05 deployment=jarvis  Key/key-cbo-ts-complete-dev                             deployment=jarvis
+
+6/10 verificaciones OK sobre 2 managed resources
+

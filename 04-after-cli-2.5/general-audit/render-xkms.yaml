@@ -1,0 +1,98 @@
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  name: poc-kms-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: kms.aws.m.upbound.io/v1beta1
+      kind: Alias
+      name: alias-jarvis-co-pocclib1-us-east-1-dev
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: kms.aws.m.upbound.io/v1beta1
+      kind: Key
+      name: key-jarvis-co-pocclib1-us-east-1-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  atProvider:
+    keyArn: ""
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: kms-alias, kms-key'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: kms.aws.m.upbound.io/v1beta1
+kind: Alias
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms-alias
+    crossplane.io/external-name: alias-jarvis-co-pocclib1-dev
+  labels:
+    crossplane.io/composite: poc-kms-jarvis-co-pocclib1-dev
+  name: alias-jarvis-co-pocclib1-us-east-1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XKMS
+    name: poc-kms-jarvis-co-pocclib1-dev
+    uid: 6bef6bfd-f7e1-5002-a632-c2e1b746a553
+spec:
+  forProvider:
+    region: us-east-1
+    targetKeyIdRef:
+      name: key-jarvis-co-pocclib1-us-east-1-dev
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: kms.aws.m.upbound.io/v1beta1
+kind: Key
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms-key
+  labels:
+    crossplane.io/composite: poc-kms-jarvis-co-pocclib1-dev
+  name: key-jarvis-co-pocclib1-us-east-1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XKMS
+    name: poc-kms-jarvis-co-pocclib1-dev
+    uid: 6bef6bfd-f7e1-5002-a632-c2e1b746a553
+spec:
+  forProvider:
+    customerMasterKeySpec: SYMMETRIC_DEFAULT
+    deletionWindowInDays: 7
+    description: CMK logs del servicio lambda-jarvis-co-pocclib1-dev
+    enableKeyRotation: true
+    keyUsage: ENCRYPT_DECRYPT
+    policy: |2
+
+      {"Statement":[{"Action":"kms:*","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::634614730521:root"},"Resource":"*","Sid":"RootAccount"},{"Action":["kms:Encrypt*","kms:Decrypt*","kms:ReEncrypt*","kms:GenerateDataKey*","kms:Describe*"],"Condition":{"ArnEquals":{"kms:EncryptionContext:aws:logs:arn":"arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev"}},"Effect":"Allow","Principal":{"Service":"logs.us-east-1.amazonaws.com"},"Resource":"*","Sid":"CloudWatchLogs"}],"Version":"2012-10-17"}
+    region: us-east-1
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

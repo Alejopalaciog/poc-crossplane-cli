@@ -1,0 +1,66 @@
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XCLOUDWATCH
+metadata:
+  name: poc-logs-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: cloudwatchlogs.aws.m.upbound.io/v1beta1
+      kind: Group
+      name: log-group-jarvis-co-lambda-jarvis-co-pocclib1-dev-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: log-group'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: cloudwatchlogs.aws.m.upbound.io/v1beta1
+kind: Group
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: log-group
+    crossplane.io/external-name: /aws/lambda/lambda-jarvis-co-pocclib1-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+  labels:
+    crossplane.io/composite: poc-logs-jarvis-co-pocclib1-dev
+  name: log-group-jarvis-co-lambda-jarvis-co-pocclib1-dev-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XCLOUDWATCH
+    name: poc-logs-jarvis-co-pocclib1-dev
+    uid: 35af19db-45ba-5370-8695-8d91321b9c8b
+spec:
+  forProvider:
+    kmsKeyId: arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+    name: /aws/lambda/lambda-jarvis-co-pocclib1-dev
+    region: us-east-1
+    retentionInDays: 14
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

@@ -1,0 +1,291 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: xlambdas.aws.platform.nequi.com
+spec:
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionUpdatePolicy: Automatic
+  group: aws.platform.nequi.com
+  names:
+    kind: XLambda
+    plural: xlambdas
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              parameters:
+                properties:
+                  capacity:
+                    description: Nombre del proyecto en el que se esta trabajando.
+                    type: string
+                  country:
+                    description: "Pa\xC3\xADs de despliegue."
+                    enum:
+                    - co
+                    - pa
+                    - gt
+                    - ts
+                    type: string
+                  deadLetterArn:
+                    default: ''
+                    description: ARN de la cola de dead letter.
+                    type: string
+                  deployment:
+                    default: jarvis
+                    description: Where the deployment was made
+                    enum:
+                    - jarvis
+                    type: string
+                  enableSnapStart:
+                    default: false
+                    description: 'Habilitar SnapStart. Requiere runtimes compatibles
+                      (Java 11+, Python 3.12+, .NET 8+).
+
+                      '
+                    type: boolean
+                  env:
+                    description: "Ambiente donde ser\xC3\xA1 desplegado el componente.\n"
+                    enum:
+                    - dev
+                    - qa
+                    - pdn
+                    - sbx
+                    - stg
+                    type: string
+                  environmentVariables:
+                    additionalProperties:
+                      type: string
+                    default: {}
+                    description: "Variables de entorno en runtime de la lambda. Incluya\
+                      \ aqu\xC3\xAD cualquier variable adicional que en el m\xC3\xB3\
+                      dulo de Terraform inyectaban Dynatrace, ADOT o FIS.\n"
+                    type: object
+                  functionality:
+                    description: "Debe ser igual al nombre del directorio donde se\
+                      \ almacena la lambda en el repositorio que la contiene. Se usa\
+                      \ para construir el nombre de la funci\xC3\xB3n.\n"
+                    type: string
+                  imageUri:
+                    default: ''
+                    description: "Imagen sobre ECR que se usar\xC3\xA1 como origen\
+                      \ para la funci\xC3\xB3n Lambda. Requerida cuando packageType\
+                      \ es Image. En Terraform este valor se resolv\xC3\xADa con data\
+                      \ sources hacia ECR; aqu\xC3\xAD se pasa directo.\n"
+                    type: string
+                  isConfigVpcEnabled:
+                    default: true
+                    description: "Define si la lambda tiene configuraci\xC3\xB3n de\
+                      \ red (VPC). Si es true, subnetIds y securityGroupIds son requeridos.\n"
+                    type: boolean
+                  isDeadLetterConfigEnabled:
+                    default: false
+                    description: "Define si se habilita la configuraci\xC3\xB3n de\
+                      \ dead letter."
+                    type: boolean
+                  lambdaArchitecture:
+                    default: x86_64
+                    description: "Arquitectura de ejecuci\xC3\xB3n para la funci\xC3\
+                      \xB3n Lambda."
+                    enum:
+                    - arm64
+                    - x86_64
+                    type: string
+                  lambdaEventSourceMappings:
+                    default: []
+                    description: 'Configuraciones para conectar la lambda con eventos.
+
+                      '
+                    items:
+                      properties:
+                        batchSize:
+                          type: integer
+                        enabled:
+                          default: true
+                          type: boolean
+                        eventSourceArn:
+                          type: string
+                        functionResponseTypes:
+                          items:
+                            type: string
+                          type: array
+                        maximumBatchingWindowInSeconds:
+                          type: integer
+                        startingPosition:
+                          description: 'Requerido para DynamoDB Streams / Kinesis
+                            (ej: LATEST).'
+                          type: string
+                      required:
+                      - eventSourceArn
+                      type: object
+                    type: array
+                  lambdaHandler:
+                    default: index.lambda_handler
+                    description: "Configuraci\xC3\xB3n del entrypoint para la lambda\
+                      \ (solo Zip)."
+                    type: string
+                  lambdaLayers:
+                    default: []
+                    description: "ARN de las Layers a agregar a la funci\xC3\xB3n\
+                      \ lambda. En Terraform las capas de Dynatrace/ADOT/FIS se resolv\xC3\
+                      \xADan por data source; aqu\xC3\xAD se pasan directamente como\
+                      \ ARNs.\n"
+                    items:
+                      type: string
+                    type: array
+                  lambdaPermissions:
+                    additionalProperties:
+                      properties:
+                        action:
+                          default: lambda:InvokeFunction
+                          type: string
+                        principal:
+                          type: string
+                        sourceArn:
+                          default: ''
+                          type: string
+                        statementId:
+                          type: string
+                      required:
+                      - statementId
+                      - principal
+                      type: object
+                    default: {}
+                    description: "Permisos hacia la funci\xC3\xB3n lambda desde otros\
+                      \ servicios. Cada clave es un identificador l\xC3\xB3gico del\
+                      \ permiso. sourceArn es necesario para conexiones Cross Account.\n"
+                    type: object
+                  lambdaRuntime:
+                    default: ''
+                    description: 'Runtime de la lambda (solo Zip). Ej: python3.12,
+                      nodejs20.x, java21.'
+                    type: string
+                  memorySize:
+                    default: 128
+                    description: 'Cantidad de memoria en MB. Valor entre 128 y 10240,
+                      en incrementos de 64.
+
+                      '
+                    type: integer
+                  packageType:
+                    default: Zip
+                    description: "Tipo de paquete para la implementaci\xC3\xB3n de\
+                      \ la funci\xC3\xB3n Lambda."
+                    enum:
+                    - Zip
+                    - Image
+                    type: string
+                  providerConfigRef:
+                    description: Reference to the AWS provider configuration
+                    properties:
+                      name:
+                        description: Name of the provider configuration
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  region:
+                    default: us-east-1
+                    description: AWS region where resources will be created
+                    type: string
+                  reservedConcurrentExecutions:
+                    description: "N\xC3\xBAmero de ejecuciones concurrentes reservadas.\
+                      \ Si no se define, no se aplica reserva.\n"
+                    type: integer
+                  roleArn:
+                    description: "ARN del rol IAM de ejecuci\xC3\xB3n que asumir\xC3\
+                      \xA1 la funci\xC3\xB3n Lambda. Esta composici\xC3\xB3n NO crea\
+                      \ el rol ni sus pol\xC3\xADticas: se esperan creados por fuera\
+                      \ (por ejemplo con el XRD XIAM) y su ARN se pasa aqu\xC3\xAD\
+                      \ como variable.\n"
+                    type: string
+                  s3Bucket:
+                    default: ''
+                    description: "Nombre del bucket S3 que contiene el paquete .zip\
+                      \ de la funci\xC3\xB3n. Requerido cuando packageType es Zip.\
+                      \ AWS exige un origen de c\xC3\xB3digo en la creaci\xC3\xB3\
+                      n; el despliegue del c\xC3\xB3digo real lo hace el pipeline\
+                      \ posteriormente.\n"
+                    type: string
+                  s3Key:
+                    default: ''
+                    description: 'Key (ruta) del objeto .zip dentro del bucket S3.
+                      Requerido cuando packageType es Zip.
+
+                      '
+                    type: string
+                  s3ObjectVersion:
+                    default: ''
+                    description: "Versi\xC3\xB3n del objeto S3 del paquete .zip (opcional).\n"
+                    type: string
+                  securityGroupIds:
+                    default: []
+                    description: 'IDs de security groups a utilizar. Solo aplica para
+                      funciones Lambda asociadas a una VPC.
+
+                      '
+                    items:
+                      type: string
+                    type: array
+                  serviceid:
+                    description: ID del servicio que se va a desplegar.
+                    type: string
+                  standardName:
+                    default: true
+                    description: "Si es true usa el est\xC3\xA1ndar de nombramiento\
+                      \ actualizado de Nequi (incluye country) para la funci\xC3\xB3\
+                      n. Si es false usa el est\xC3\xA1ndar antiguo.\n"
+                    type: boolean
+                  subnetIds:
+                    default: []
+                    description: "IDs de las subredes a asociar a la lambda. En el\
+                      \ m\xC3\xB3dulo de Terraform se descubr\xC3\xADan por tag (aws-landing-zone-PrivateSubnet*C);\
+                      \ aqu\xC3\xAD se pasan expl\xC3\xADcitamente como variable.\n"
+                    items:
+                      type: string
+                    type: array
+                  tags:
+                    additionalProperties:
+                      type: string
+                    default: {}
+                    description: Tags adicionales para aplicar a los recursos creados.
+                    type: object
+                  timeout:
+                    default: 15
+                    description: "Timeout para ejecuci\xC3\xB3n de lambda (segundos)."
+                    type: integer
+                required:
+                - capacity
+                - country
+                - env
+                - functionality
+                - serviceid
+                - roleArn
+                - providerConfigRef
+                type: object
+            required:
+            - parameters
+            type: object
+          status:
+            properties:
+              atProvider:
+                properties:
+                  lambdaFunctionArn:
+                    description: "ARN de la funci\xC3\xB3n lambda creada."
+                    type: string
+                  lambdaFunctionName:
+                    description: "Nombre de la funci\xC3\xB3n lambda creada."
+                    type: string
+                  lambdaInvokeArn:
+                    description: "ARN de invocaci\xC3\xB3n para integrar la lambda\
+                      \ a un endpoint de API Gateway.\n"
+                    type: string
+                type: object
+            type: object
+        type: object
+    served: true
+

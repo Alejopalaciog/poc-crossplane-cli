@@ -1,0 +1,92 @@
+﻿# ..\tools\crank-2.2.6.exe render ..\02-before-1-yaml\xr.yaml ..\02-before-1-yaml\composition.yaml functions.yaml
+# start=2026-10-17T15:14:37.2372945-05:00 duration=2.71s exit=0
+---
+apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+kind: XPocCliLambdaService
+metadata:
+  name: poc-cli-before-hello
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: iam, kms'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XIAM
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: iam
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+  labels:
+    crossplane.io/composite: poc-cli-before-hello
+    poc.nequi.com/experiment: cli-2.5
+  name: poc-iam-jarvis-co-pocclib1-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliLambdaService
+    name: poc-cli-before-hello
+    uid: ""
+spec:
+  parameters:
+    capacity: jarvis
+    country: co
+    deployment: jarvis
+    env: dev
+    policies:
+    - description: Escritura de logs acotada al log group del servicio
+      name: pocclib1-lmd-logs
+      policy: '{"Statement":[{"Action":["logs:CreateLogStream","logs:PutLogEvents"],"Effect":"Allow","Resource":["arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev","arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev:*"],"Sid":"Logs"}],"Version":"2012-10-17"}'
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    role:
+      assumeRolePolicy: '{"Statement":[{"Action":"sts:AssumeRole","Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"}}],"Version":"2012-10-17"}'
+      description: Rol de ejecucion de lambda-jarvis-co-pocclib1-dev
+      name: pocclib1-lmd
+    serviceid: NEQ0169
+    standardName: true
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+  labels:
+    crossplane.io/composite: poc-cli-before-hello
+    poc.nequi.com/experiment: cli-2.5
+  name: poc-kms-jarvis-co-pocclib1-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliLambdaService
+    name: poc-cli-before-hello
+    uid: ""
+spec:
+  parameters:
+    capacity: jarvis
+    country: co
+    deployment: jarvis
+    env: dev
+    key:
+      deletionWindowInDays: 7
+      description: CMK logs del servicio lambda-jarvis-co-pocclib1-dev
+      enableKeyRotation: true
+      name: pocclib1
+      policy: '{"Statement":[{"Action":"kms:*","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::634614730521:root"},"Resource":"*","Sid":"RootAccount"},{"Action":["kms:Encrypt*","kms:Decrypt*","kms:ReEncrypt*","kms:GenerateDataKey*","kms:Describe*"],"Condition":{"ArnEquals":{"kms:EncryptionContext:aws:logs:arn":"arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev"}},"Effect":"Allow","Principal":{"Service":"logs.us-east-1.amazonaws.com"},"Resource":"*","Sid":"CloudWatchLogs"}],"Version":"2012-10-17"}'
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    serviceid: NEQ0169
+    standardName: true
+

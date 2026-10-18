@@ -1,0 +1,130 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xpoccililambdaservices.poc-cli-before.platform.nequi.com
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+spec:
+  scope: Cluster
+  group: poc-cli-before.platform.nequi.com
+  names:
+    kind: XPocCliLambdaService
+    plural: xpoccililambdaservices
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  type: object
+                  description: Parametros del servicio Lambda con estandares Nequi
+                  properties:
+                    serviceid:
+                      type: string
+                      description: Identificador del servicio en CMDB (ej. NEQ0169)
+                    capacity:
+                      type: string
+                      description: Capacidad duena del servicio
+                    country:
+                      type: string
+                      description: Pais de despliegue
+                      enum: ["co", "gt", "ts", "pa"]
+                    env:
+                      type: string
+                      description: Ambiente
+                      enum: ["dev", "qa", "pdn", "sbx", "stg"]
+                    functionality:
+                      type: string
+                      description: Funcionalidad del servicio (parte del nombre estandar)
+                      maxLength: 30
+                    accountId:
+                      type: string
+                      description: Cuenta AWS donde se despliega (para construir ARNs)
+                      pattern: "^[0-9]{12}$"
+                    region:
+                      type: string
+                      default: us-east-1
+                    providerConfigName:
+                      type: string
+                      default: sharedservices-jarvis-dev
+                    tags:
+                      type: object
+                      additionalProperties:
+                        type: string
+                      default: {}
+                    lambda:
+                      type: object
+                      properties:
+                        runtime:
+                          type: string
+                          default: python3.12
+                        handler:
+                          type: string
+                          default: index.lambda_handler
+                        memorySize:
+                          type: integer
+                          default: 128
+                          minimum: 128
+                          maximum: 1024
+                        timeout:
+                          type: integer
+                          default: 15
+                          minimum: 1
+                          maximum: 60
+                        s3Bucket:
+                          type: string
+                        s3Key:
+                          type: string
+                        environmentVariables:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          default: {}
+                      required:
+                        - s3Bucket
+                        - s3Key
+                    logs:
+                      type: object
+                      properties:
+                        retentionInDays:
+                          type: integer
+                          description: Si no se indica, la plataforma usa 14 (no productivo) o 90 (pdn)
+                    vpc:
+                      type: object
+                      properties:
+                        enabled:
+                          type: boolean
+                          default: false
+                        vpcId:
+                          type: string
+                        subnetIds:
+                          type: array
+                          items:
+                            type: string
+                  required:
+                    - serviceid
+                    - capacity
+                    - country
+                    - env
+                    - functionality
+                    - accountId
+                    - lambda
+              required:
+                - parameters
+            status:
+              type: object
+              properties:
+                lambdaArn:
+                  type: string
+                roleArn:
+                  type: string
+                kmsKeyArn:
+                  type: string
+                logGroupName:
+                  type: string

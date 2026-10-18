@@ -1,0 +1,15 @@
+﻿# ..\.venv\Scripts\python ..\05-measurements\business_checks.py render-out.yaml
+# start=2026-10-17T15:15:21.5836565-05:00 duration=0.36s exit=0
+PASS  BR-01 identidad y tags       4 hijos OK
+PASS  BR-02 naming estßndar        standardName en todos
+PASS  BR-03 retenci¾n logs         14 dÝas (mÝnimo 14 en dev)
+PASS  BR-04 logs cifrados          arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+PASS  BR-05 rotaci¾n CMK           enableKeyRotation=true
+PASS  BR-06 mÝnimo privilegio      trust lambda + recursos acotados
+PASS  BR-07 guardarraÝles costo    memoria=128MB timeout=15s
+PASS  BR-08 cuenta/regi¾n          providerConfig={'sharedservices-jarvis-dev'} regi¾n={'us-east-1'}
+PASS  BR-09 red                    sin VPC y sin SG
+PASS  BR-10 sin referencias rotas  roleArn=arn:aws:iam::634614730521:role/role-jarvis-co-pocclib1-lmd-dev
+
+10/10 reglas de negocio cumplidas
+

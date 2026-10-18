@@ -1,0 +1,3 @@
+﻿# "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\tools\crossplane-2.5.0.exe" composition render ..\local-argocd-crossplane-config\claims\adopt-kms-test\claim.yaml ..\local-argocd-crossplane-config\platform\aws_xrds\kms\composition.yaml 03-before-2-cli-2.2\functions.yaml -x > 04-after-cli-2.5\adoption-demo\render-adopt-kms.yaml
+# start=2026-10-17T19:24:54.9019104-05:00 duration=5.26s exit=0
+

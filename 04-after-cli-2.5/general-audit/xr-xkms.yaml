@@ -1,0 +1,21 @@
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  name: poc-kms-jarvis-co-pocclib1-dev
+spec:
+  parameters:
+    capacity: jarvis
+    country: co
+    deployment: jarvis
+    env: dev
+    key:
+      deletionWindowInDays: 7
+      description: CMK logs del servicio lambda-jarvis-co-pocclib1-dev
+      enableKeyRotation: true
+      name: pocclib1
+      policy: '{"Statement":[{"Action":"kms:*","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::634614730521:root"},"Resource":"*","Sid":"RootAccount"},{"Action":["kms:Encrypt*","kms:Decrypt*","kms:ReEncrypt*","kms:GenerateDataKey*","kms:Describe*"],"Condition":{"ArnEquals":{"kms:EncryptionContext:aws:logs:arn":"arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev"}},"Effect":"Allow","Principal":{"Service":"logs.us-east-1.amazonaws.com"},"Resource":"*","Sid":"CloudWatchLogs"}],"Version":"2012-10-17"}'
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    serviceid: NEQ0169
+    standardName: true

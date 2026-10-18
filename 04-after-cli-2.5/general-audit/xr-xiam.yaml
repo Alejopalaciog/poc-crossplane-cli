@@ -1,0 +1,26 @@
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XIAM
+metadata:
+  name: poc-iam-jarvis-co-pocclib1-dev
+spec:
+  parameters:
+    capacity: jarvis
+    country: co
+    deployment: jarvis
+    env: dev
+    policies:
+    - description: Escritura de logs acotada al log group del servicio
+      name: pocclib1-lmd-logs
+      policy: '{"Statement":[{"Action":["logs:CreateLogStream","logs:PutLogEvents"],"Effect":"Allow","Resource":["arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev","arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev:*"],"Sid":"Logs"}],"Version":"2012-10-17"}'
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    role:
+      assumeRolePolicy: '{"Statement":[{"Action":"sts:AssumeRole","Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"}}],"Version":"2012-10-17"}'
+      description: Rol de ejecucion de lambda-jarvis-co-pocclib1-dev
+      name: pocclib1-lmd
+    serviceid: NEQ0169
+    standardName: true
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5

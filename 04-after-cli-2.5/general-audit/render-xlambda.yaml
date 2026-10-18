@@ -1,0 +1,83 @@
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XLambda
+metadata:
+  name: poc-lambda-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: lambda.aws.m.upbound.io/v1beta1
+      kind: Function
+      name: lambda-jarvis-co-pocclib1-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: lambda-function'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: lambda.aws.m.upbound.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: lambda-function
+    crossplane.io/external-name: lambda-jarvis-co-pocclib1-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-lambda-jarvis-co-pocclib1-dev
+  name: lambda-jarvis-co-pocclib1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XLambda
+    name: poc-lambda-jarvis-co-pocclib1-dev
+    uid: d21e911d-2ff5-5264-b2b3-f6379041156d
+spec:
+  forProvider:
+    architectures:
+    - x86_64
+    environment:
+      variables:
+        POC: crossplane-cli-2.5
+    handler: index.lambda_handler
+    memorySize: 128
+    packageType: Zip
+    region: us-east-1
+    role: arn:aws:iam::634614730521:role/role-jarvis-co-pocclib1-lmd-dev
+    runtime: python3.12
+    s3Bucket: masivos-deployment
+    s3Key: poc-cli-2.5/hello.zip
+    tags:
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+    timeout: 15
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

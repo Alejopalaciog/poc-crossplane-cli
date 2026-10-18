@@ -1,0 +1,30 @@
+apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+kind: XPocCliLambdaService
+metadata:
+  name: poc-cli-before-hello
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+spec:
+  parameters:
+    serviceid: NEQ0169
+    capacity: jarvis
+    country: co
+    env: dev
+    functionality: pocclib1
+    accountId: "634614730521"
+    region: us-east-1
+    providerConfigName: sharedservices-jarvis-dev
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+    lambda:
+      runtime: python3.12
+      handler: index.lambda_handler
+      memorySize: 128
+      timeout: 15
+      s3Bucket: masivos-deployment
+      s3Key: poc-cli-2.5/hello.zip
+      environmentVariables:
+        POC: "crossplane-cli-2.5"
+    vpc:
+      enabled: false

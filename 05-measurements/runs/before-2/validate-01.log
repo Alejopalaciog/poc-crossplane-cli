@@ -1,0 +1,10 @@
+﻿# ..\tools\crank-2.2.6.exe beta validate extensions render-out.yaml
+# start=2026-10-17T15:14:52.5736632-05:00 duration=19.22s exit=0
+schemas does not exist, downloading:  xpkg.crossplane.io/crossplane/crossplane:v2.2.6
+[!] could not find CRD/XRD for: poc-cli-before.platform.nequi.com/v1alpha1, Kind=XPocCliLambdaService
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XIAM, poc-iam-jarvis-co-pocclib1-dev validated successfully
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XKMS, poc-kms-jarvis-co-pocclib1-dev validated successfully
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XLambda, poc-lambda-jarvis-co-pocclib1-dev validated successfully
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XCLOUDWATCH, poc-logs-jarvis-co-pocclib1-dev validated successfully
+Total 5 resources: 1 missing schemas, 4 success cases, 0 failure cases
+

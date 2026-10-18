@@ -1,0 +1,3 @@
+﻿# ../../tools/crossplane-2.5.0.exe composition render xr-xlambda.yaml ../../../local-argocd-crossplane-config/platform/aws_xrds/lambda/composition.yaml ../../03-before-2-cli-2.2/functions.yaml > render-xlambda.yaml
+# start=2026-10-17T18:28:56.4874042-05:00 duration=0.06s exit=1
+

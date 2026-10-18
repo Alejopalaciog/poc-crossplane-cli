@@ -1,0 +1,323 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: poc-cli-before-lambda-service
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+    provider: aws
+    resource: lambda-service
+    platform: nequi
+spec:
+  compositeTypeRef:
+    apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    kind: XPocCliLambdaService
+  mode: Pipeline
+  pipeline:
+
+    # ============================================================
+    # Step 1: Llave KMS propia del servicio (cifra el log group)
+    # ============================================================
+    - step: compose-kms
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $region := $p.region | default "us-east-1" }}
+            {{- $lambdaName := printf "lambda-%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $logGroupArn := printf "arn:aws:logs:%s:%s:log-group:/aws/lambda/%s" $region $p.accountId $lambdaName }}
+            {{- $keyPolicy := dict "Version" "2012-10-17" "Statement" (list
+                  (dict "Sid" "RootAccount" "Effect" "Allow" "Principal" (dict "AWS" (printf "arn:aws:iam::%s:root" $p.accountId)) "Action" "kms:*" "Resource" "*")
+                  (dict "Sid" "CloudWatchLogs" "Effect" "Allow" "Principal" (dict "Service" (printf "logs.%s.amazonaws.com" $region))
+                        "Action" (list "kms:Encrypt*" "kms:Decrypt*" "kms:ReEncrypt*" "kms:GenerateDataKey*" "kms:Describe*") "Resource" "*"
+                        "Condition" (dict "ArnEquals" (dict "kms:EncryptionContext:aws:logs:arn" $logGroupArn)))) }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XKMS
+            metadata:
+              name: poc-kms-{{ $p.capacity }}-{{ $p.country }}-{{ $p.functionality }}-{{ $p.env }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: kms
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              parameters:
+                serviceid: {{ $p.serviceid }}
+                capacity: {{ $p.capacity }}
+                country: {{ $p.country }}
+                env: {{ $p.env }}
+                deployment: jarvis
+                region: {{ $region }}
+                standardName: true
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                key:
+                  name: {{ $p.functionality }}
+                  description: "CMK logs del servicio {{ $lambdaName }}"
+                  enableKeyRotation: true
+                  deletionWindowInDays: 7
+                  policy: {{ $keyPolicy | toJson | quote }}
+
+    # ============================================================
+    # Step 2: Log group de la Lambda (espera el ARN de la llave)
+    # ============================================================
+    - step: compose-logs
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $lambdaName := printf "lambda-%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $keyArn := "" }}
+            {{- with .observed.resources.kms }}
+              {{- $keyArn = .resource.status.atProvider.keyArn | default "" }}
+            {{- end }}
+            {{- $retention := 14 }}
+            {{- if eq $p.env "pdn" }}{{- $retention = 90 }}{{- end }}
+            {{- with $p.logs }}{{- with .retentionInDays }}{{- $retention = . }}{{- end }}{{- end }}
+            {{- if $keyArn }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XCLOUDWATCH
+            metadata:
+              name: poc-logs-{{ $p.capacity }}-{{ $p.country }}-{{ $p.functionality }}-{{ $p.env }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: logs
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              parameters:
+                serviceid: {{ $p.serviceid }}
+                capacity: {{ $p.capacity }}
+                country: {{ $p.country }}
+                env: {{ $p.env }}
+                deployment: jarvis
+                region: {{ $p.region }}
+                standardName: true
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                tags: {{ $p.tags | toJson }}
+                logGroup:
+                  name: {{ $lambdaName }}
+                  resourceType: lambda
+                  retentionInDays: {{ $retention }}
+                  kmsKeyId: {{ $keyArn }}
+            {{- end }}
+
+    # ============================================================
+    # Step 3: Rol IAM con minimo privilegio (logs acotados al log group)
+    # ============================================================
+    - step: compose-iam
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $lambdaName := printf "lambda-%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $logGroupArn := printf "arn:aws:logs:%s:%s:log-group:/aws/lambda/%s" $p.region $p.accountId $lambdaName }}
+            {{- $trust := dict "Version" "2012-10-17" "Statement" (list (dict "Effect" "Allow" "Principal" (dict "Service" "lambda.amazonaws.com") "Action" "sts:AssumeRole")) }}
+            {{- $statements := list (dict "Sid" "Logs" "Effect" "Allow" "Action" (list "logs:CreateLogStream" "logs:PutLogEvents") "Resource" (list $logGroupArn (printf "%s:*" $logGroupArn))) }}
+            {{- if (($p.vpc | default dict).enabled) }}
+              {{- $statements = append $statements (dict "Sid" "VpcEni" "Effect" "Allow" "Action" (list "ec2:CreateNetworkInterface" "ec2:DescribeNetworkInterfaces" "ec2:DeleteNetworkInterface") "Resource" "*") }}
+            {{- end }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XIAM
+            metadata:
+              name: poc-iam-{{ $p.capacity }}-{{ $p.country }}-{{ $p.functionality }}-{{ $p.env }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: iam
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              parameters:
+                serviceid: {{ $p.serviceid }}
+                capacity: {{ $p.capacity }}
+                country: {{ $p.country }}
+                env: {{ $p.env }}
+                deployment: jarvis
+                region: {{ $p.region }}
+                standardName: true
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                tags: {{ $p.tags | toJson }}
+                role:
+                  name: {{ $p.functionality }}-lmd
+                  description: "Rol de ejecucion de {{ $lambdaName }}"
+                  assumeRolePolicy: {{ $trust | toJson | quote }}
+                policies:
+                  - name: {{ $p.functionality }}-lmd-logs
+                    description: "Escritura de logs acotada al log group del servicio"
+                    policy: {{ dict "Version" "2012-10-17" "Statement" $statements | toJson | quote }}
+
+    # ============================================================
+    # Step 4: Security Group (solo si el servicio va en VPC)
+    # ============================================================
+    - step: compose-sg
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $vpc := $p.vpc | default dict }}
+            {{- if $vpc.enabled }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XSecurityGroup
+            metadata:
+              name: poc-sg-{{ $p.capacity }}-{{ $p.country }}-{{ $p.functionality }}-{{ $p.env }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: sg
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+            spec:
+              parameters:
+                serviceid: {{ $p.serviceid }}
+                capacity: {{ $p.capacity }}
+                country: {{ $p.country }}
+                env: {{ $p.env }}
+                deployment: jarvis
+                region: {{ $p.region }}
+                standardName: true
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                securityGroup:
+                  name: {{ $p.functionality }}-lmd
+                  description: "SG de la Lambda {{ $p.functionality }}"
+                  vpcId: {{ $vpc.vpcId }}
+                egressRules:
+                  - description: "Salida HTTPS"
+                    protocol: tcp
+                    fromPort: 443
+                    toPort: 443
+                    cidrBlocks: ["0.0.0.0/0"]
+            {{- end }}
+
+    # ============================================================
+    # Step 5: Lambda (solo cuando el rol ya tiene ARN)
+    # ============================================================
+    - step: compose-lambda
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $l := $p.lambda }}
+            {{- $vpc := $p.vpc | default dict }}
+            {{- $roleArn := "" }}
+            {{- with .observed.resources.iam }}
+              {{- $roleArn = .resource.status.atProvider.roleArn | default "" }}
+            {{- end }}
+            {{- $sgId := "" }}
+            {{- with .observed.resources.sg }}
+              {{- $sgId = .resource.status.atProvider.securityGroupId | default "" }}
+            {{- end }}
+            {{- $vpcReady := or (not $vpc.enabled) $sgId }}
+            {{- if and $roleArn $vpcReady }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XLambda
+            metadata:
+              name: poc-lambda-{{ $p.capacity }}-{{ $p.country }}-{{ $p.functionality }}-{{ $p.env }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: lambda
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              parameters:
+                serviceid: {{ $p.serviceid }}
+                capacity: {{ $p.capacity }}
+                country: {{ $p.country }}
+                env: {{ $p.env }}
+                functionality: {{ $p.functionality }}
+                deployment: jarvis
+                region: {{ $p.region }}
+                standardName: true
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                tags: {{ $p.tags | toJson }}
+                roleArn: {{ $roleArn }}
+                packageType: Zip
+                s3Bucket: {{ $l.s3Bucket }}
+                s3Key: {{ $l.s3Key }}
+                lambdaRuntime: {{ $l.runtime | default "python3.12" }}
+                lambdaHandler: {{ $l.handler | default "index.lambda_handler" }}
+                memorySize: {{ $l.memorySize | default 128 }}
+                timeout: {{ $l.timeout | default 15 }}
+                environmentVariables: {{ $l.environmentVariables | default dict | toJson }}
+                isConfigVpcEnabled: {{ $vpc.enabled | default false }}
+                {{- if $vpc.enabled }}
+                subnetIds: {{ $vpc.subnetIds | toJson }}
+                securityGroupIds: [{{ $sgId | quote }}]
+                {{- end }}
+            {{- end }}
+
+    # ============================================================
+    # Step 6: Publicar ARNs en el status del XR
+    # ============================================================
+    - step: publish-status
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $o := .observed.resources }}
+            ---
+            apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+            kind: XPocCliLambdaService
+            status:
+              {{- with $o.lambda }}{{- with .resource.status.atProvider.lambdaFunctionArn }}
+              lambdaArn: {{ . }}
+              {{- end }}{{- end }}
+              {{- with $o.iam }}{{- with .resource.status.atProvider.roleArn }}
+              roleArn: {{ . }}
+              {{- end }}{{- end }}
+              {{- with $o.kms }}{{- with .resource.status.atProvider.keyArn }}
+              kmsKeyArn: {{ . }}
+              {{- end }}{{- end }}
+              {{- with $o.logs }}{{- with .resource.status.atProvider.logGroupName }}
+              logGroupName: {{ . }}
+              {{- end }}{{- end }}
+
+    - step: mark-ready
+      functionRef:
+        name: function-auto-ready

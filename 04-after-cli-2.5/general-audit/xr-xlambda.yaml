@@ -1,0 +1,30 @@
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XLambda
+metadata:
+  name: poc-lambda-jarvis-co-pocclib1-dev
+spec:
+  parameters:
+    capacity: jarvis
+    country: co
+    deployment: jarvis
+    env: dev
+    environmentVariables:
+      POC: crossplane-cli-2.5
+    functionality: pocclib1
+    isConfigVpcEnabled: false
+    lambdaHandler: index.lambda_handler
+    lambdaRuntime: python3.12
+    memorySize: 128
+    packageType: Zip
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    roleArn: arn:aws:iam::634614730521:role/role-jarvis-co-pocclib1-lmd-dev
+    s3Bucket: masivos-deployment
+    s3Key: poc-cli-2.5/hello.zip
+    serviceid: NEQ0169
+    standardName: true
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+    timeout: 15

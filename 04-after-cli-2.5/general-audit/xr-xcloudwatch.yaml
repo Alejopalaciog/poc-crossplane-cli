@@ -1,0 +1,23 @@
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XCLOUDWATCH
+metadata:
+  name: poc-logs-jarvis-co-pocclib1-dev
+spec:
+  parameters:
+    capacity: jarvis
+    country: co
+    deployment: jarvis
+    env: dev
+    logGroup:
+      kmsKeyId: arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+      name: lambda-jarvis-co-pocclib1-dev
+      resourceType: lambda
+      retentionInDays: 14
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    serviceid: NEQ0169
+    standardName: true
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5

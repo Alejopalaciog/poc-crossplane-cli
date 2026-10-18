@@ -1,0 +1,3 @@
+﻿# "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\tools\crossplane-2.5.0.exe" composition render 04-after-cli-2.5\adoption-demo\claim-sin-policies.yaml ..\local-argocd-crossplane-config\platform\aws_xrds\kms\composition.yaml 03-before-2-cli-2.2\functions.yaml -x > 04-after-cli-2.5\adoption-demo\render-sin-policies.yaml
+# start=2026-10-17T19:25:12.8650954-05:00 duration=0.18s exit=1
+

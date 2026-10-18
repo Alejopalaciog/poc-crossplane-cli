@@ -1,0 +1,15 @@
+﻿# .venv\Scripts\python 05-measurements\adoption_checks.py 04-after-cli-2.5\adoption-demo\render-adopt-kms.yaml
+# start=2026-10-17T19:25:00.2465892-05:00 duration=0.36s exit=0
+PASS  AD-01 sin Delete         Alias/alias-cbo-ts-complete-dev                         policies=['Observe', 'Create', 'Update', 'LateInitialize']
+PASS  AD-02 propagación        Alias/alias-cbo-ts-complete-dev                         claim=['Observe', 'Create', 'Update', 'LateInitialize'] mr=['Observe', 'Create', 'Update', 'LateInitialize']
+PASS  AD-03 external-name      Alias/alias-cbo-ts-complete-dev                         alias/key-cbo-ts-complete-dev
+PASS  AD-04 render íntegro     Alias/alias-cbo-ts-complete-dev                         ok
+PASS  AD-05 deployment=jarvis  Alias/alias-cbo-ts-complete-dev                         deployment=None
+PASS  AD-01 sin Delete         Key/key-cbo-ts-complete-dev                             policies=['Observe', 'Create', 'Update', 'LateInitialize']
+PASS  AD-02 propagación        Key/key-cbo-ts-complete-dev                             claim=['Observe', 'Create', 'Update', 'LateInitialize'] mr=['Observe', 'Create', 'Update', 'LateInitialize']
+PASS  AD-03 external-name      Key/key-cbo-ts-complete-dev                             0a195fad-46db-4ed2-9752-42eab9fa1c30
+PASS  AD-04 render íntegro     Key/key-cbo-ts-complete-dev                             ok
+PASS  AD-05 deployment=jarvis  Key/key-cbo-ts-complete-dev                             deployment=jarvis
+
+10/10 verificaciones OK sobre 2 managed resources
+

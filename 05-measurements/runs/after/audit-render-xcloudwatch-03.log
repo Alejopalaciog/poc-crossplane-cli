@@ -1,0 +1,3 @@
+﻿# "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\tools\crossplane-2.5.0.exe" composition render xr-xcloudwatch.yaml "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\local-argocd-crossplane-config\platform\aws_xrds\cloudwatch\composition.yaml" "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\03-before-2-cli-2.2\functions.yaml" > render-xcloudwatch.yaml
+# start=2026-10-17T18:29:38.5944764-05:00 duration=45.65s exit=0
+

@@ -1,0 +1,21 @@
+# Recursos "observados" simulados: permiten renderizar las etapas que dependen
+# de ARNs de otros recursos (llave KMS -> log group, rol IAM -> Lambda) sin cluster.
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  name: poc-kms-jarvis-co-pocclib1-dev
+  annotations:
+    crossplane.io/composition-resource-name: kms
+status:
+  atProvider:
+    keyArn: arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XIAM
+metadata:
+  name: poc-iam-jarvis-co-pocclib1-dev
+  annotations:
+    crossplane.io/composition-resource-name: iam
+status:
+  atProvider:
+    roleArn: arn:aws:iam::634614730521:role/role-jarvis-co-pocclib1-lmd-dev

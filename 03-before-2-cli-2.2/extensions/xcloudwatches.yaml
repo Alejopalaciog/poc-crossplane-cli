@@ -1,0 +1,128 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: xcloudwatches.aws.platform.nequi.com
+spec:
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionUpdatePolicy: Automatic
+  group: aws.platform.nequi.com
+  names:
+    kind: XCLOUDWATCH
+    plural: xcloudwatches
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              parameters:
+                properties:
+                  bia:
+                    type: boolean
+                  capacity:
+                    type: string
+                  country:
+                    enum:
+                    - co
+                    - gt
+                    - ts
+                    - pa
+                    type: string
+                  deployment:
+                    enum:
+                    - jarvis
+                    type: string
+                  env:
+                    enum:
+                    - dev
+                    - qa
+                    - pdn
+                    - sbx
+                    - stg
+                    type: string
+                  externalName:
+                    description: "Nombre REAL del log group en AWS (standardName=false).\
+                      \ Es tambi\xC3\xA9n el crossplane.io/external-name del managed\
+                      \ resource Group.\n"
+                    type: string
+                  logGroup:
+                    properties:
+                      customPath:
+                        description: "Path/nombre real completo del log group (si\
+                          \ no sigue la f\xC3\xB3rmula)."
+                        type: string
+                      kmsKeyId:
+                        type: string
+                      name:
+                        description: "Nombre l\xC3\xB3gico del log group."
+                        type: string
+                      resourceType:
+                        default: generic
+                        enum:
+                        - eks
+                        - lambda
+                        - rds
+                        - ecs
+                        - apigateway
+                        - generic
+                        type: string
+                      retentionInDays:
+                        default: 14
+                        type: integer
+                    required:
+                    - name
+                    type: object
+                  managementPolicies:
+                    description: Se propaga al Group. ["Observe"] para adoptar en
+                      solo-lectura.
+                    items:
+                      type: string
+                    type: array
+                  providerConfigRef:
+                    properties:
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  region:
+                    default: us-east-1
+                    type: string
+                  serviceid:
+                    default: NEQ0000
+                    type: string
+                  standardName:
+                    default: true
+                    description: "true (default): nombre calculado seg\xC3\xBAn logGroup.\
+                      \ false: adopta un log group existente usando externalName como\
+                      \ nombre literal.\n"
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    type: object
+                required:
+                - capacity
+                - country
+                - env
+                - logGroup
+                - serviceid
+                - providerConfigRef
+                type: object
+            type: object
+          status:
+            properties:
+              atProvider:
+                properties:
+                  arn:
+                    type: string
+                  logGroupName:
+                    type: string
+                type: object
+            type: object
+        type: object
+    served: true
+

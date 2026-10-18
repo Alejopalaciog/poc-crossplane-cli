@@ -1,0 +1,4 @@
+﻿# kubectl apply -f 02-before-1-yaml/composition.yaml
+# start=2026-10-17T15:13:42.8715458-05:00 duration=2.45s exit=0
+composition.apiextensions.crossplane.io/poc-cli-before-lambda-service created
+

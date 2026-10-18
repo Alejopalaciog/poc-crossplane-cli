@@ -1,0 +1,23 @@
+﻿# "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\tools\crossplane-2.5.0.exe" resource validate providers.yaml render-all.yaml
+# start=2026-10-17T18:30:32.8812054-05:00 duration=31.47s exit=1
+schemas does not exist, downloading:  xpkg.upbound.io/upbound/provider-aws-iam:v2.5.0
+schemas does not exist, downloading:  xpkg.upbound.io/upbound/provider-aws-kms:v2.5.0
+schemas does not exist, downloading:  xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs:v2.5.0
+schemas does not exist, downloading:  xpkg.upbound.io/upbound/provider-aws-lambda:v2.5.0
+schemas does not exist, downloading:  xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0
+schemas does not exist, downloading:  xpkg.upbound.io/upbound/provider-aws-ec2:v2.5.0
+schemas does not exist, downloading:  xpkg.crossplane.io/crossplane/crossplane:stable
+[!] could not find CRD/XRD for: aws.platform.nequi.com/v1alpha1, Kind=XCLOUDWATCH
+[x] schema validation error cloudwatchlogs.aws.m.upbound.io/v1beta1, Kind=Group, log-group-jarvis-co-lambda-jarvis-co-pocclib1-dev-dev : spec.forProvider.name: Invalid value: "name": unknown field: "name"
+[!] could not find CRD/XRD for: aws.platform.nequi.com/v1alpha1, Kind=XIAM
+[✓] iam.aws.m.upbound.io/v1beta1, Kind=RolePolicyAttachment, attachment-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev validated successfully
+[✓] iam.aws.m.upbound.io/v1beta1, Kind=Policy, policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev validated successfully
+[✓] iam.aws.m.upbound.io/v1beta1, Kind=Role, role-jarvis-co-pocclib1-lmd-dev validated successfully
+[!] could not find CRD/XRD for: aws.platform.nequi.com/v1alpha1, Kind=XKMS
+[✓] kms.aws.m.upbound.io/v1beta1, Kind=Alias, alias-jarvis-co-pocclib1-us-east-1-dev validated successfully
+[✓] kms.aws.m.upbound.io/v1beta1, Kind=Key, key-jarvis-co-pocclib1-us-east-1-dev validated successfully
+[!] could not find CRD/XRD for: aws.platform.nequi.com/v1alpha1, Kind=XLambda
+[✓] lambda.aws.m.upbound.io/v1beta1, Kind=Function, lambda-jarvis-co-pocclib1-dev validated successfully
+Total 11 resources: 4 missing schemas, 6 success cases, 1 failure cases
+crossplane: error: could not validate all resources
+

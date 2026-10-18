@@ -1,0 +1,410 @@
+﻿---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XCLOUDWATCH
+metadata:
+  name: poc-logs-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: cloudwatchlogs.aws.m.upbound.io/v1beta1
+      kind: Group
+      name: log-group-jarvis-co-lambda-jarvis-co-pocclib1-dev-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: log-group'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: cloudwatchlogs.aws.m.upbound.io/v1beta1
+kind: Group
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: log-group
+    crossplane.io/external-name: /aws/lambda/lambda-jarvis-co-pocclib1-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+  labels:
+    crossplane.io/composite: poc-logs-jarvis-co-pocclib1-dev
+  name: log-group-jarvis-co-lambda-jarvis-co-pocclib1-dev-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XCLOUDWATCH
+    name: poc-logs-jarvis-co-pocclib1-dev
+    uid: 35af19db-45ba-5370-8695-8d91321b9c8b
+spec:
+  forProvider:
+    kmsKeyId: arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+    name: /aws/lambda/lambda-jarvis-co-pocclib1-dev
+    region: us-east-1
+    retentionInDays: 14
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XIAM
+metadata:
+  name: poc-iam-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: iam.aws.m.upbound.io/v1beta1
+      kind: Policy
+      name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: iam.aws.m.upbound.io/v1beta1
+      kind: RolePolicyAttachment
+      name: attachment-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: iam.aws.m.upbound.io/v1beta1
+      kind: Role
+      name: role-jarvis-co-pocclib1-lmd-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: attachmentjarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev,
+      policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev, and role-jarvis-co-pocclib1-lmd-dev'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: iam.aws.m.upbound.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: attachmentjarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-iam-jarvis-co-pocclib1-dev
+  name: attachment-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XIAM
+    name: poc-iam-jarvis-co-pocclib1-dev
+    uid: d7ea4de7-1a59-50c5-8741-fba9f5b4a380
+spec:
+  forProvider:
+    policyArnRef:
+      name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+    roleRef:
+      name: role-jarvis-co-pocclib1-lmd-dev
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: iam.aws.m.upbound.io/v1beta1
+kind: Policy
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-iam-jarvis-co-pocclib1-dev
+  name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XIAM
+    name: poc-iam-jarvis-co-pocclib1-dev
+    uid: d7ea4de7-1a59-50c5-8741-fba9f5b4a380
+spec:
+  forProvider:
+    description: Escritura de logs acotada al log group del servicio
+    path: /
+    policy: '{"Statement":[{"Action":["logs:CreateLogStream","logs:PutLogEvents"],"Effect":"Allow","Resource":["arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev","arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev:*"],"Sid":"Logs"}],"Version":"2012-10-17"}'
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: iam.aws.m.upbound.io/v1beta1
+kind: Role
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: role-jarvis-co-pocclib1-lmd-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-iam-jarvis-co-pocclib1-dev
+  name: role-jarvis-co-pocclib1-lmd-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XIAM
+    name: poc-iam-jarvis-co-pocclib1-dev
+    uid: d7ea4de7-1a59-50c5-8741-fba9f5b4a380
+spec:
+  forProvider:
+    assumeRolePolicy: '{"Statement":[{"Action":"sts:AssumeRole","Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"}}],"Version":"2012-10-17"}'
+    description: Rol de ejecucion de lambda-jarvis-co-pocclib1-dev
+    maxSessionDuration: 3600
+    path: /
+    permissionsBoundary: <no value>
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  name: poc-kms-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: kms.aws.m.upbound.io/v1beta1
+      kind: Alias
+      name: alias-jarvis-co-pocclib1-us-east-1-dev
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: kms.aws.m.upbound.io/v1beta1
+      kind: Key
+      name: key-jarvis-co-pocclib1-us-east-1-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  atProvider:
+    keyArn: ""
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: kms-alias, kms-key'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: kms.aws.m.upbound.io/v1beta1
+kind: Alias
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms-alias
+    crossplane.io/external-name: alias-jarvis-co-pocclib1-dev
+  labels:
+    crossplane.io/composite: poc-kms-jarvis-co-pocclib1-dev
+  name: alias-jarvis-co-pocclib1-us-east-1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XKMS
+    name: poc-kms-jarvis-co-pocclib1-dev
+    uid: 6bef6bfd-f7e1-5002-a632-c2e1b746a553
+spec:
+  forProvider:
+    region: us-east-1
+    targetKeyIdRef:
+      name: key-jarvis-co-pocclib1-us-east-1-dev
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: kms.aws.m.upbound.io/v1beta1
+kind: Key
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms-key
+  labels:
+    crossplane.io/composite: poc-kms-jarvis-co-pocclib1-dev
+  name: key-jarvis-co-pocclib1-us-east-1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XKMS
+    name: poc-kms-jarvis-co-pocclib1-dev
+    uid: 6bef6bfd-f7e1-5002-a632-c2e1b746a553
+spec:
+  forProvider:
+    customerMasterKeySpec: SYMMETRIC_DEFAULT
+    deletionWindowInDays: 7
+    description: CMK logs del servicio lambda-jarvis-co-pocclib1-dev
+    enableKeyRotation: true
+    keyUsage: ENCRYPT_DECRYPT
+    policy: |2
+
+      {"Statement":[{"Action":"kms:*","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::634614730521:root"},"Resource":"*","Sid":"RootAccount"},{"Action":["kms:Encrypt*","kms:Decrypt*","kms:ReEncrypt*","kms:GenerateDataKey*","kms:Describe*"],"Condition":{"ArnEquals":{"kms:EncryptionContext:aws:logs:arn":"arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev"}},"Effect":"Allow","Principal":{"Service":"logs.us-east-1.amazonaws.com"},"Resource":"*","Sid":"CloudWatchLogs"}],"Version":"2012-10-17"}
+    region: us-east-1
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XLambda
+metadata:
+  name: poc-lambda-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: lambda.aws.m.upbound.io/v1beta1
+      kind: Function
+      name: lambda-jarvis-co-pocclib1-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: lambda-function'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: lambda.aws.m.upbound.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: lambda-function
+    crossplane.io/external-name: lambda-jarvis-co-pocclib1-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-lambda-jarvis-co-pocclib1-dev
+  name: lambda-jarvis-co-pocclib1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XLambda
+    name: poc-lambda-jarvis-co-pocclib1-dev
+    uid: d21e911d-2ff5-5264-b2b3-f6379041156d
+spec:
+  forProvider:
+    architectures:
+    - x86_64
+    environment:
+      variables:
+        POC: crossplane-cli-2.5
+    handler: index.lambda_handler
+    memorySize: 128
+    packageType: Zip
+    region: us-east-1
+    role: arn:aws:iam::634614730521:role/role-jarvis-co-pocclib1-lmd-dev
+    runtime: python3.12
+    s3Bucket: masivos-deployment
+    s3Key: poc-cli-2.5/hello.zip
+    tags:
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+    timeout: 15
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

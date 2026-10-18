@@ -1,0 +1,9 @@
+﻿# ..\tools\crank-2.2.6.exe beta validate extensions render-out.yaml
+# start=2026-10-17T15:15:20.7428848-05:00 duration=0.15s exit=0
+[Ô£ô] poc-cli-before.platform.nequi.com/v1alpha1, Kind=XPocCliLambdaService, poc-cli-before-hello validated successfully
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XIAM, poc-iam-jarvis-co-pocclib1-dev validated successfully
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XKMS, poc-kms-jarvis-co-pocclib1-dev validated successfully
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XLambda, poc-lambda-jarvis-co-pocclib1-dev validated successfully
+[Ô£ô] aws.platform.nequi.com/v1alpha1, Kind=XCLOUDWATCH, poc-logs-jarvis-co-pocclib1-dev validated successfully
+Total 5 resources: 0 missing schemas, 5 success cases, 0 failure cases
+

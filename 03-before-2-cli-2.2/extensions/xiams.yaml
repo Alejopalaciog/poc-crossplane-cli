@@ -1,0 +1,162 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: xiams.aws.platform.nequi.com
+spec:
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionUpdatePolicy: Automatic
+  group: aws.platform.nequi.com
+  names:
+    kind: XIAM
+    plural: xiams
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              parameters:
+                properties:
+                  bia:
+                    description: If it supports any BIA process
+                    type: boolean
+                  capacity:
+                    description: Capacity of the deployment
+                    type: string
+                  country:
+                    description: Country of the deployment
+                    enum:
+                    - co
+                    - gt
+                    - ts
+                    type: string
+                  deployment:
+                    description: Where the deployment was made
+                    enum:
+                    - jarvis
+                    type: string
+                  env:
+                    description: Environment
+                    enum:
+                    - dev
+                    - qa
+                    - pdn
+                    - sbx
+                    - stg
+                    type: string
+                  managedPolicies:
+                    description: ARNs of managed policies to associate
+                    items:
+                      type: string
+                    type: array
+                  managementPolicies:
+                    description: "Se propaga a los managed resources (Role, RolePolicy,\
+                      \ attachments). [\"Observe\"] para adoptar en solo lectura.\
+                      \ La composici\xC3\xB3n ya lo consume; declarado aqu\xC3\xAD\
+                      \ para que el schema no lo rechace.\n"
+                    items:
+                      type: string
+                    type: array
+                  policies:
+                    description: List of IAM policies to create and attach to the
+                      role
+                    items:
+                      properties:
+                        description:
+                          description: Description of the IAM policy
+                          type: string
+                        name:
+                          description: Name of the IAM policy
+                          type: string
+                        path:
+                          default: /
+                          description: Path for the IAM policy
+                          type: string
+                        policy:
+                          description: JSON policy document
+                          type: string
+                        tags:
+                          additionalProperties:
+                            type: string
+                          description: Key-value map of tags for the IAM policy
+                          type: object
+                      required:
+                      - name
+                      - policy
+                      type: object
+                    type: array
+                  providerConfigRef:
+                    description: Reference to the AWS provider configuration
+                    properties:
+                      name:
+                        description: Name of the provider configuration
+                        type: string
+                    type: object
+                  region:
+                    default: us-east-1
+                    description: AWS region where resources will be created
+                    type: string
+                  role:
+                    description: IAM Role configuration
+                    properties:
+                      assumeRolePolicy:
+                        description: JSON policy document for assume role policy
+                        type: string
+                      description:
+                        description: Description of the IAM role
+                        type: string
+                      maxSessionDuration:
+                        default: 3600
+                        description: Maximum session duration in seconds
+                        type: integer
+                      name:
+                        description: Name of the IAM role
+                        type: string
+                      path:
+                        default: /
+                        description: Path for the IAM role
+                        type: string
+                      permissionsBoundary:
+                        description: ARN of the policy that is used to set the permissions
+                          boundary for the role
+                        type: string
+                    required:
+                    - name
+                    - assumeRolePolicy
+                    type: object
+                  serviceid:
+                    default: NEQ0169
+                    description: Identifier of the deployment
+                    type: string
+                  standardName:
+                    default: true
+                    description: "true (default): nombre est\xC3\xA1ndar role-{capacity}-{country}-{role.name}-{env}.\
+                      \ false: usa role.name como nombre literal (para ADOPTAR un\
+                      \ rol existente).\n"
+                    type: boolean
+                  tags:
+                    additionalProperties:
+                      type: string
+                    description: Key-value map of resource tags
+                    type: object
+                required:
+                - role
+                - capacity
+                - country
+                type: object
+            type: object
+          status:
+            properties:
+              atProvider:
+                properties:
+                  roleArn:
+                    description: The ARN of the created IAM Role.
+                    type: string
+                type: object
+            type: object
+        type: object
+    served: true
+

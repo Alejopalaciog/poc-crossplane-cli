@@ -1,0 +1,163 @@
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XIAM
+metadata:
+  name: poc-iam-jarvis-co-pocclib1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: iam.aws.m.upbound.io/v1beta1
+      kind: Policy
+      name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: iam.aws.m.upbound.io/v1beta1
+      kind: RolePolicyAttachment
+      name: attachment-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: iam.aws.m.upbound.io/v1beta1
+      kind: Role
+      name: role-jarvis-co-pocclib1-lmd-dev
+      namespace: sharedservices-jarvis-dev
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: attachmentjarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev,
+      policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev, and role-jarvis-co-pocclib1-lmd-dev'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: iam.aws.m.upbound.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: attachmentjarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-iam-jarvis-co-pocclib1-dev
+  name: attachment-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XIAM
+    name: poc-iam-jarvis-co-pocclib1-dev
+    uid: d7ea4de7-1a59-50c5-8741-fba9f5b4a380
+spec:
+  forProvider:
+    policyArnRef:
+      name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+    roleRef:
+      name: role-jarvis-co-pocclib1-lmd-dev
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: iam.aws.m.upbound.io/v1beta1
+kind: Policy
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-iam-jarvis-co-pocclib1-dev
+  name: policy-jarvis-co-pocclib1-lmd-pocclib1-lmd-logs-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XIAM
+    name: poc-iam-jarvis-co-pocclib1-dev
+    uid: d7ea4de7-1a59-50c5-8741-fba9f5b4a380
+spec:
+  forProvider:
+    description: Escritura de logs acotada al log group del servicio
+    path: /
+    policy: '{"Statement":[{"Action":["logs:CreateLogStream","logs:PutLogEvents"],"Effect":"Allow","Resource":["arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev","arn:aws:logs:us-east-1:634614730521:log-group:/aws/lambda/lambda-jarvis-co-pocclib1-dev:*"],"Sid":"Logs"}],"Version":"2012-10-17"}'
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: iam.aws.m.upbound.io/v1beta1
+kind: Role
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: role-jarvis-co-pocclib1-lmd-dev
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-iam-jarvis-co-pocclib1-dev
+  name: role-jarvis-co-pocclib1-lmd-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XIAM
+    name: poc-iam-jarvis-co-pocclib1-dev
+    uid: d7ea4de7-1a59-50c5-8741-fba9f5b4a380
+spec:
+  forProvider:
+    assumeRolePolicy: '{"Statement":[{"Action":"sts:AssumeRole","Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"}}],"Version":"2012-10-17"}'
+    description: Rol de ejecucion de lambda-jarvis-co-pocclib1-dev
+    maxSessionDuration: 3600
+    path: /
+    permissionsBoundary: <no value>
+    tags:
+      bia: "false"
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      map-migrated: migYI61VXQDWG
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

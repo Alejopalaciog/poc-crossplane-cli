@@ -1,0 +1,74 @@
+# =============================================================================
+# CLAIM — XKMS — FASE OBSERVE (adopción de prueba)
+#
+# Adopta la KMS key existente con serviceid=NEQ1442 (origen Terraform):
+#   key-id : 0a195fad-46db-4ed2-9752-42eab9fa1c30
+#   alias  : alias/key-cbo-ts-complete-dev
+#   ARN    : arn:aws:kms:us-east-1:634614730521:key/0a195fad-46db-4ed2-9752-42eab9fa1c30
+#
+# Datos REALES traídos por CLI (aws kms describe-key / get-key-rotation-status):
+#   KeyUsage=ENCRYPT_DECRYPT  KeySpec=SYMMETRIC_DEFAULT  KeyManager=CUSTOMER
+#   Description="prueba CODI C-KMS-009 y C-KMS-010"
+#   KeyRotationEnabled=TRUE  (default de la composición es false -> se declara real para no pisarlo)
+#
+# Con managementPolicies: [Observe] Crossplane IMPORTA y OBSERVA (cero escrituras).
+# El cambio a modo administrado lo hace una PERSONA por GitOps tras el preflight.
+# =============================================================================
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  name: adopt-kms-cbo-ts-dev
+spec:
+  parameters:
+    # ── Identidad ────────────────────────────────────────────────────────────
+    capacity: cbo
+    country: ts
+    env: dev
+    serviceid: NEQ1442
+    region: us-east-1
+    # Requerido por el enum del XRD y por la composición (tag deployment="{{ $params.deployment }}").
+    # Si se omite, la composición renderiza el tag como "<no value>" y AWS lo rechaza al pasar
+    # a managed (TagException: Invalid tag). El tag real de origen es "terraform"; la plataforma
+    # lo normaliza a "jarvis" al adoptar (FORCED_TAG), que es el valor que impone este claim.
+    deployment: jarvis
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+
+    # ── Adopción: external-name con IDs REALES de AWS ──────────────────────────
+    # externalKeyId   -> crossplane.io/external-name del managed resource Key (UUID real)
+    # externalAliasName -> external-name del Alias (formato alias/xxx real)
+    externalKeyId: 0a195fad-46db-4ed2-9752-42eab9fa1c30
+    externalAliasName: alias/key-cbo-ts-complete-dev
+
+    # ── GESTIÓN — Observe (solo-lectura) ───────────────────────────────────────
+    # Se propaga a Key y Alias. NUNCA Delete en la primera adopción. El paso a
+    # ["Observe","Create","Update","LateInitialize"] lo hace una persona tras el preflight.
+
+    # ── Key — valores REALES (gap cerrado) ─────────────────────────────────────
+    key:
+      name: complete
+      description: "prueba CODI C-KMS-009 y C-KMS-010"
+      keyUsage: ENCRYPT_DECRYPT
+      keySpec: SYMMETRIC_DEFAULT
+      # Rotación REAL en AWS = true. El default de la composición es false; declararlo
+      # evita que al pasar a managed se DESACTIVE la rotación (WOULD_WRITE_ON_MANAGED).
+      enableKeyRotation: true
+      # Tags del claim: se mergean con prioridad sobre el bloque fijo de la composición.
+      # TAG_CONFLICT resuelto: la composición hardcodea map-migrated=migYI61VXQDWG, pero el
+      # valor REAL (origen Terraform) es migEJKUAQ5U8C. Se conserva el real para no romper
+      # la trazabilidad del reporte MAP al pasar a managed.
+      #
+      # Tags de TRAZABILIDAD de origen (Terraform) declarados EXPLÍCITAMENTE. El gap los
+      # marcó como "conservar", pero al pasar a managed el provider con permiso de untag
+      # borraría de la nube todo tag que el claim no declare. Se declaran con su valor REAL
+      # para preservarlos (compliance/trazabilidad). Decisión de gobierno aprobada.
+      tags:
+        map-migrated: "migEJKUAQ5U8C"
+        availability: "low"
+        bia: "false"
+        branch: "feat/jgalcara"
+        owner: "terraform_team"
+        pci: "false"
+        sox: "false"
+        repository: "NequiTI/tsTerraformExamples_base_IaC:Api-SQS/KMS"
+        tfmodule: "terraform_kms_mod/kms:v3.2.2"

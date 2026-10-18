@@ -1,0 +1,190 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: xsecuritygroups.aws.platform.nequi.com
+spec:
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionUpdatePolicy: Automatic
+  group: aws.platform.nequi.com
+  names:
+    kind: XSecurityGroup
+    plural: xsecuritygroups
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              parameters:
+                properties:
+                  bia:
+                    type: boolean
+                  capacity:
+                    type: string
+                  country:
+                    enum:
+                    - co
+                    - gt
+                    - ts
+                    - pa
+                    type: string
+                  deployment:
+                    enum:
+                    - jarvis
+                    type: string
+                  egressRules:
+                    items:
+                      properties:
+                        cidrBlocks:
+                          items:
+                            type: string
+                          type: array
+                        description:
+                          type: string
+                        fromPort:
+                          type: integer
+                        ipv6CidrBlocks:
+                          items:
+                            type: string
+                          type: array
+                        prefixListIds:
+                          items:
+                            type: string
+                          type: array
+                        protocol:
+                          type: string
+                        securityGroups:
+                          items:
+                            type: string
+                          type: array
+                        self:
+                          default: false
+                          type: boolean
+                        toPort:
+                          type: integer
+                      required:
+                      - fromPort
+                      - toPort
+                      - protocol
+                      type: object
+                    type: array
+                  env:
+                    enum:
+                    - dev
+                    - qa
+                    - pdn
+                    - sbx
+                    - stg
+                    type: string
+                  externalName:
+                    description: Nombre real del SG cuando standardName=false.
+                    type: string
+                  externalNameId:
+                    description: ID real del SG (sg-xxxxxxxx) = crossplane.io/external-name.
+                    type: string
+                  ingressRules:
+                    items:
+                      properties:
+                        cidrBlocks:
+                          items:
+                            type: string
+                          type: array
+                        description:
+                          type: string
+                        fromPort:
+                          type: integer
+                        ipv6CidrBlocks:
+                          items:
+                            type: string
+                          type: array
+                        prefixListIds:
+                          items:
+                            type: string
+                          type: array
+                        protocol:
+                          type: string
+                        securityGroups:
+                          items:
+                            type: string
+                          type: array
+                        self:
+                          default: false
+                          type: boolean
+                        toPort:
+                          type: integer
+                      required:
+                      - fromPort
+                      - toPort
+                      - protocol
+                      type: object
+                    type: array
+                  managementPolicies:
+                    description: Se propaga al SecurityGroup y sus reglas. ["Observe"]
+                      para adoptar.
+                    items:
+                      type: string
+                    type: array
+                  providerConfigRef:
+                    properties:
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  region:
+                    default: us-east-1
+                    type: string
+                  securityGroup:
+                    properties:
+                      description:
+                        type: string
+                      name:
+                        type: string
+                      revokeRulesOnDelete:
+                        default: false
+                        type: boolean
+                      tags:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      vpcId:
+                        description: VPC ID. En Observe puede omitirse (se lee de
+                          AWS).
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  serviceid:
+                    default: NEQ0169
+                    type: string
+                  standardName:
+                    default: true
+                    description: "true (default): nombre est\xC3\xA1ndar sg-{capacity}-{country}-{name}-{env}.\
+                      \ false: adopta un SG existente usando externalName (nombre)\
+                      \ y externalNameId (el sg-xxxx real como crossplane.io/external-name).\n"
+                    type: boolean
+                required:
+                - securityGroup
+                - capacity
+                - country
+                - providerConfigRef
+                type: object
+            type: object
+          status:
+            properties:
+              atProvider:
+                properties:
+                  arn:
+                    type: string
+                  ownerId:
+                    type: string
+                  securityGroupId:
+                    type: string
+                type: object
+            type: object
+        type: object
+    served: true
+

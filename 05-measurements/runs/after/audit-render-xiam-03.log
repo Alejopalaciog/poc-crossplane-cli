@@ -1,0 +1,3 @@
+﻿# "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\tools\crossplane-2.5.0.exe" composition render xr-xiam.yaml "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\local-argocd-crossplane-config\platform\aws_xrds\iam\composition.yaml" "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\03-before-2-cli-2.2\functions.yaml" > render-xiam.yaml
+# start=2026-10-17T18:30:30.0942901-05:00 duration=2.7s exit=0
+

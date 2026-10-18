@@ -1,0 +1,3 @@
+﻿# ../../tools/crossplane-2.5.0.exe composition render xr-xiam.yaml ../../../local-argocd-crossplane-config/platform/aws_xrds/iam/composition.yaml ../../03-before-2-cli-2.2/functions.yaml > render-xiam.yaml
+# start=2026-10-17T18:28:53.8489814-05:00 duration=0.05s exit=1
+

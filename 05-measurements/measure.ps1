@@ -34,6 +34,9 @@ $iteration = 1 + @(Import-Csv $csv | Where-Object { $_.scenario -eq $Scenario -a
 $safeStep  = $Step -replace '[^\w\-]', '_'
 $logFile   = Join-Path $runDir ('{0}-{1:D2}.log' -f $safeStep, $iteration)
 
+$env:PYTHONIOENCODING = 'utf-8'
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+
 $start = Get-Date
 $sw    = [Diagnostics.Stopwatch]::StartNew()
 Push-Location $WorkDir
