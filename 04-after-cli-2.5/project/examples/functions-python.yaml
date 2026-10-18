@@ -1,0 +1,13 @@
+# Imagen de la funcion Python construida por `crossplane project build` (cargada con docker load)
+apiVersion: pkg.crossplane.io/v1
+kind: Function
+metadata:
+  name: poc-cli-apicompose-api-py
+  annotations:
+    render.crossplane.io/runtime-docker-pull-policy: Never
+spec: {package: 634614730521.dkr.ecr.us-east-1.amazonaws.com/poc-cli-api_compose-api-py:amd64}
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Function
+metadata: {name: crossplane-contrib-function-auto-ready}
+spec: {package: xpkg.upbound.io/crossplane-contrib/function-auto-ready:v0.4.0}

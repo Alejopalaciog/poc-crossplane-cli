@@ -1,0 +1,3 @@
+﻿# ..\..\tools\crossplane-2.5.0.exe composition render examples\xr.yaml apis\xpoccliapiservices\composition-python.yaml -o examples\observed.yaml -x > ..\..\05-measurements\gate-out\render-python.yaml
+# start=2026-10-17T21:38:55.9617170-05:00 duration=60.29s exit=1
+

@@ -1,0 +1,16 @@
+﻿# .venv\Scripts\python 05-measurements\business_checks_api.py 05-measurements\gate-out\render-python.yaml
+# start=2026-10-17T22:05:29.0008705-05:00 duration=0.47s exit=1
+PASS  API-00 render íntegro            sin <no value>
+FAIL  API-01 identidad y tags          0 hijos OK
+FAIL  API-02 guardarraíl 'cbo'         0 nombres OK
+FAIL  API-03 retención logs            log group aún no emitido (¿llave lista?)
+FAIL  API-04 logs cifrados             log group aún no emitido
+FAIL  API-05 rotación CMK              sin rotación o sin XKMS
+FAIL  API-06 regional + clasificación  no hay XAPIGatewayRestStack
+PASS  API-07 alarmas 5XX + latencia    aún no emitidas (esperan el stage) — correcto
+FAIL  API-08 cuenta/región             providerConfig=set() región=set()
+PASS  API-09 access logs               stage aún no emitido (espera integración y logs) — correcto
+PASS  API-10 sin referencias rotas     OK
+
+4/11 reglas de negocio cumplidas
+

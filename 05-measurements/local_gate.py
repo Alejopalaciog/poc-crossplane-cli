@@ -78,23 +78,63 @@ def as_observed(doc):
     return obs
 
 
+def composed_of(docs):
+    return [d for d in docs[1:] if d.get("apiVersion") != "render.crossplane.io/v1beta1"]
+
+
 def simulate(xr, composition, functions, workdir, tmp, label, max_passes=8):
-    """Devuelve (ok, docs_finales, pasadas, error)."""
+    """Devuelve (ok, docs_finales, pasadas, error, intermedios).
+
+    `intermedios` son los recursos emitidos en pasadas anteriores a la final: permiten
+    detectar errores de orden (un recurso emitido antes de que exista su dependencia).
+    """
     observed_file = tmp / f"{label}-observed.yaml"
     observed_file.unlink(missing_ok=True)
-    previous = None
+    previous, history, docs = None, [], []
     for n in range(1, max_passes + 1):
         rc, out, err = render(xr, composition, functions, observed_file if observed_file.exists() else None, workdir)
         if rc != 0:
-            return False, [], n, err.splitlines()[-1] if err else f"render rc={rc}"
+            return False, [], n, err.splitlines()[-1] if err else f"render rc={rc}", history
         docs = load(out)
-        composed = [d for d in docs[1:] if d.get("apiVersion") != "render.crossplane.io/v1beta1"]
+        composed = composed_of(docs)
         key = sorted(f"{d['kind']}/{d['metadata'].get('name')}" for d in composed)
         if key == previous:
-            return True, docs, n, ""
+            return True, docs, n, "", history
         previous = key
+        history += composed
         observed_file.write_text(yaml.safe_dump_all([as_observed(d) for d in composed], sort_keys=False), encoding="utf-8")
-    return True, docs, max_passes, "no convergió (revisar dependencias circulares)"
+    return True, docs, max_passes, "no convergió (revisar dependencias circulares)", history
+
+
+def instance(xr, args, workdir, out, label, row):
+    """Render simulado de la plataforma + anidado de sus bloques generales.
+
+    Devuelve (docs_plataforma, todos_los_docs_para_validar, nombres_de_recursos_AWS)."""
+    t = time.time()
+    ok, docs, passes, err, hist = simulate(xr, Path(args.composition), Path(args.functions), workdir, out, f"{label}-platform")
+    row(f"render plataforma{label} (simulado)", ok, f"{passes} pasadas, {len(composed_of(docs))} recursos" if ok else err, time.time() - t)
+    if not ok:
+        return [], [], set()
+    to_validate = composed_of(docs) + hist
+    names = set()
+    for child in [d for d in composed_of(docs) if d.get("kind") in GENERAL]:
+        comp = Path(args.general_dir) / GENERAL[child["kind"]] / "composition.yaml"
+        xr_file = out / f"child{label}-{child['kind'].lower()}.yaml"
+        clean = {k: child[k] for k in ("apiVersion", "kind", "spec") if k in child}
+        clean["metadata"] = {"name": child["metadata"]["name"], "labels": child["metadata"].get("labels", {})}
+        xr_file.write_text(yaml.safe_dump(clean, sort_keys=False), encoding="utf-8")
+        t = time.time()
+        okc, cdocs, cpasses, cerr, chist = simulate(xr_file, comp, Path(args.nested_functions or args.functions), workdir, out,
+                                                    f"{label}-{child['kind'].lower()}")
+        row(f"render anidado{label} {child['kind']}", okc,
+            f"{cpasses} pasadas, {len(composed_of(cdocs))} recursos" if okc else cerr, time.time() - t)
+        to_validate += composed_of(cdocs) + chist
+        names |= {(d["kind"], d["metadata"].get("namespace", ""), d["metadata"]["name"]) for d in composed_of(cdocs)}
+        nv = [f"{d['kind']}/{d['metadata']['name']}" for d in cdocs if "<no value>" in yaml.safe_dump(d)]
+        if nv:
+            row(f"integridad{label} {child['kind']}", False, "'<no value>' en " + ", ".join(nv), 0)
+    names |= {(d["kind"], d["metadata"].get("namespace", ""), d["metadata"]["name"]) for d in composed_of(docs)}
+    return docs, to_validate, names
 
 
 def main():
@@ -107,6 +147,7 @@ def main():
     ap.add_argument("--nested-functions", help="functions para composiciones generales (incluye privadas)")
     ap.add_argument("--contract", help="script de contrato de negocio")
     ap.add_argument("--out", default=str(ROOT / "05-measurements" / "gate-out"))
+    ap.add_argument("--multi-instance", action="store_true", help="renderiza una 2.ª solicitud y verifica colisiones de nombres")
     args = ap.parse_args()
 
     workdir = Path.cwd()
@@ -120,32 +161,26 @@ def main():
         failed |= not ok
         rows.append((stage, ok, detail, secs))
 
-    # 1. Plataforma
-    t = time.time()
-    ok, docs, passes, err = simulate(Path(args.xr), Path(args.composition), Path(args.functions), workdir, out, "platform")
-    platform_docs = docs
-    row("render plataforma (simulado)", ok, f"{passes} pasadas, {max(len(docs) - 1, 0)} recursos" if ok else err, time.time() - t)
-    (out / "platform-render.yaml").write_text(yaml.safe_dump_all(docs, sort_keys=False), encoding="utf-8")
-    all_docs = list(docs[1:])
+    # 1-2. Plataforma + render anidado de cada bloque general
+    platform_docs, all_docs, names = instance(Path(args.xr), args, workdir, out, "", row)
+    if platform_docs:
+        (out / "platform-render.yaml").write_text(yaml.safe_dump_all(platform_docs, sort_keys=False), encoding="utf-8")
 
-    # 2. Render anidado de cada XR general
-    for child in [d for d in docs[1:] if d.get("kind") in GENERAL]:
-        comp = Path(args.general_dir) / GENERAL[child["kind"]] / "composition.yaml"
-        xr_file = out / f"child-{child['kind'].lower()}.yaml"
-        clean = {k: child[k] for k in ("apiVersion", "kind", "spec") if k in child}
-        clean["metadata"] = {"name": child["metadata"]["name"], "labels": child["metadata"].get("labels", {})}
-        xr_file.write_text(yaml.safe_dump(clean, sort_keys=False), encoding="utf-8")
-        t = time.time()
-        okc, cdocs, cpasses, cerr = simulate(xr_file, comp, Path(args.nested_functions or args.functions), workdir, out, child["kind"].lower())
-        row(f"render anidado {child['kind']}", okc, f"{cpasses} pasadas, {max(len(cdocs) - 1, 0)} recursos" if okc else cerr, time.time() - t)
-        all_docs += cdocs[1:]
-        nv = [f"{d['kind']}/{d['metadata']['name']}" for d in cdocs if "<no value>" in yaml.safe_dump(d)]
-        if nv:
-            row(f"integridad {child['kind']}", False, "'<no value>' en " + ", ".join(nv), 0)
+    # 2b. Multi-instancia: una segunda solicitud (otra funcionalidad) no debe chocar con la primera
+    if args.multi_instance and platform_docs:
+        xr2 = yaml.safe_load(Path(args.xr).read_text(encoding="utf-8"))
+        xr2["metadata"]["name"] += "-b"
+        xr2["spec"]["parameters"]["functionality"] += "b"
+        xr2_file = out / "xr-second-instance.yaml"
+        xr2_file.write_text(yaml.safe_dump(xr2, sort_keys=False), encoding="utf-8")
+        _, _, names2 = instance(xr2_file, args, workdir, out, " #2", row)
+        clash = sorted(f"{k}/{n}" for k, ns, n in names & names2)
+        row("multi-instancia (sin colisiones)", not clash, ("choca: " + ", ".join(clash)) if clash else f"{len(names2)} nombres únicos", 0)
 
-    # 3. Validación de esquemas de todo lo emitido
+    # 3. Validación de esquemas de todo lo emitido (incluidas pasadas intermedias)
     bundle = out / "all-rendered.yaml"
-    to_validate = [platform_docs[0]] + [d for d in all_docs if d.get("apiVersion") != "render.crossplane.io/v1beta1"] if platform_docs else []
+    unique = {yaml.safe_dump(d, sort_keys=True): d for d in all_docs}
+    to_validate = [platform_docs[0]] + list(unique.values()) if platform_docs else []
     bundle.write_text(yaml.safe_dump_all(to_validate, sort_keys=False), encoding="utf-8")
     if len(to_validate) < 2:
         row("validate esquemas (providers + XRDs)", False, "no hay recursos renderizados para validar", 0)

@@ -1,0 +1,4 @@
+﻿# kubectl apply -f 04-after-cli-2.5/project/apis/xpoccliapiservices/definition.yaml
+# start=2026-10-17T22:08:38.2537233-05:00 duration=4.86s exit=0
+compositeresourcedefinition.apiextensions.crossplane.io/xpoccliapiservices.poc-cli.platform.nequi.com created
+

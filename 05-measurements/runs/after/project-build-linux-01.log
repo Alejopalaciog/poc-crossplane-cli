@@ -1,0 +1,18 @@
+﻿# wsl -d Ubuntu -- bash -lc "cd /mnt/c/Users/USUARIO/Documents/proyectos/MyCompany/Work/PoCCliCrossplane/poc-crossplane-cli/04-after-cli-2.5/project && ../../tools/crossplane-2.5.0 project build 2>&1 | tail -15"
+# start=2026-10-17T22:01:12.5824892-05:00 duration=183.18s exit=0
+Updating dependency xpkg.upbound.io/upbound/provider-aws-cloudwatch:v2.5.0...
+✓ Updating dependency xpkg.upbound.io/crossplane-contrib/function-go-templating:v0.10.0
+✓ Updating dependency xpkg.upbound.io/crossplane-contrib/function-auto-ready:v0.4.0
+✓ Updating dependency xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs:v2.5.0
+✓ Updating dependency xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0
+✓ Updating dependency xpkg.upbound.io/upbound/provider-aws-cloudwatch:v2.5.0
+Generating schemas...
+✓ Generating schemas
+Building function compose-api-py...
+✓ Building function compose-api-py
+Building configuration package...
+✓ Building configuration package
+Writing packages to disk...
+✓ Writing packages to disk
+Built project "poc-cli-api" to _output/poc-cli-api.xpkg
+

@@ -1,0 +1,4 @@
+﻿# wsl -d Ubuntu -- bash -lc "cd /mnt/c/Users/USUARIO/Documents/proyectos/MyCompany/Work/PoCCliCrossplane/poc-crossplane-cli/04-after-cli-2.5/project && ../../tools/crossplane-2.5.0 composition render examples/xr.yaml apis/xpoccliapiservices/composition-python.yaml -o examples/observed.yaml -x > ../../05-measurements/gate-out/render-python.yaml 2> ../../05-measurements/gate-out/render-python.err; echo rc=\True"
+# start=2026-10-17T22:04:27.7893048-05:00 duration=61.09s exit=0
+rc=True
+

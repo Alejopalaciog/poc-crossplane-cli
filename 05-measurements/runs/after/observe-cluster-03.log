@@ -1,0 +1,25 @@
+﻿# powershell -NoProfile -File 05-measurements/observe-xr.ps1 -Kind xpoccliapiservice.poc-cli.platform.nequi.com -Name poc-cli-api -TimeoutSec 1200
+# start=2026-10-17T22:23:36.3040183-05:00 duration=137.59s exit=0
+[22:24:51] XR Ready=True  recursos=17  no-listos=0
+
+===== Estado final =====
+Method                       method-health-get-cbopoccli2                                           synced=True   ready=True
+RestAPI                      apigw-jarvis-co-cbopoccli2-dev                                         synced=True   ready=True
+MethodResponse               methodresp-health-get-cbopoccli2                                       synced=True   ready=True
+IntegrationResponse          intresp-health-get-cbopoccli2                                          synced=True   ready=True
+Stage                        poc-stage-jarvis-co-cbopoccli2-dev                                     synced=True   ready=True
+Deployment                   poc-deploy-jarvis-co-cbopoccli2-dev                                    synced=True   ready=True
+Resource                     path-health-cbopoccli2                                                 synced=True   ready=True
+Integration                  integration-health-get-cbopoccli2                                      synced=True   ready=True
+MetricAlarm                  poc-alarm-jarvis-co-cbopoccli2-dev-5xx                                 synced=True   ready=True
+MetricAlarm                  poc-alarm-jarvis-co-cbopoccli2-dev-latency                             synced=True   ready=True
+Group                        poc-logs-jarvis-co-cbopoccli2-dev                                      synced=True   ready=True
+Key                          key-jarvis-co-cbopoccli2-us-east-1-dev                                 synced=True   ready=True
+Alias                        alias-jarvis-co-cbopoccli2-us-east-1-dev                               synced=True   ready=True
+XAPIGatewayRestStack         poc-api-jarvis-co-cbopoccli2-dev                                       synced=True   ready=True
+XKMS                         poc-kms-jarvis-co-cbopoccli2-dev                                       synced=True   ready=True
+XAPIGatewayIntegration       poc-health-jarvis-co-cbopoccli2-dev                                    synced=True   ready=True
+XPocCliApiService            poc-cli-api                                                            synced=True   ready=True
+
+===== Feedback (recursos no listos) =====
+

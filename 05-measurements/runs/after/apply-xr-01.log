@@ -1,0 +1,4 @@
+﻿# kubectl apply -f 04-after-cli-2.5/project/examples/xr.yaml
+# start=2026-10-17T22:09:02.7249877-05:00 duration=7.13s exit=0
+xpoccliapiservice.poc-cli.platform.nequi.com/poc-cli-api created
+

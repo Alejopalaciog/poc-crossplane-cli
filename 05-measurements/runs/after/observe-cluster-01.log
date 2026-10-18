@@ -1,0 +1,34 @@
+﻿# powershell -NoProfile -File 05-measurements/observe-xr.ps1 -Kind xpoccliapiservice.poc-cli.platform.nequi.com -Name poc-cli-api -TimeoutSec 1200
+# start=2026-10-17T22:09:17.7816179-05:00 duration=196.87s exit=2
+[22:10:56] XR Ready=False  recursos=7  no-listos=2
+
+===== Estado final =====
+RestAPI                      apigw-jarvis-co-cbopoccli2-dev                                         synced=True   ready=True
+Group                        poc-logs-jarvis-co-cbopoccli2-dev                                      synced=True   ready=True
+Key                          key-jarvis-co-cbopoccli2-us-east-1-dev                                 synced=True   ready=True
+Alias                        alias-jarvis-co-cbopoccli2-us-east-1-dev                               synced=True   ready=True
+XAPIGatewayIntegration       poc-health-jarvis-co-cbopoccli2-dev                                    synced=False  ready=False
+XAPIGatewayRestStack         poc-api-jarvis-co-cbopoccli2-dev                                       synced=True   ready=True
+XKMS                         poc-kms-jarvis-co-cbopoccli2-dev                                       synced=True   ready=True
+XPocCliApiService            poc-cli-api                                                            synced=True   ready=False
+
+===== Feedback (recursos no listos) =====
+--- xapigatewayintegration.aws.platform.nequi.com/poc-health-jarvis-co-cbopoccli2-dev
+  Synced=False ReconcileError: Unsynced resources: path-health
+  Ready=False Creating: Unready resources: path-health
+  Responsive=False WatchCircuitOpen: Too many watch events from XAPIGatewayIntegration/poc-health-jarvis-co-cbopoccli2-dev. Allowing events periodically.
+3m20s       Normal    SelectComposition   xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Successfully selected composition: aws-apigateway-integration
+3m20s       Normal    SelectComposition   xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Selected composition revision: aws-apigateway-integration-ab341ce
+3m15s       Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Composed resource "path-health" is not yet valid
+3m15s       Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Composed resource "path-health" is not yet ready
+3m8s        Warning   ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   cannot apply composed resource "path-health": Resource.apigateway.aws.m.upbound.io "path-health" is invalid: metadata.ownerReferences: Invalid value: [{"apiVersion":"aws.platform.nequi.com/v1alpha1","kind":"XAPIGatewayIntegration","name":"poc-health-jarvis-co-cbopoccli1-dev","uid":"10afecc4-ffdc-46c3-8b17-881231c9581b","controller":true,"blockOwnerDeletion":true},{"apiVersion":"aws.platform.nequi.com/v1alpha1","kind":"XAPIGatewayIntegration","name":"poc-health-jarvis-co-cbopoccli2-dev","uid":"1e72642f-4a89-48cd-b0a1-7f15d546194c","controller":true,"blockOwnerDeletion":true}]: Only one reference can have Controller set to true. Found "true" in references for XAPIGatewayIntegration/poc-health-jarvis-co-cbopoccli1-dev and XAPIGatewayIntegration/poc-health-jarvis-co-cbopoccli2-dev
+--- xpoccliapiservice.poc-cli.platform.nequi.com/poc-cli-api
+  Synced=True ReconcileSuccess: 
+  Ready=False Creating: Unready resources: health
+  Responsive=False WatchCircuitOpen: Too many watch events from XAPIGatewayIntegration/poc-health-jarvis-co-cbopoccli2-dev. Allowing events periodically.
+3m24s       Normal   SelectComposition   xpoccliapiservice/poc-cli-api   Successfully selected composition: poc-cli-api-service
+3m24s       Normal   SelectComposition   xpoccliapiservice/poc-cli-api   Selected composition revision: poc-cli-api-service-4fd3057
+3m23s       Normal   ComposeResources    xpoccliapiservice/poc-cli-api   Composed resource "api" is not yet ready
+3m22s       Normal   ComposeResources    xpoccliapiservice/poc-cli-api   Composed resource "kms" is not yet ready
+3m22s       Normal   ComposeResources    xpoccliapiservice/poc-cli-api   Composed resource "health" is not yet ready
+

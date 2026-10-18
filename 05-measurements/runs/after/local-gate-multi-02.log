@@ -1,0 +1,17 @@
+﻿# .venv\Scripts\python 05-measurements\local_gate.py --xr 04-after-cli-2.5\project\examples\xr.yaml --composition 04-after-cli-2.5\project\apis\xpoccliapiservices\composition.yaml --functions 04-after-cli-2.5\project\examples\functions.yaml --nested-functions 04-after-cli-2.5\general-audit\functions-api.yaml --extensions 04-after-cli-2.5\extensions --contract 05-measurements\business_checks_api.py --out 05-measurements\gate-out\multi-after --multi-instance
+# start=2026-10-17T22:20:31.4942390-05:00 duration=29.31s exit=0
+ETAPA                                    RESULT    SEG  DETALLE
+render plataforma (simulado)             OK        6.3  6 pasadas, 8 recursos
+render anidado XAPIGatewayRestStack      OK        1.8  2 pasadas, 1 recursos
+render anidado XAPIGatewayIntegration    OK        3.2  3 pasadas, 5 recursos
+render anidado XKMS                      OK        1.9  2 pasadas, 2 recursos
+render plataforma #2 (simulado)          OK        6.7  6 pasadas, 8 recursos
+render anidado #2 XAPIGatewayRestStack   OK        2.2  2 pasadas, 1 recursos
+render anidado #2 XAPIGatewayIntegration OK        3.3  3 pasadas, 5 recursos
+render anidado #2 XKMS                   OK        2.0  2 pasadas, 2 recursos
+multi-instancia (sin colisiones)         OK        0.0  16 nombres únicos
+validate esquemas (providers + XRDs)     OK        0.7  Total 17 resources: 0 missing schemas, 17 success cases, 0 failure cases
+contrato de negocio                      OK        0.4  11/11 reglas de negocio cumplidas
+
+Compuerta local: APROBADA en 28.8 s (sin cluster ni AWS)
+

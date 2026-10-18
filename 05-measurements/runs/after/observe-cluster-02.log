@@ -1,0 +1,39 @@
+﻿# powershell -NoProfile -File 05-measurements/observe-xr.ps1 -Kind xpoccliapiservice.poc-cli.platform.nequi.com -Name poc-cli-api -TimeoutSec 1200
+# start=2026-10-17T22:21:15.9359589-05:00 duration=131.6s exit=2
+[22:22:20] XR Ready=False  recursos=13  no-listos=5
+
+===== Estado final =====
+RestAPI                      apigw-jarvis-co-cbopoccli2-dev                                         synced=True   ready=True
+MethodResponse               methodresp-health-get-cbopoccli2                                       synced=True   ready=True
+Resource                     path-health-cbopoccli2                                                 synced=True   ready=True
+IntegrationResponse          intresp-health-get-cbopoccli2                                          synced=True   ready=True
+Integration                  integration-health-get-cbopoccli2                                      synced=True   ready=True
+Method                       method-health-get-cbopoccli2                                           synced=True   ready=True
+Group                        poc-logs-jarvis-co-cbopoccli2-dev                                      synced=True   ready=True
+Alias                        alias-jarvis-co-cbopoccli2-us-east-1-dev                               synced=True   ready=True
+Key                          key-jarvis-co-cbopoccli2-us-east-1-dev                                 synced=True   ready=True
+XAPIGatewayIntegration       poc-health-jarvis-co-cbopoccli2-dev                                    synced=True   ready=False
+XAPIGatewayRestStack         poc-api-jarvis-co-cbopoccli2-dev                                       synced=True   ready=True
+XKMS                         poc-kms-jarvis-co-cbopoccli2-dev                                       synced=True   ready=True
+XPocCliApiService            poc-cli-api                                                            synced=True   ready=False
+
+===== Feedback (recursos no listos) =====
+--- xapigatewayintegration.aws.platform.nequi.com/poc-health-jarvis-co-cbopoccli2-dev
+  Synced=True ReconcileSuccess: 
+  Ready=False Creating: Unready resources: intresp-health-get-cbopoccli2, methodresp-health-get-cbopoccli2
+  Responsive=False WatchCircuitOpen: Too many watch events from IntegrationResponse/intresp-health-get-cbopoccli2 (sharedservices-jarvis-dev). Allowing events periodically.
+14m         Normal    SelectComposition   xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Successfully selected composition: aws-apigateway-integration
+14m         Normal    SelectComposition   xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Selected composition revision: aws-apigateway-integration-ab341ce
+14m         Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Composed resource "path-health" is not yet ready
+3m45s       Warning   ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   cannot apply composed resource "path-health": Resource.apigateway.aws.m.upbound.io "path-health" is invalid: metadata.ownerReferences: Invalid value: [{"apiVersion":"aws.platform.nequi.com/v1alpha1","kind":"XAPIGatewayIntegration","name":"poc-health-jarvis-co-cbopoccli1-dev","uid":"10afecc4-ffdc-46c3-8b17-881231c9581b","controller":true,"blockOwnerDeletion":true},{"apiVersion":"aws.platform.nequi.com/v1alpha1","kind":"XAPIGatewayIntegration","name":"poc-health-jarvis-co-cbopoccli2-dev","uid":"1e72642f-4a89-48cd-b0a1-7f15d546194c","controller":true,"blockOwnerDeletion":true}]: Only one reference can have Controller set to true. Found "true" in references for XAPIGatewayIntegration/poc-health-jarvis-co-cbopoccli1-dev and XAPIGatewayIntegration/poc-health-jarvis-co-cbopoccli2-dev
+3m45s       Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli2-dev   Composed resource "path-health" is not yet valid
+--- xpoccliapiservice.poc-cli.platform.nequi.com/poc-cli-api
+  Synced=True ReconcileSuccess: 
+  Ready=False Creating: Unready resources: health
+  Responsive=True WatchCircuitClosed: 
+14m         Normal    SelectComposition   xpoccliapiservice/poc-cli-api   Selected composition revision: poc-cli-api-service-4fd3057
+14m         Normal    ComposeResources    xpoccliapiservice/poc-cli-api   Composed resource "api" is not yet ready
+14m         Normal    ComposeResources    xpoccliapiservice/poc-cli-api   Composed resource "kms" is not yet ready
+3m55s       Normal    ComposeResources    xpoccliapiservice/poc-cli-api   Composed resource "health" is not yet ready
+2m12s       Warning   ComposeResources    xpoccliapiservice/poc-cli-api   selected CompositionRevision poc-cli-api-service-7abf1f0 does not have a valid function pipeline: pipeline status unknown
+

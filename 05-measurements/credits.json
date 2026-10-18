@@ -1,0 +1,41 @@
+{
+  "escenarios": [
+    {
+      "escenario": "Antes-1 (YAML + cluster)",
+      "turnos": 28,
+      "tokens": 757920,
+      "creditos_relativos": 100,
+      "espera_cluster_min": 8.0
+    },
+    {
+      "escenario": "Antes-2 (CLI 2.2 local + cluster)",
+      "turnos": 22,
+      "tokens": 582389,
+      "creditos_relativos": 77,
+      "espera_cluster_min": 5.8
+    },
+    {
+      "escenario": "Después medido (compuerta v1)",
+      "turnos": 31,
+      "tokens": 766627,
+      "creditos_relativos": 101,
+      "espera_cluster_min": 7.8
+    },
+    {
+      "escenario": "Después (CLI 2.5 + compuerta)",
+      "turnos": 11,
+      "tokens": 228593,
+      "creditos_relativos": 30,
+      "espera_cluster_min": 2.3
+    }
+  ],
+  "supuestos": {
+    "BASE_CONTEXT": 15000,
+    "POLL_EVERY_S": 30,
+    "POLL_OUTPUT": 150,
+    "DIAG_TURNS_PER_ERROR": 2,
+    "DIAG_OUTPUT": 900,
+    "FIX_OUTPUT_RATIO": 0.25,
+    "CHARS_PER_TOKEN": 4
+  }
+}

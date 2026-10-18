@@ -1,0 +1,15 @@
+﻿# .venv\Scripts\python 05-measurements\defects.py
+# start=2026-10-17T22:10:57.9423554-05:00 duration=395.92s exit=0
+D01 | 2.2: validate       ( 13.4s) | 2.5: validate esquemas (providers + XRDs)     ( 79.2s) | Campo con nombre errado en un bloque general (endpointTypes)
+D02 | 2.2: validate       ( 17.4s) | 2.5: validate esquemas (providers + XRDs)     ( 25.5s) | Tipo errado en recurso AWS (threshold texto)
+D03 | 2.2: validate       ( 18.0s) | 2.5: validate esquemas (providers + XRDs)     ( 43.5s) | Falta un campo requerido del bloque general (confidentiality)
+D04 | 2.2: validate       (  4.8s) | 2.5: validate esquemas (providers + XRDs)     ( 27.9s) | Valor fuera de catálogo en la solicitud (country: colombia)
+D05 | 2.2: render         (  2.1s) | 2.5: render plataforma (simulado)             (  1.7s) | Plantilla go-template rota (falta {{- end }})
+D06 | 2.2: no detectado   (  3.0s) | 2.5: contrato de negocio                      ( 62.6s) | Falta el tag serviceid en el stage
+D07 | 2.2: no detectado   (  4.2s) | 2.5: contrato de negocio                      ( 25.1s) | Retención de logs de 1 día
+D08 | 2.2: no detectado   (  2.8s) | 2.5: contrato de negocio                      ( 19.0s) | Nombre de alarma sin 'cbo' (guardarraíl IAM)
+D09 | 2.2: validate       (  3.1s) | 2.5: render anidado XKMS                      ( 16.3s) | apiVersion errada en un bloque general (v1alpha2)
+D10 | 2.2: no detectado   (  4.2s) | 2.5: no detectado                             ( 20.5s) | Stage emitido sin esperar el deployment (referencia rota)
+
+Detectados antes del cluster: CLI 2.2 = 6/10 · CLI 2.5 + compuerta = 9/10
+

@@ -106,13 +106,15 @@ spec:
                   name: {{ $p.providerConfigName }}
                 apiId: {{ $apiId }}
                 managementPolicies: ["*"]
+                # Claves unicas por servicio: el bloque general nombra los recursos con la clave
+                # (path-<clave>, method-<clave>) sin prefijo de instancia -> colision entre APIs
                 pathResources:
-                  health:
+                  health-{{ $p.functionality }}:
                     parentId: {{ $rootId }}
                     pathPart: health
                 apiResources:
-                  health-get:
-                    resourceId: "@health"
+                  health-get-{{ $p.functionality }}:
+                    resourceId: "@health-{{ $p.functionality }}"
                     httpMethod: GET
                     authorization: NONE
                     apiKeyRequired: false

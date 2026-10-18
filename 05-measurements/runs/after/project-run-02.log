@@ -1,0 +1,32 @@
+﻿# wsl -d Ubuntu -- bash /mnt/c/Users/USUARIO/AppData/Local/Temp/kindrun.sh
+# start=2026-10-17T22:28:05.9869617-05:00 duration=234.11s exit=0
+✓ Updating dependency xpkg.upbound.io/crossplane-contrib/function-go-templating:v0.10.0
+✓ Updating dependency xpkg.upbound.io/crossplane-contrib/function-auto-ready:v0.4.0
+✓ Updating dependency xpkg.upbound.io/upbound/provider-aws-cloudwatch:v2.5.0
+✓ Updating dependency xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0
+✓ Updating dependency xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs:v2.5.0
+Generating schemas...
+✓ Generating schemas
+Building function compose-api-py...
+✓ Setting up control plane
+✓ Building function compose-api-py
+Building configuration package...
+✓ Building configuration package
+Loading packages into control plane...
+✓ Loading packages into control plane
+Installing configuration...
+✓ Installing configuration
+Local dev control plane running in kind cluster "poc-cli-dev".
+Kubeconfig updated. Current context is "kind-poc-cli-dev".
+Run `kubectl get configurations` to see the installed project configuration.
+Run `kind delete cluster --name poc-cli-dev` to clean up.
+duracion: 232s
+E1017 22:31:59.700403  132590 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+E1017 22:31:59.700887  132590 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+E1017 22:31:59.703889  132590 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+E1017 22:31:59.704998  132590 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+E1017 22:31:59.705950  132590 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+E1017 22:31:59.706601  132590 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+E1017 22:31:59.708442  132590 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+

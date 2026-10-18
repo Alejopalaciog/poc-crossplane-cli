@@ -1,0 +1,4 @@
+﻿# kubectl apply -f 04-after-cli-2.5/project/apis/xpoccliapiservices/composition.yaml
+# start=2026-10-17T22:21:11.1214190-05:00 duration=4.71s exit=0
+composition.apiextensions.crossplane.io/poc-cli-api-service configured
+

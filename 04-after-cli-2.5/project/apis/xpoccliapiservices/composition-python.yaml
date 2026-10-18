@@ -1,0 +1,19 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: poc-cli-api-service-python
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+    variant: python
+spec:
+  compositeTypeRef:
+    apiVersion: poc-cli.platform.nequi.com/v1alpha1
+    kind: XPocCliApiService
+  mode: Pipeline
+  pipeline:
+  - step: compose-api-py
+    functionRef:
+      name: poc-cli-apicompose-api-py
+  - step: mark-ready
+    functionRef:
+      name: crossplane-contrib-function-auto-ready
