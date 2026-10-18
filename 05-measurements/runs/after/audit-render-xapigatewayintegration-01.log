@@ -1,0 +1,3 @@
+﻿# tools\crossplane-2.5.0.exe composition render 04-after-cli-2.5\general-audit\xr-xapigatewayintegration.yaml ..\local-argocd-crossplane-config\platform\aws_xrds\apigateway-integration\composition.yaml 04-after-cli-2.5\general-audit\functions-api.yaml > 04-after-cli-2.5\general-audit\render-xapigatewayintegration.yaml
+# start=2026-10-17T21:28:41.7202828-05:00 duration=10.01s exit=0
+

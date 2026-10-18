@@ -1,0 +1,5 @@
+﻿# "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\tools\crossplane-2.5.0.exe" project init poc-cli-api --directory 04-after-cli-2.5/project --registry 634614730521.dkr.ecr.us-east-1.amazonaws.com
+# start=2026-10-17T21:23:26.3315654-05:00 duration=0.27s exit=0
+Initializing project...
+✓ Initializing project
+

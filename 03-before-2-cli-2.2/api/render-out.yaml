@@ -1,0 +1,347 @@
+---
+apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+kind: XPocCliApiService
+metadata:
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+  name: poc-cli-before-api
+spec:
+  parameters:
+    accountId: "634614730521"
+    alarms:
+      latencyP99Ms: 2000
+    capacity: jarvis
+    classification:
+      availability: low
+      confidentiality: internal
+      integrity: moderate
+      pci: false
+    country: co
+    env: dev
+    functionality: cbopoccli1
+    providerConfigName: sharedservices-jarvis-dev
+    region: us-east-1
+    serviceid: NEQ0169
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: alarm-5xx, alarm-latency, api, and 4 more'
+    reason: Creating
+    status: "False"
+    type: Ready
+  invokeUrl: https://abc123defg.execute-api.us-east-1.amazonaws.com/dev/health
+  kmsKeyArn: arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+  logGroupName: arn:aws:logs:us-east-1:634614730521:log-group:/aws/apigateway/access-jarvis-co-cbopoccli1-dev
+  restApiId: abc123defg
+---
+apiVersion: cloudwatch.aws.m.upbound.io/v1beta1
+kind: MetricAlarm
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: alarm-5xx
+    crossplane.io/external-name: alarm-jarvis-co-cbopoccli1-dev-5xx
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+  name: poc-alarm-jarvis-co-cbopoccli1-dev-5xx
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  forProvider:
+    alarmDescription: Errores 5XX en la API apigw-jarvis-co-cbopoccli1-dev
+    comparisonOperator: GreaterThanThreshold
+    dimensions:
+      ApiName: apigw-jarvis-co-cbopoccli1-dev
+      Stage: dev
+    evaluationPeriods: 1
+    metricName: 5XXError
+    namespace: AWS/ApiGateway
+    period: 60
+    region: us-east-1
+    statistic: Sum
+    tags:
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+    threshold: 0
+    treatMissingData: notBreaching
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: cloudwatch.aws.m.upbound.io/v1beta1
+kind: MetricAlarm
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: alarm-latency
+    crossplane.io/external-name: alarm-jarvis-co-cbopoccli1-dev-latency
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+  name: poc-alarm-jarvis-co-cbopoccli1-dev-latency
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  forProvider:
+    alarmDescription: Latencia p99 sobre el umbral apigw-jarvis-co-cbopoccli1-dev
+    comparisonOperator: GreaterThanThreshold
+    dimensions:
+      ApiName: apigw-jarvis-co-cbopoccli1-dev
+      Stage: dev
+    evaluationPeriods: 1
+    extendedStatistic: p99
+    metricName: Latency
+    namespace: AWS/ApiGateway
+    period: 300
+    region: us-east-1
+    tags:
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+    threshold: 2000
+    treatMissingData: notBreaching
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XAPIGatewayRestStack
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: api
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+    poc.nequi.com/experiment: cli-2.5
+  name: poc-api-jarvis-co-cbopoccli1-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  parameters:
+    accountId: "634614730521"
+    apiName: apigw-jarvis-co-cbopoccli1-dev
+    availability: low
+    capacity: jarvis
+    confidentiality: internal
+    country: co
+    deployment: jarvis
+    description: API cbopoccli1 publicada por la plataforma
+    endpointType: REGIONAL
+    env: dev
+    integrity: moderate
+    pci: false
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    serviceid: NEQ0169
+    standardName: true
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: deployment
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+  name: poc-deploy-jarvis-co-cbopoccli1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  forProvider:
+    description: Despliegue de la plataforma
+    region: us-east-1
+    restApiId: abc123defg
+    triggers:
+      redeployment: health-get-mock-v1
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XAPIGatewayIntegration
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: health
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+    poc.nequi.com/experiment: cli-2.5
+  name: poc-health-jarvis-co-cbopoccli1-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  parameters:
+    apiId: abc123defg
+    apiResources:
+      health-get:
+        apiKeyRequired: false
+        authorization: NONE
+        httpMethod: GET
+        integrationHttpMethod: POST
+        integrationType: MOCK
+        integrationUri: ""
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        resourceId: '@health'
+        statusCode: 200
+    env: dev
+    managementPolicies:
+    - '*'
+    pathResources:
+      health:
+        parentId: root000001
+        pathPart: health
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: kms
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+    poc.nequi.com/experiment: cli-2.5
+  name: poc-kms-jarvis-co-cbopoccli1-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  parameters:
+    capacity: jarvis
+    country: co
+    deployment: jarvis
+    env: dev
+    key:
+      deletionWindowInDays: 7
+      description: CMK access logs de apigw-jarvis-co-cbopoccli1-dev
+      enableKeyRotation: true
+      name: cbopoccli1
+      policy: '{"Statement":[{"Action":"kms:*","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::634614730521:root"},"Resource":"*","Sid":"RootAccount"},{"Action":["kms:Encrypt*","kms:Decrypt*","kms:ReEncrypt*","kms:GenerateDataKey*","kms:Describe*"],"Condition":{"ArnEquals":{"kms:EncryptionContext:aws:logs:arn":"arn:aws:logs:us-east-1:634614730521:log-group:/aws/apigateway/access-jarvis-co-cbopoccli1-dev"}},"Effect":"Allow","Principal":{"Service":"logs.us-east-1.amazonaws.com"},"Resource":"*","Sid":"CloudWatchLogs"}],"Version":"2012-10-17"}'
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1
+    serviceid: NEQ0169
+    standardName: true
+---
+apiVersion: cloudwatchlogs.aws.m.upbound.io/v1beta1
+kind: Group
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: logs
+    crossplane.io/external-name: /aws/apigateway/access-jarvis-co-cbopoccli1-dev
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+    poc.nequi.com/experiment: cli-2.5
+  name: poc-logs-jarvis-co-cbopoccli1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  forProvider:
+    kmsKeyId: arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+    region: us-east-1
+    retentionInDays: 14
+    tags:
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Stage
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: stage
+  labels:
+    crossplane.io/composite: poc-cli-before-api
+  name: poc-stage-jarvis-co-cbopoccli1-dev
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XPocCliApiService
+    name: poc-cli-before-api
+    uid: ""
+spec:
+  forProvider:
+    accessLogSettings:
+      destinationArn: arn:aws:logs:us-east-1:634614730521:log-group:/aws/apigateway/access-jarvis-co-cbopoccli1-dev
+      format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","method":"$context.httpMethod","path":"$context.resourcePath","status":"$context.status","latency":"$context.responseLatency"}'
+    deploymentId: dep0001
+    region: us-east-1
+    restApiId: abc123defg
+    stageName: dev
+    tags:
+      capacity: jarvis
+      country: co
+      deployment: jarvis
+      env: dev
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+      serviceid: NEQ0169
+    xrayTracingEnabled: false
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

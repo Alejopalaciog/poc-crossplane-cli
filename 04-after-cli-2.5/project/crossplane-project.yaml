@@ -1,0 +1,40 @@
+apiVersion: dev.crossplane.io/v1alpha1
+kind: Project
+metadata:
+  name: poc-cli-api
+spec:
+  dependencies:
+  - type: xpkg
+    xpkg:
+      apiVersion: pkg.crossplane.io/v1beta1
+      kind: Function
+      package: xpkg.upbound.io/crossplane-contrib/function-go-templating
+      version: v0.10.0
+  - type: xpkg
+    xpkg:
+      apiVersion: pkg.crossplane.io/v1beta1
+      kind: Function
+      package: xpkg.upbound.io/crossplane-contrib/function-auto-ready
+      version: v0.4.0
+  - type: xpkg
+    xpkg:
+      apiOnly: true
+      apiVersion: pkg.crossplane.io/v1
+      kind: Provider
+      package: xpkg.upbound.io/upbound/provider-aws-apigateway
+      version: v2.5.0
+  - type: xpkg
+    xpkg:
+      apiOnly: true
+      apiVersion: pkg.crossplane.io/v1
+      kind: Provider
+      package: xpkg.upbound.io/upbound/provider-aws-cloudwatch
+      version: v2.5.0
+  - type: xpkg
+    xpkg:
+      apiOnly: true
+      apiVersion: pkg.crossplane.io/v1
+      kind: Provider
+      package: xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs
+      version: v2.5.0
+  repository: 634614730521.dkr.ecr.us-east-1.amazonaws.com/poc-cli-api

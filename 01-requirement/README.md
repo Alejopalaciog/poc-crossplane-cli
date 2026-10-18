@@ -1,5 +1,11 @@
 # 01 · Requerimiento, contrato de negocio y catálogo de defectos
 
+> **Cambio de caso (17-oct-2026).** La primera corrida con el caso Lambda (secciones 1–5) reveló en el
+> cluster 2 bugs latentes en composiciones generales (`aws-iam-role`, `aws-cloudwatch`) y que el rol del
+> provider solo puede escribir recursos con `cbo` en el nombre y **no tiene permisos de Lambda/S3/SQS**.
+> Esa corrida queda como evidencia del "antes". El caso desplegable pasa a ser **API Service Platform**
+> (sección 6), cubierto por los permisos reales del entorno, sin agregar permisos.
+
 ## 1. La solicitud (lo que el usuario le pide a la AI)
 
 > "Necesito una composición de plataforma para desplegar **servicios Lambda con los estándares Nequi**:
@@ -67,3 +73,47 @@ negocio, `kubectl apply`, runtime en cluster (eventos/condiciones) o **nunca** (
 - Tags estándar: `serviceid=NEQ0169, capacity=jarvis, country=co, env=dev, deployment=jarvis, owner=alpalac@nequi.com`.
 - Lambda **fuera de VPC** (decisión de la PoC); la rama con VPC se prueba solo con render.
 - ProviderConfig: `sharedservices-jarvis-dev`.
+
+---
+
+## 6. Caso desplegable: `XPocCliApiService` (API Service Platform)
+
+### Solicitud a la AI
+> "Necesito una composición de plataforma para **exponer APIs REST con los estándares Nequi**: el equipo
+> dice su servicio, país, ambiente y funcionalidad, y la plataforma crea la API (regional), un endpoint
+> `/health`, la publica en un stage del ambiente con **access logs cifrados** con una llave KMS propia y
+> retención según el ambiente, y deja **alarmas** de errores 5XX y de latencia. Naming y tags estándar."
+
+### Diseño
+```
+XPocCliApiService (plataforma)
+├── XAPIGatewayRestStack   [general]  API REST regional                       → status.restApiId, rootResourceId
+├── XAPIGatewayIntegration [general]  /health GET MOCK 200                    ← espera restApiId
+├── XKMS                   [general]  CMK + alias, rotación, policy para Logs
+├── Group (logs)           [directo]  access logs cifrados, retención         ← espera keyArn      (XCLOUDWATCH tiene bug)
+├── Deployment + Stage     [directo]  stage <env> con access logs             ← espera integración lista y log group
+└── MetricAlarm ×2         [directo]  5XXError > 0, Latency p99 > umbral       ← espera stage
+```
+"Directo" = la composición de plataforma compone el managed resource porque el bloque general tiene un bug
+(`aws-cloudwatch`) o no soporta la capacidad (access logs en `XAPIGatewayDeployment`, alarmas).
+
+### Guardarraíles del entorno (sin agregar permisos)
+- `functionality` debe contener `cbo` → todos los nombres derivados (alias, log group, alarmas) cumplen
+  la restricción `*cbo*` del rol del provider. Tags estándar sin cambios.
+- `XAPIGatewayIntegration` usa `managementPolicies: [Observe]` por defecto: la plataforma debe pasar `["*"]`.
+- API Gateway ya tiene rol de CloudWatch a nivel de cuenta (`role-apigw-cloudwatch-dev`) → access logs viables.
+
+### Contrato de negocio (`05-measurements/business_checks_api.py`)
+| ID | Regla |
+|---|---|
+| API-00 | Render íntegro: ningún campo con `<no value>` |
+| API-01 | Identidad: `serviceid`, `capacity`, `country`, `env`, `deployment=jarvis` en todos los hijos (params o tags) |
+| API-02 | Nombres compatibles con el guardarraíl IAM: alias, log group y alarmas contienen `cbo` |
+| API-03 | Retención de access logs ≥14 días (no productivo) / ≥90 (pdn) |
+| API-04 | Access logs cifrados con la CMK de la plataforma |
+| API-05 | CMK con rotación |
+| API-06 | API REGIONAL y clasificación de datos declarada (confidencialidad/integridad/disponibilidad/pci) |
+| API-07 | Observabilidad: alarma 5XX y alarma de latencia apuntando a la API y al stage |
+| API-08 | `providerConfig` y región consistentes |
+| API-09 | Stage con access logs hacia el log group de la plataforma |
+| API-10 | Sin referencias rotas: integración solo con `apiId`; stage solo con deployment; recursos nuevos con `managementPolicies` que permitan crear |

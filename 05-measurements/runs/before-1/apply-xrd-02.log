@@ -1,0 +1,5 @@
+﻿# kubectl apply -f 02-before-1-yaml/api/xrd.yaml
+# start=2026-10-17T21:20:37.0131610-05:00 duration=2.2s exit=0
+Warning: CompositeResourceDefinition v1 is deprecated and will be removed in a future release; consider migrating to v2
+compositeresourcedefinition.apiextensions.crossplane.io/xpoccliapiservices.poc-cli-before.platform.nequi.com created
+

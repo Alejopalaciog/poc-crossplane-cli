@@ -1,0 +1,29 @@
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XAPIGatewayIntegration
+metadata:
+  name: poc-health-jarvis-co-cbopoccli1-dev
+spec:
+  parameters:
+    apiId: abc123defg
+    apiResources:
+      health-get:
+        apiKeyRequired: false
+        authorization: NONE
+        httpMethod: GET
+        integrationHttpMethod: POST
+        integrationType: MOCK
+        integrationUri: ''
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        resourceId: '@health'
+        statusCode: 200
+    env: dev
+    managementPolicies:
+    - '*'
+    pathResources:
+      health:
+        parentId: root000001
+        pathPart: health
+    providerConfigRef:
+      name: sharedservices-jarvis-dev
+    region: us-east-1

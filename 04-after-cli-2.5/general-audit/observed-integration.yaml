@@ -1,0 +1,8 @@
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Resource
+metadata:
+  name: path-health
+  namespace: sharedservices-jarvis-dev
+  annotations: {crossplane.io/composition-resource-name: path-health}
+status:
+  atProvider: {id: res0health}

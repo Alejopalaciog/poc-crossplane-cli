@@ -5,3 +5,5 @@ __pycache__/
 *.tar.gz
 _output/
 .up/
+05-measurements/gate-out/
+04-after-cli-2.5/project/schemas/

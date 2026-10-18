@@ -1,0 +1,11 @@
+﻿# tools\crossplane-2.5.0.exe resource validate 04-after-cli-2.5\general-audit\providers-api.yaml 04-after-cli-2.5\general-audit\render-xapigatewayintegration.yaml
+# start=2026-10-17T21:29:16.0684589-05:00 duration=0.52s exit=1
+[!] could not find CRD/XRD for: aws.platform.nequi.com/v1alpha1, Kind=XAPIGatewayIntegration
+[x] schema validation error apigateway.aws.m.upbound.io/v1beta1, Kind=Integration, integration-health-get : spec.forProvider.uri: Invalid value: "null": spec.forProvider.uri in body must be of type string: "null"
+[✓] apigateway.aws.m.upbound.io/v1beta1, Kind=IntegrationResponse, intresp-health-get validated successfully
+[✓] apigateway.aws.m.upbound.io/v1beta1, Kind=Method, method-health-get validated successfully
+[✓] apigateway.aws.m.upbound.io/v1beta1, Kind=MethodResponse, methodresp-health-get validated successfully
+[✓] apigateway.aws.m.upbound.io/v1beta1, Kind=Resource, path-health validated successfully
+Total 6 resources: 1 missing schemas, 4 success cases, 1 failure cases
+crossplane: error: could not validate all resources
+

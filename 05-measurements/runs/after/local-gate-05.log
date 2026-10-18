@@ -1,0 +1,11 @@
+﻿# .venv\Scripts\python 05-measurements\local_gate.py --xr 04-after-cli-2.5\project\examples\xr.yaml --composition 04-after-cli-2.5\project\apis\xpoccliapiservices\composition.yaml --functions 04-after-cli-2.5\project\examples\functions.yaml --nested-functions 04-after-cli-2.5\general-audit\functions-api.yaml --extensions 04-after-cli-2.5\extensions --contract 05-measurements\business_checks_api.py --out 05-measurements\gate-out\after-warm
+# start=2026-10-17T21:36:12.4753094-05:00 duration=22.51s exit=1
+Traceback (most recent call last):
+  File "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\05-measurements\local_gate.py", line 176, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\USUARIO\Documents\proyectos\MyCompany\Work\PoCCliCrossplane\poc-crossplane-cli\05-measurements\local_gate.py", line 154, in main
+    v = v if v is None and len(to_validate) < 2 else subprocess.run([str(XP), "resource", "validate", args.extensions, str(bundle)], capture_output=True, text=True, encoding="utf-8", cwd=workdir)
+             ^
+UnboundLocalError: cannot access local variable 'v' where it is not associated with a value
+

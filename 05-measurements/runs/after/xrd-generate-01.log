@@ -1,0 +1,4 @@
+﻿# ..\..\tools\crossplane-2.5.0.exe xrd generate apis\xpoccliapiservices\schema.yaml --from simpleschema
+# start=2026-10-17T21:23:59.1241040-05:00 duration=0.25s exit=0
+Created CompositeResourceDefinition (XRD) at xpoccliapiservices/definition.yaml
+

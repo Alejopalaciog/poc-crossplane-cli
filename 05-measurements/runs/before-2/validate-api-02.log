@@ -1,0 +1,13 @@
+﻿# tools\crank-2.2.6.exe beta validate 03-before-2-cli-2.2\api\extensions 03-before-2-cli-2.2\api\render-out.yaml
+# start=2026-10-17T21:23:09.9678383-05:00 duration=0.63s exit=0
+[✓] poc-cli-before.platform.nequi.com/v1alpha1, Kind=XPocCliApiService, poc-cli-before-api validated successfully
+[✓] cloudwatch.aws.m.upbound.io/v1beta1, Kind=MetricAlarm, poc-alarm-jarvis-co-cbopoccli1-dev-5xx validated successfully
+[✓] cloudwatch.aws.m.upbound.io/v1beta1, Kind=MetricAlarm, poc-alarm-jarvis-co-cbopoccli1-dev-latency validated successfully
+[✓] aws.platform.nequi.com/v1alpha1, Kind=XAPIGatewayRestStack, poc-api-jarvis-co-cbopoccli1-dev validated successfully
+[✓] apigateway.aws.m.upbound.io/v1beta1, Kind=Deployment, poc-deploy-jarvis-co-cbopoccli1-dev validated successfully
+[✓] aws.platform.nequi.com/v1alpha1, Kind=XAPIGatewayIntegration, poc-health-jarvis-co-cbopoccli1-dev validated successfully
+[✓] aws.platform.nequi.com/v1alpha1, Kind=XKMS, poc-kms-jarvis-co-cbopoccli1-dev validated successfully
+[✓] cloudwatchlogs.aws.m.upbound.io/v1beta1, Kind=Group, poc-logs-jarvis-co-cbopoccli1-dev validated successfully
+[✓] apigateway.aws.m.upbound.io/v1beta1, Kind=Stage, poc-stage-jarvis-co-cbopoccli1-dev validated successfully
+Total 9 resources: 0 missing schemas, 9 success cases, 0 failure cases
+

@@ -1,0 +1,386 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: poc-cli-before-api-service
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+    provider: aws
+    resource: api-service
+    platform: nequi
+spec:
+  compositeTypeRef:
+    apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+    kind: XPocCliApiService
+  mode: Pipeline
+  pipeline:
+
+    # ============================================================
+    # Step 1: API REST regional (bloque general)
+    # ============================================================
+    - step: compose-api
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $base := printf "%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $c := $p.classification }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XAPIGatewayRestStack
+            metadata:
+              name: poc-api-{{ $base }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: api
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              parameters:
+                serviceid: {{ $p.serviceid }}
+                capacity: {{ $p.capacity }}
+                country: {{ $p.country }}
+                env: {{ $p.env }}
+                deployment: jarvis
+                region: {{ $p.region }}
+                accountId: {{ $p.accountId | quote }}
+                standardName: true
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                tags: {{ $p.tags | toJson }}
+                apiName: apigw-{{ $base }}
+                description: "API {{ $p.functionality }} publicada por la plataforma"
+                endpointType: REGIONAL
+                confidentiality: {{ $c.confidentiality }}
+                integrity: {{ $c.integrity }}
+                availability: {{ $c.availability }}
+                pci: {{ $c.pci | default false }}
+
+    # ============================================================
+    # Step 2: Endpoint /health tipo MOCK (bloque general)
+    # Espera el restApiId y el rootResourceId de la API
+    # ============================================================
+    - step: compose-health
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $base := printf "%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $apiId := "" }}
+            {{- $rootId := "" }}
+            {{- with .observed.resources.api }}
+              {{- $apiId = .resource.status.atProvider.restApiId | default "" }}
+              {{- $rootId = .resource.status.atProvider.rootResourceId | default "" }}
+            {{- end }}
+            {{- if and $apiId $rootId }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XAPIGatewayIntegration
+            metadata:
+              name: poc-health-{{ $base }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: health
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              parameters:
+                region: {{ $p.region }}
+                env: {{ $p.env }}
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                apiId: {{ $apiId }}
+                managementPolicies: ["*"]
+                pathResources:
+                  health:
+                    parentId: {{ $rootId }}
+                    pathPart: health
+                apiResources:
+                  health-get:
+                    resourceId: "@health"
+                    httpMethod: GET
+                    authorization: NONE
+                    apiKeyRequired: false
+                    # MOCK no es viable con el bloque general (emite uri: null, ver 00-research);
+                    # se usa HTTP hacia un endpoint publico de AWS como backend de salud
+                    integrationType: HTTP
+                    integrationUri: https://checkip.amazonaws.com/
+                    integrationHttpMethod: GET
+                    statusCode: 200
+            {{- end }}
+
+    # ============================================================
+    # Step 3: Llave KMS propia (bloque general) para cifrar access logs
+    # ============================================================
+    - step: compose-kms
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $base := printf "%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $logGroupArn := printf "arn:aws:logs:%s:%s:log-group:/aws/apigateway/access-%s" $p.region $p.accountId $base }}
+            {{- $keyPolicy := dict "Version" "2012-10-17" "Statement" (list
+                  (dict "Sid" "RootAccount" "Effect" "Allow" "Principal" (dict "AWS" (printf "arn:aws:iam::%s:root" $p.accountId)) "Action" "kms:*" "Resource" "*")
+                  (dict "Sid" "CloudWatchLogs" "Effect" "Allow" "Principal" (dict "Service" (printf "logs.%s.amazonaws.com" $p.region))
+                        "Action" (list "kms:Encrypt*" "kms:Decrypt*" "kms:ReEncrypt*" "kms:GenerateDataKey*" "kms:Describe*") "Resource" "*"
+                        "Condition" (dict "ArnEquals" (dict "kms:EncryptionContext:aws:logs:arn" $logGroupArn)))) }}
+            ---
+            apiVersion: aws.platform.nequi.com/v1alpha1
+            kind: XKMS
+            metadata:
+              name: poc-kms-{{ $base }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: kms
+                gotemplating.fn.crossplane.io/readiness-checks: |
+                  [{"type":"MatchCondition","matchCondition":{"type":"Ready","status":"True"}}]
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              parameters:
+                serviceid: {{ $p.serviceid }}
+                capacity: {{ $p.capacity }}
+                country: {{ $p.country }}
+                env: {{ $p.env }}
+                deployment: jarvis
+                region: {{ $p.region }}
+                standardName: true
+                providerConfigRef:
+                  name: {{ $p.providerConfigName }}
+                key:
+                  name: {{ $p.functionality }}
+                  description: "CMK access logs de apigw-{{ $base }}"
+                  enableKeyRotation: true
+                  deletionWindowInDays: 7
+                  policy: {{ $keyPolicy | toJson | quote }}
+
+    # ============================================================
+    # Step 4: Log group de access logs (directo: XCLOUDWATCH tiene bug)
+    # Espera el ARN de la llave
+    # ============================================================
+    - step: compose-logs
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $base := printf "%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $keyArn := "" }}
+            {{- with .observed.resources.kms }}
+              {{- $keyArn = .resource.status.atProvider.keyArn | default "" }}
+            {{- end }}
+            {{- $retention := 14 }}
+            {{- if eq $p.env "pdn" }}{{- $retention = 90 }}{{- end }}
+            {{- with $p.logs }}{{- with .retentionInDays }}{{- $retention = . }}{{- end }}{{- end }}
+            {{- $tags := merge (dict "serviceid" $p.serviceid "capacity" $p.capacity "country" $p.country "env" $p.env "deployment" "jarvis") ($p.tags | default dict) }}
+            {{- if $keyArn }}
+            ---
+            apiVersion: cloudwatchlogs.aws.m.upbound.io/v1beta1
+            kind: Group
+            metadata:
+              name: poc-logs-{{ $base }}
+              namespace: {{ $p.providerConfigName }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: logs
+                crossplane.io/external-name: /aws/apigateway/access-{{ $base }}
+              labels:
+                {{- range $k, $v := .observed.composite.resource.metadata.labels }}
+                {{ $k }}: "{{ $v }}"
+                {{- end }}
+            spec:
+              providerConfigRef:
+                name: {{ $p.providerConfigName }}
+                kind: ClusterProviderConfig
+              forProvider:
+                region: {{ $p.region }}
+                retentionInDays: {{ $retention }}
+                kmsKeyId: {{ $keyArn }}
+                tags: {{ $tags | toJson }}
+            {{- end }}
+
+    # ============================================================
+    # Step 5: Deployment + Stage con access logs (directo)
+    # Espera que /health este listo y que el log group exista
+    # ============================================================
+    - step: compose-stage
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $base := printf "%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $o := .observed.resources }}
+            {{- $apiId := "" }}
+            {{- with $o.api }}{{- $apiId = .resource.status.atProvider.restApiId | default "" }}{{- end }}
+            {{- $healthReady := false }}
+            {{- with $o.health }}
+              {{- range .resource.status.conditions }}
+                {{- if and (eq .type "Ready") (eq .status "True") }}{{- $healthReady = true }}{{- end }}
+              {{- end }}
+            {{- end }}
+            {{- $logsReady := false }}
+            {{- with $o.logs }}{{- with .resource.status.atProvider.arn }}{{- $logsReady = true }}{{- end }}{{- end }}
+            {{- $deploymentId := "" }}
+            {{- with $o.deployment }}{{- $deploymentId = .resource.status.atProvider.id | default "" }}{{- end }}
+            {{- $tags := merge (dict "serviceid" $p.serviceid "capacity" $p.capacity "country" $p.country "env" $p.env "deployment" "jarvis") ($p.tags | default dict) }}
+            {{- if and $apiId $healthReady }}
+            ---
+            apiVersion: apigateway.aws.m.upbound.io/v1beta1
+            kind: Deployment
+            metadata:
+              name: poc-deploy-{{ $base }}
+              namespace: {{ $p.providerConfigName }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: deployment
+            spec:
+              providerConfigRef:
+                name: {{ $p.providerConfigName }}
+                kind: ClusterProviderConfig
+              forProvider:
+                region: {{ $p.region }}
+                restApiId: {{ $apiId }}
+                description: "Despliegue de la plataforma"
+                triggers:
+                  redeployment: "health-get-mock-v1"
+            {{- end }}
+            {{- if and $deploymentId $logsReady }}
+            ---
+            apiVersion: apigateway.aws.m.upbound.io/v1beta1
+            kind: Stage
+            metadata:
+              name: poc-stage-{{ $base }}
+              namespace: {{ $p.providerConfigName }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: stage
+            spec:
+              providerConfigRef:
+                name: {{ $p.providerConfigName }}
+                kind: ClusterProviderConfig
+              forProvider:
+                region: {{ $p.region }}
+                restApiId: {{ $apiId }}
+                deploymentId: {{ $deploymentId }}
+                stageName: {{ $p.env }}
+                xrayTracingEnabled: false
+                accessLogSettings:
+                  destinationArn: arn:aws:logs:{{ $p.region }}:{{ $p.accountId }}:log-group:/aws/apigateway/access-{{ $base }}
+                  format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","method":"$context.httpMethod","path":"$context.resourcePath","status":"$context.status","latency":"$context.responseLatency"}'
+                tags: {{ $tags | toJson }}
+            {{- end }}
+
+    # ============================================================
+    # Step 6: Alarmas 5XX y latencia p99 (directo), cuando el stage existe
+    # ============================================================
+    - step: compose-alarms
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $base := printf "%s-%s-%s-%s" $p.capacity $p.country $p.functionality $p.env }}
+            {{- $latency := 2000 }}
+            {{- with $p.alarms }}{{- with .latencyP99Ms }}{{- $latency = . }}{{- end }}{{- end }}
+            {{- $tags := merge (dict "serviceid" $p.serviceid "capacity" $p.capacity "country" $p.country "env" $p.env "deployment" "jarvis") ($p.tags | default dict) }}
+            {{- if .observed.resources.stage }}
+            {{- range $a := list (dict "id" "5xx" "metric" "5XXError" "stat" "Sum" "threshold" 0 "period" 60 "desc" "Errores 5XX en la API")
+                                  (dict "id" "latency" "metric" "Latency" "ext" "p99" "threshold" $latency "period" 300 "desc" "Latencia p99 sobre el umbral") }}
+            ---
+            apiVersion: cloudwatch.aws.m.upbound.io/v1beta1
+            kind: MetricAlarm
+            metadata:
+              name: poc-alarm-{{ $base }}-{{ $a.id }}
+              namespace: {{ $p.providerConfigName }}
+              annotations:
+                gotemplating.fn.crossplane.io/composition-resource-name: alarm-{{ $a.id }}
+                crossplane.io/external-name: alarm-{{ $base }}-{{ $a.id }}
+            spec:
+              providerConfigRef:
+                name: {{ $p.providerConfigName }}
+                kind: ClusterProviderConfig
+              forProvider:
+                region: {{ $p.region }}
+                alarmDescription: "{{ $a.desc }} apigw-{{ $base }}"
+                namespace: AWS/ApiGateway
+                metricName: {{ $a.metric }}
+                dimensions:
+                  ApiName: apigw-{{ $base }}
+                  Stage: {{ $p.env }}
+                {{- if $a.ext }}
+                extendedStatistic: {{ $a.ext }}
+                {{- else }}
+                statistic: {{ $a.stat }}
+                {{- end }}
+                comparisonOperator: GreaterThanThreshold
+                threshold: {{ $a.threshold }}
+                period: {{ $a.period }}
+                evaluationPeriods: 1
+                treatMissingData: notBreaching
+                tags: {{ $tags | toJson }}
+            {{- end }}
+            {{- end }}
+
+    # ============================================================
+    # Step 7: Publicar datos utiles en el status del XR
+    # ============================================================
+    - step: publish-status
+      functionRef:
+        name: function-go-templating
+      input:
+        apiVersion: gotemplating.fn.crossplane.io/v1beta1
+        kind: GoTemplate
+        source: Inline
+        inline:
+          template: |
+            {{- $p := .observed.composite.resource.spec.parameters }}
+            {{- $o := .observed.resources }}
+            ---
+            apiVersion: poc-cli-before.platform.nequi.com/v1alpha1
+            kind: XPocCliApiService
+            status:
+              {{- with $o.api }}{{- with .resource.status.atProvider.restApiId }}
+              restApiId: {{ . }}
+              invokeUrl: https://{{ . }}.execute-api.{{ $p.region }}.amazonaws.com/{{ $p.env }}/health
+              {{- end }}{{- end }}
+              {{- with $o.kms }}{{- with .resource.status.atProvider.keyArn }}
+              kmsKeyArn: {{ . }}
+              {{- end }}{{- end }}
+              {{- with $o.logs }}{{- with .resource.status.atProvider.arn }}
+              logGroupName: {{ . }}
+              {{- end }}{{- end }}
+
+    - step: mark-ready
+      functionRef:
+        name: function-auto-ready

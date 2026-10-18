@@ -1,0 +1,20 @@
+# Mismas versiones que el cluster (family v2.5.0)
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata: {name: provider-aws-apigateway}
+spec: {package: xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0}
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata: {name: provider-aws-cloudwatch}
+spec: {package: xpkg.upbound.io/upbound/provider-aws-cloudwatch:v2.5.0}
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata: {name: provider-aws-cloudwatchlogs}
+spec: {package: xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs:v2.5.0}
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata: {name: provider-aws-kms}
+spec: {package: xpkg.upbound.io/upbound/provider-aws-kms:v2.5.0}

@@ -1,0 +1,47 @@
+﻿# powershell -NoProfile -File 05-measurements/observe-xr.ps1 -Kind xpoccliapiservice.poc-cli-before.platform.nequi.com -Name poc-cli-before-api -TimeoutSec 1200
+# start=2026-10-17T21:23:33.5709063-05:00 duration=143.78s exit=2
+[21:24:45] XR Ready=False  recursos=12  no-listos=3
+
+===== Estado final =====
+MethodResponse               methodresp-health-get                                                  synced=True   ready=True
+IntegrationResponse          intresp-health-get                                                     synced=False  ready=False
+Method                       method-health-get                                                      synced=True   ready=True
+RestAPI                      apigw-jarvis-co-cbopoccli1-dev                                         synced=True   ready=True
+Resource                     path-health                                                            synced=True   ready=True
+Group                        poc-logs-jarvis-co-cbopoccli1-dev                                      synced=True   ready=True
+Alias                        alias-jarvis-co-cbopoccli1-us-east-1-dev                               synced=True   ready=True
+Key                          key-jarvis-co-cbopoccli1-us-east-1-dev                                 synced=True   ready=True
+XAPIGatewayRestStack         poc-api-jarvis-co-cbopoccli1-dev                                       synced=True   ready=True
+XKMS                         poc-kms-jarvis-co-cbopoccli1-dev                                       synced=True   ready=True
+XAPIGatewayIntegration       poc-health-jarvis-co-cbopoccli1-dev                                    synced=False  ready=False
+XPocCliApiService            poc-cli-before-api                                                     synced=True   ready=False
+
+===== Feedback (recursos no listos) =====
+--- integrationresponse.apigateway.aws.m.upbound.io/intresp-health-get
+  Ready=False Creating: 
+  Synced=False ReconcileError: create failed: async create failed: failed to create the resource: [{0 putting API Gateway Integration Response: operation error API Gateway: PutIntegrationResponse, https response error StatusCode: 404, RequestID: e7627727-3f62-457d-8abd-58f6bb2c231f, NotFoundException: Invalid Integration identifier specified  []}]
+  LastAsyncOperation=False AsyncCreateFailure: async create failed: failed to create the resource: [{0 putting API Gateway Integration Response: operation error API Gateway: PutIntegrationResponse, https response error StatusCode: 404, RequestID: e7627727-3f62-457d-8abd-58f6bb2c231f, NotFoundException: Invalid Integration identifier specified  []}]
+2m26s       Warning   CannotCreateExternalResource   integrationresponse/intresp-health-get   async create failed: failed to create the resource: [{0 putting API Gateway Integration Response: operation error API Gateway: PutIntegrationResponse, https response error StatusCode: 404, RequestID: 0b73e04d-8a59-4ae2-90a3-eab5cc1e5240, NotFoundException: Invalid Integration identifier specified  []}]
+2m26s       Warning   CannotCreateExternalResource   integrationresponse/intresp-health-get   async create failed: failed to create the resource: [{0 putting API Gateway Integration Response: operation error API Gateway: PutIntegrationResponse, https response error StatusCode: 404, RequestID: 0fd61a01-a25f-416c-8b3c-e73448cff1a9, NotFoundException: Invalid Integration identifier specified  []}]
+2m25s       Warning   CannotCreateExternalResource   integrationresponse/intresp-health-get   async create failed: failed to create the resource: [{0 putting API Gateway Integration Response: operation error API Gateway: PutIntegrationResponse, https response error StatusCode: 404, RequestID: 12905185-73c3-4eec-b23c-ac257e3d503d, NotFoundException: Invalid Integration identifier specified  []}]
+2m24s       Warning   CannotCreateExternalResource   integrationresponse/intresp-health-get   async create failed: failed to create the resource: [{0 putting API Gateway Integration Response: operation error API Gateway: PutIntegrationResponse, https response error StatusCode: 404, RequestID: 454fd129-7c97-45da-9065-d4ec1d4f93b6, NotFoundException: Invalid Integration identifier specified  []}]
+4s          Warning   CannotCreateExternalResource   integrationresponse/intresp-health-get   (combined from similar events): async create failed: failed to create the resource: [{0 putting API Gateway Integration Response: operation error API Gateway: PutIntegrationResponse, https response error StatusCode: 404, RequestID: e7627727-3f62-457d-8abd-58f6bb2c231f, NotFoundException: Invalid Integration identifier specified  []}]
+--- xapigatewayintegration.aws.platform.nequi.com/poc-health-jarvis-co-cbopoccli1-dev
+  Synced=False ReconcileError: Unsynced resources: integration-health-get
+  Ready=False Creating: Unready resources: integration-health-get, intresp-health-get
+  Responsive=False WatchCircuitOpen: Too many watch events from MethodResponse/methodresp-health-get (sharedservices-jarvis-dev). Allowing events periodically.
+3m          Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "methodresp-health-get" is not yet ready
+2m29s       Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "integration-health-get" is not yet valid
+2m29s       Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "integration-health-get" is not yet ready
+107s        Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "intresp-health-get" is not yet ready
+7s          Warning   ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   cannot apply composed resource "integration-health-get": Integration.apigateway.aws.m.upbound.io "integration-health-get" is invalid: [spec.forProvider.uri: Invalid value: "null": spec.forProvider.uri in body must be of type string: "null", <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation]
+--- xpoccliapiservice.poc-cli-before.platform.nequi.com/poc-cli-before-api
+  Synced=True ReconcileSuccess: 
+  Ready=False Creating: Unready resources: health
+  Responsive=False WatchCircuitOpen: Too many watch events from Group/poc-logs-jarvis-co-cbopoccli1-dev (sharedservices-jarvis-dev). Allowing events periodically.
+4m54s       Normal    ComposeResources    xpoccliapiservice/poc-cli-before-api   Composed resource "kms" is not yet ready
+4m54s       Normal    ComposeResources    xpoccliapiservice/poc-cli-before-api   Composed resource "health" is not yet valid
+4m54s       Normal    ComposeResources    xpoccliapiservice/poc-cli-before-api   Composed resource "health" is not yet ready
+3m40s       Warning   ComposeResources    xpoccliapiservice/poc-cli-before-api   cannot apply composed resource "health": XAPIGatewayIntegration.aws.platform.nequi.com "poc-health-jarvis-co-cbopoccli1-dev" is invalid: [spec.parameters.apiResources.health-get.integrationUri: Required value, spec.parameters.apiResources.health-get.integrationHttpMethod: Required value]
+3m6s        Warning   ComposeResources    xpoccliapiservice/poc-cli-before-api   selected CompositionRevision poc-cli-before-api-service-a47d8f3 does not have a valid function pipeline: pipeline status unknown
+

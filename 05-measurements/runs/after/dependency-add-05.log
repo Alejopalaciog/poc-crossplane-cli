@@ -1,0 +1,5 @@
+﻿# ..\..\tools\crossplane-2.5.0.exe dependency add --api-only xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs:v2.5.0
+# start=2026-10-17T21:26:37.9823190-05:00 duration=18.49s exit=0
+Adding xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs:v2.5.0...
+✓ Adding xpkg.upbound.io/upbound/provider-aws-cloudwatchlogs:v2.5.0
+

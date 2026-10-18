@@ -1,0 +1,4 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata: {name: provider-aws-apigateway}
+spec: {package: xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0}

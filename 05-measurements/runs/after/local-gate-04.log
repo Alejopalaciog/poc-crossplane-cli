@@ -1,0 +1,8 @@
+﻿# .venv\Scripts\python 05-measurements\local_gate.py --xr 04-after-cli-2.5\project\examples\xr.yaml --composition 04-after-cli-2.5\project\apis\xpoccliapiservices\composition.yaml --functions 04-after-cli-2.5\project\examples\functions.yaml --nested-functions 04-after-cli-2.5\general-audit\functions-api.yaml --extensions 04-after-cli-2.5\extensions --contract 05-measurements\business_checks_api.py --out 05-measurements\gate-out\after-warm
+# start=2026-10-17T21:35:48.4879555-05:00 duration=1.7s exit=1
+ETAPA                                    RESULT    SEG  DETALLE
+render plataforma (simulado)             FALLA     0.4  crossplane: error: cannot start function runtimes: cannot start Function "function-go-templating": container "poc-gate-function-go-templating" is not connected to Docker network "crossplane-render-m65x59sj"; verify the "render.crossplane.io/runtime-docker-network" annotation value matches an existing network
+validate esquemas (providers + XRDs)     OK        0.7  Total 0 resources: 0 missing schemas, 0 success cases, 0 failure cases
+
+Compuerta local: RECHAZADA en 1.2 s (sin cluster ni AWS)
+

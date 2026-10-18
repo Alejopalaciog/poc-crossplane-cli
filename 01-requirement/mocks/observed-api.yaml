@@ -1,0 +1,52 @@
+# Estado "observado" simulado de todos los hijos: permite renderizar el pipeline
+# completo (incluidas las etapas que esperan ARNs/IDs) sin cluster ni AWS.
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XAPIGatewayRestStack
+metadata:
+  name: poc-api-jarvis-co-cbopoccli1-dev
+  annotations: {crossplane.io/composition-resource-name: api}
+status:
+  atProvider: {restApiId: abc123defg, rootResourceId: root000001}
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XAPIGatewayIntegration
+metadata:
+  name: poc-health-jarvis-co-cbopoccli1-dev
+  annotations: {crossplane.io/composition-resource-name: health}
+status:
+  conditions: [{type: Ready, status: "True", reason: Available, lastTransitionTime: "2026-10-17T00:00:00Z"}]
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XKMS
+metadata:
+  name: poc-kms-jarvis-co-cbopoccli1-dev
+  annotations: {crossplane.io/composition-resource-name: kms}
+status:
+  atProvider: {keyArn: "arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000"}
+---
+apiVersion: cloudwatchlogs.aws.m.upbound.io/v1beta1
+kind: Group
+metadata:
+  name: poc-logs-jarvis-co-cbopoccli1-dev
+  namespace: sharedservices-jarvis-dev
+  annotations: {crossplane.io/composition-resource-name: logs}
+status:
+  atProvider: {arn: "arn:aws:logs:us-east-1:634614730521:log-group:/aws/apigateway/access-jarvis-co-cbopoccli1-dev"}
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Deployment
+metadata:
+  name: poc-deploy-jarvis-co-cbopoccli1-dev
+  namespace: sharedservices-jarvis-dev
+  annotations: {crossplane.io/composition-resource-name: deployment}
+status:
+  atProvider: {id: dep0001}
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Stage
+metadata:
+  name: poc-stage-jarvis-co-cbopoccli1-dev
+  namespace: sharedservices-jarvis-dev
+  annotations: {crossplane.io/composition-resource-name: stage}
+status:
+  atProvider: {id: ags-abc123defg-dev}

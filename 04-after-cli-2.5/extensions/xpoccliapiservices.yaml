@@ -1,0 +1,133 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: xpoccliapiservices.poc-cli.platform.nequi.com
+spec:
+  group: poc-cli.platform.nequi.com
+  names:
+    categories:
+    - crossplane
+    kind: XPocCliApiService
+    plural: xpoccliapiservices
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        description: XPocCliApiService is the Schema for the XPocCliApiService API.
+        properties:
+          spec:
+            properties:
+              parameters:
+                properties:
+                  accountId:
+                    pattern: ^[0-9]{12}$
+                    type: string
+                  alarms:
+                    default: {}
+                    properties:
+                      latencyP99Ms:
+                        default: 2000
+                        minimum: 100
+                        type: integer
+                    type: object
+                  capacity:
+                    description: Capacidad duena del servicio
+                    type: string
+                  classification:
+                    properties:
+                      availability:
+                        enum:
+                        - critical
+                        - moderate
+                        - tolerable
+                        - low
+                        type: string
+                      confidentiality:
+                        enum:
+                        - public
+                        - internal
+                        - confidential
+                        - restricted
+                        type: string
+                      integrity:
+                        enum:
+                        - critical
+                        - moderate
+                        - tolerable
+                        - low
+                        type: string
+                      pci:
+                        default: false
+                        type: boolean
+                    required:
+                    - availability
+                    - confidentiality
+                    - integrity
+                    type: object
+                  country:
+                    enum:
+                    - co
+                    - gt
+                    - ts
+                    - pa
+                    type: string
+                  env:
+                    enum:
+                    - dev
+                    - qa
+                    - pdn
+                    - sbx
+                    - stg
+                    type: string
+                  functionality:
+                    description: Funcionalidad; debe contener 'cbo' (guardarrail IAM
+                      del provider)
+                    maxLength: 20
+                    pattern: ^[a-z0-9]*cbo[a-z0-9]*$
+                    type: string
+                  logs:
+                    properties:
+                      retentionInDays:
+                        description: Si no se indica, 14 (no productivo) o 90 (pdn)
+                        type: integer
+                    type: object
+                  providerConfigName:
+                    default: sharedservices-jarvis-dev
+                    type: string
+                  region:
+                    default: us-east-1
+                    type: string
+                  serviceid:
+                    description: Identificador del servicio en CMDB (ej. NEQ0169)
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    default: {}
+                    type: object
+                required:
+                - accountId
+                - env
+                - functionality
+                - serviceid
+                - capacity
+                - country
+                type: object
+            type: object
+          status:
+            properties:
+              invokeUrl:
+                type: string
+              kmsKeyArn:
+                type: string
+              logGroupName:
+                type: string
+              restApiId:
+                type: string
+            type: object
+        required:
+        - spec
+        type: object
+    served: true

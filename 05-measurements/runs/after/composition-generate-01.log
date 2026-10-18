@@ -1,0 +1,7 @@
+﻿# ..\..\tools\crossplane-2.5.0.exe composition generate apis\xpoccliapiservices\definition.yaml
+# start=2026-10-17T21:24:14.5835226-05:00 duration=35.52s exit=0
+Ensuring function-auto-ready dependency...
+✓ Ensuring function-auto-ready dependency
+Writing Composition...
+✓ Writing Composition
+

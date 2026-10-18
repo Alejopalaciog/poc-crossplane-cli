@@ -1,0 +1,26 @@
+apiVersion: poc-cli.platform.nequi.com/v1alpha1
+kind: XPocCliApiService
+metadata:
+  name: poc-cli-api
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+spec:
+  parameters:
+    serviceid: NEQ0169
+    capacity: jarvis
+    country: co
+    env: dev
+    functionality: cbopoccli2
+    accountId: "634614730521"
+    region: us-east-1
+    providerConfigName: sharedservices-jarvis-dev
+    tags:
+      owner: alpalac@nequi.com
+      poc: crossplane-cli-2.5
+    classification:
+      confidentiality: internal
+      integrity: moderate
+      availability: low
+      pci: false
+    alarms:
+      latencyP99Ms: 2000

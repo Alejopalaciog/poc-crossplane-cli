@@ -1,0 +1,16 @@
+﻿# .venv\Scripts\python 05-measurements\business_checks_api.py 03-before-2-cli-2.2\api\render-out.yaml
+# start=2026-10-17T21:21:45.9458809-05:00 duration=0.57s exit=1
+PASS  API-00 render íntegro            sin <no value>
+FAIL  API-01 identidad y tags          Deployment.serviceid, Deployment.capacity, Deployment.country, Deployment.env
+PASS  API-02 guardarraíl 'cbo'         4 nombres OK
+PASS  API-03 retención logs            14 días (mínimo 14 en dev)
+PASS  API-04 logs cifrados             arn:aws:kms:us-east-1:634614730521:key/00000000-0000-0000-0000-000000000000
+PASS  API-05 rotación CMK              enableKeyRotation=true
+PASS  API-06 regional + clasificación  endpoint=REGIONAL faltan=ninguno
+PASS  API-07 alarmas 5XX + latencia    métricas=['5XXError', 'Latency'] dimensiones=OK
+PASS  API-08 cuenta/región             providerConfig={'sharedservices-jarvis-dev'} región={'us-east-1'}
+PASS  API-09 access logs               arn:aws:logs:us-east-1:634614730521:log-group:/aws/apigateway/access-jarvis-co-cbopoccli1-dev
+PASS  API-10 sin referencias rotas     OK
+
+10/11 reglas de negocio cumplidas
+

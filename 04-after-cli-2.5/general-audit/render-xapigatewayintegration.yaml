@@ -1,0 +1,258 @@
+---
+apiVersion: aws.platform.nequi.com/v1alpha1
+kind: XAPIGatewayIntegration
+metadata:
+  name: poc-health-jarvis-co-cbopoccli1-dev
+spec:
+  crossplane:
+    resourceRefs:
+    - apiVersion: apigateway.aws.m.upbound.io/v1beta1
+      kind: IntegrationResponse
+      name: intresp-health-get
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: apigateway.aws.m.upbound.io/v1beta1
+      kind: Integration
+      name: integration-health-get
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: apigateway.aws.m.upbound.io/v1beta1
+      kind: MethodResponse
+      name: methodresp-health-get
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: apigateway.aws.m.upbound.io/v1beta1
+      kind: Method
+      name: method-health-get
+      namespace: sharedservices-jarvis-dev
+    - apiVersion: apigateway.aws.m.upbound.io/v1beta1
+      kind: Resource
+      name: path-health
+      namespace: sharedservices-jarvis-dev
+status:
+  atProvider:
+    resourceIds:
+      health: res0health
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: WatchCircuitClosed
+    status: "True"
+    type: Responsive
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    reason: ReconcileSuccess
+    status: "True"
+    type: Synced
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: integration-health-get, intresp-health-get, method-health-get,
+      and 2 more'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Integration
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: integration-health-get
+    gotemplating.fn.crossplane.io/depends-on: method-health-get
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-health-jarvis-co-cbopoccli1-dev
+  name: integration-health-get
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XAPIGatewayIntegration
+    name: poc-health-jarvis-co-cbopoccli1-dev
+    uid: 999b3ad0-9086-5138-a43c-a683e95cf8f2
+spec:
+  forProvider:
+    connectionType: INTERNET
+    httpMethod: GET
+    integrationHttpMethod: POST
+    region: us-east-1
+    requestTemplates:
+      application/json: '{"statusCode": 200}'
+    resourceId: res0health
+    restApiId: abc123defg
+    timeoutMilliseconds: 29000
+    type: MOCK
+    uri: null
+  managementPolicies:
+  - '*'
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: IntegrationResponse
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: intresp-health-get
+    gotemplating.fn.crossplane.io/depends-on: integration-health-get,methodresp-health-get
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-health-jarvis-co-cbopoccli1-dev
+  name: intresp-health-get
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XAPIGatewayIntegration
+    name: poc-health-jarvis-co-cbopoccli1-dev
+    uid: 999b3ad0-9086-5138-a43c-a683e95cf8f2
+spec:
+  forProvider:
+    httpMethod: GET
+    region: us-east-1
+    resourceId: res0health
+    responseParameters:
+      method.response.header.Strict-Transport-Security: '''max-age=31536000; includeSubDomains'''
+      method.response.header.X-Content-Type-Options: '''nosniff'''
+    restApiId: abc123defg
+    statusCode: "200"
+  managementPolicies:
+  - '*'
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Method
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: method-health-get
+    gotemplating.fn.crossplane.io/depends-on: path-health
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-health-jarvis-co-cbopoccli1-dev
+  name: method-health-get
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XAPIGatewayIntegration
+    name: poc-health-jarvis-co-cbopoccli1-dev
+    uid: 999b3ad0-9086-5138-a43c-a683e95cf8f2
+spec:
+  forProvider:
+    apiKeyRequired: false
+    authorization: NONE
+    httpMethod: GET
+    region: us-east-1
+    resourceId: res0health
+    restApiId: abc123defg
+  managementPolicies:
+  - '*'
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: MethodResponse
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: methodresp-health-get
+    gotemplating.fn.crossplane.io/depends-on: method-health-get
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-health-jarvis-co-cbopoccli1-dev
+  name: methodresp-health-get
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XAPIGatewayIntegration
+    name: poc-health-jarvis-co-cbopoccli1-dev
+    uid: 999b3ad0-9086-5138-a43c-a683e95cf8f2
+spec:
+  forProvider:
+    httpMethod: GET
+    region: us-east-1
+    resourceId: res0health
+    responseParameters:
+      method.response.header.Strict-Transport-Security: true
+      method.response.header.X-Content-Type-Options: true
+    restApiId: abc123defg
+    statusCode: "200"
+  managementPolicies:
+  - '*'
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev
+---
+apiVersion: apigateway.aws.m.upbound.io/v1beta1
+kind: Resource
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: path-health
+    gotemplating.fn.crossplane.io/readiness-checks: |
+      [
+        {
+          "type": "MatchCondition",
+          "matchCondition": {
+            "type": "Ready",
+            "status": "True"
+          }
+        }
+      ]
+  labels:
+    crossplane.io/composite: poc-health-jarvis-co-cbopoccli1-dev
+  name: path-health
+  namespace: sharedservices-jarvis-dev
+  ownerReferences:
+  - apiVersion: aws.platform.nequi.com/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: XAPIGatewayIntegration
+    name: poc-health-jarvis-co-cbopoccli1-dev
+    uid: 999b3ad0-9086-5138-a43c-a683e95cf8f2
+spec:
+  forProvider:
+    parentId: root000001
+    pathPart: health
+    region: us-east-1
+    restApiId: abc123defg
+  managementPolicies:
+  - '*'
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: sharedservices-jarvis-dev

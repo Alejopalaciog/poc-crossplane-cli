@@ -1,0 +1,27 @@
+apiVersion: poc-cli.platform.nequi.com/v1alpha1
+kind: XPocCliApiService
+spec:
+  parameters:
+    serviceid: string | required=true description="Identificador del servicio en CMDB (ej. NEQ0169)"
+    capacity: string | required=true description="Capacidad duena del servicio"
+    country: string | required=true enum="co,gt,ts,pa"
+    env: string | required=true enum="dev,qa,pdn,sbx,stg"
+    functionality: string | required=true pattern="^[a-z0-9]*cbo[a-z0-9]*$" maxLength=20 description="Funcionalidad; debe contener 'cbo' (guardarrail IAM del provider)"
+    accountId: string | required=true pattern="^[0-9]{12}$"
+    region: string | default="us-east-1"
+    providerConfigName: string | default="sharedservices-jarvis-dev"
+    tags: map[string]string | default={}
+    classification:
+      confidentiality: string | required=true enum="public,internal,confidential,restricted"
+      integrity: string | required=true enum="critical,moderate,tolerable,low"
+      availability: string | required=true enum="critical,moderate,tolerable,low"
+      pci: boolean | default=false
+    logs:
+      retentionInDays: integer | description="Si no se indica, 14 (no productivo) o 90 (pdn)"
+    alarms:
+      latencyP99Ms: integer | default=2000 minimum=100
+status:
+  restApiId: string
+  invokeUrl: string
+  kmsKeyArn: string
+  logGroupName: string

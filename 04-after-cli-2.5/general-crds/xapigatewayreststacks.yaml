@@ -1,0 +1,355 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: xapigatewayreststacks.aws.platform.nequi.com
+  ownerReferences:
+  - apiVersion: apiextensions.crossplane.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: CompositeResourceDefinition
+    name: xapigatewayreststacks.aws.platform.nequi.com
+    uid: ""
+spec:
+  group: aws.platform.nequi.com
+  names:
+    categories:
+    - composite
+    kind: XAPIGatewayRestStack
+    plural: xapigatewayreststacks
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .spec.crossplane.compositionRef.name
+      name: COMPOSITION
+      type: string
+    - jsonPath: .spec.crossplane.compositionRevisionRef.name
+      name: COMPOSITIONREVISION
+      priority: 1
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            properties:
+              name:
+                maxLength: 63
+                type: string
+            type: object
+          spec:
+            properties:
+              crossplane:
+                description: Configures how Crossplane will reconcile this composite
+                  resource
+                properties:
+                  compositionRef:
+                    properties:
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  compositionRevisionRef:
+                    properties:
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  compositionRevisionSelector:
+                    properties:
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    required:
+                    - matchLabels
+                    type: object
+                  compositionSelector:
+                    properties:
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    required:
+                    - matchLabels
+                    type: object
+                  compositionUpdatePolicy:
+                    default: Automatic
+                    enum:
+                    - Automatic
+                    - Manual
+                    type: string
+                  resourceRefs:
+                    items:
+                      properties:
+                        apiVersion:
+                          type: string
+                        kind:
+                          type: string
+                        name:
+                          type: string
+                        namespace:
+                          type: string
+                      required:
+                      - apiVersion
+                      - kind
+                      type: object
+                    type: array
+                    x-kubernetes-list-type: atomic
+                type: object
+              parameters:
+                properties:
+                  accountId:
+                    description: AWS account ID.
+                    pattern: ^[0-9]{12}$
+                    type: string
+                  apiName:
+                    description: |
+                      Nombre del REST API en API Gateway. Si no se especifica, se genera como apigw-<capacity>-<country>-<env>.
+                    type: string
+                  availability:
+                    description: ClasificaciÃ³n de la disponibilidad.
+                    enum:
+                    - critical
+                    - moderate
+                    - tolerable
+                    - low
+                    type: string
+                  basePath:
+                    description: |
+                      Base path para el mapping (ej: 'v1'). Si se omite, se mapea el root (/).
+                    type: string
+                  binaryMediaTypes:
+                    default: []
+                    description: Lista de media types binarios soportados por el API.
+                    items:
+                      type: string
+                    type: array
+                  capacity:
+                    description: Nombre del proyecto en el que se esta trabajando.
+                    type: string
+                  confidentiality:
+                    description: ClasificaciÃ³n de la confidencialidad.
+                    enum:
+                    - public
+                    - internal
+                    - confidential
+                    - restricted
+                    type: string
+                  country:
+                    description: PaÃ­s de despliegue.
+                    enum:
+                    - co
+                    - pa
+                    - gt
+                    - ts
+                    type: string
+                  deployment:
+                    default: jarvis
+                    description: Where the deployment was made
+                    enum:
+                    - jarvis
+                    type: string
+                  description:
+                    default: REST API managed by Crossplane
+                    description: DescripciÃ³n del REST API.
+                    type: string
+                  endpointType:
+                    default: REGIONAL
+                    description: |
+                      Tipo de endpoint del API Gateway. REGIONAL para acceso dentro de la misma regiÃ³n. PRIVATE para acceso solo desde VPC via VPC Endpoint. EDGE para distribuciÃ³n vÃ­a CloudFront.
+                    enum:
+                    - REGIONAL
+                    - PRIVATE
+                    - EDGE
+                    type: string
+                  env:
+                    description: |
+                      Ambiente donde serÃ¡ desplegado el componente. Sus Ãºnicos valores posibles serÃ¡n: dev, qa, pdn, sbx, stg.
+                    enum:
+                    - dev
+                    - qa
+                    - pdn
+                    - sbx
+                    - stg
+                    type: string
+                  existingCertificateArn:
+                    description: |
+                      ARN de un certificado ACM ya emitido (ISSUED). Requerido para crear el DomainName â€” esta XRD no crea certificados.
+                    type: string
+                  externalName:
+                    description: |
+                      Nombre lÃ³gico/real del REST API cuando standardName es false (usado en metadata.name y forProvider.name).
+                    type: string
+                  externalNameId:
+                    description: |
+                      ID REAL del REST API en API Gateway (ej. "abc123def4"). Es el identificador que el managed resource RestAPI usa para encontrarse en AWS (se fija en crossplane.io/external-name). Requerido para adoptar.
+                    type: string
+                  hostedZone:
+                    description: Zona DNS base (ej. nequi.com.co).
+                    type: string
+                  integrity:
+                    description: ClasificaciÃ³n de la integridad.
+                    enum:
+                    - critical
+                    - moderate
+                    - tolerable
+                    - low
+                    type: string
+                  managementPolicies:
+                    description: |
+                      PolÃ­ticas de gestiÃ³n de Crossplane sobre los managed resources emitidos (RestAPI, RestAPIPolicy, DomainName, BasePathMapping). Acepta Observe, Create, Update, Delete, LateInitialize, *. Uso principal: ["Observe"] para adoptar en solo-lectura. Si no se provee, gestiÃ³n completa (default).
+                    items:
+                      type: string
+                    type: array
+                  pci:
+                    description: Holds unmasked credit or debit card data
+                    type: boolean
+                  providerConfigRef:
+                    description: Reference to the AWS provider configuration
+                    properties:
+                      name:
+                        description: Name of the provider configuration
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  region:
+                    default: us-east-1
+                    description: AWS region where resources will be created
+                    type: string
+                  resourcePolicy:
+                    description: |
+                      JSON de la polÃ­tica de recursos del API Gateway. Si no se provee y endpointType=PRIVATE, se genera automÃ¡ticamente.
+                    type: string
+                  serviceid:
+                    description: Identifier of the deployment
+                    type: string
+                  standardName:
+                    default: true
+                    description: |
+                      true (default): el REST API se nombra apigw-{capacity}-{country}-{env} (o apiName si se pasa). Comportamiento actual, sin cambios. false: ADOPTA un REST API existente. El nombre lÃ³gico se toma de externalName y el external-name real (el ID del API) se fija con externalNameId.
+                    type: boolean
+                  subdomain:
+                    description: |
+                      Subdominio para el custom domain (ej: 'api-payments'). Junto con hostedZone y existingCertificateArn crea DomainName + BasePathMapping.
+                    type: string
+                  tags:
+                    additionalProperties:
+                      type: string
+                    default: {}
+                    description: Tags adicionales para aplicar al REST API.
+                    type: object
+                  vpcEndpointIds:
+                    default: []
+                    description: |
+                      IDs de VPC Endpoints para API Gateway (solo aplica si endpointType=PRIVATE).
+                    items:
+                      type: string
+                    type: array
+                  vpcLinkId:
+                    description: |
+                      ID de un VPC Link ya existente, para que las Integrations lo referencien. Esta XRD no crea el VPC Link â€” solo lo expone en status.atProvider.vpcLinkId.
+                    type: string
+                required:
+                - capacity
+                - country
+                - env
+                - serviceid
+                - confidentiality
+                - integrity
+                - availability
+                - pci
+                - providerConfigRef
+                type: object
+            required:
+            - parameters
+            type: object
+          status:
+            properties:
+              atProvider:
+                properties:
+                  certificateArn:
+                    description: ARN del certificado ACM del custom domain (si fue
+                      creado).
+                    type: string
+                  domainName:
+                    description: FQDN del custom domain (subdomain.hostedZone).
+                    type: string
+                  executionArn:
+                    description: ARN de ejecuciÃ³n del API (para permisos Lambda).
+                    type: string
+                  regionalDomainName:
+                    description: Domain name regional de API Gateway (para el registro
+                      DNS).
+                    type: string
+                  regionalHostedZoneId:
+                    description: Hosted zone ID del domain regional.
+                    type: string
+                  restApiId:
+                    description: ID del REST API creado en API Gateway.
+                    type: string
+                  rootResourceId:
+                    description: ID del recurso raÃ­z (/) del REST API.
+                    type: string
+                  vpcLinkId:
+                    description: ID del VPC Link (si fue provisto).
+                    type: string
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: null
+  storedVersions: null

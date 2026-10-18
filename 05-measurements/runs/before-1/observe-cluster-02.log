@@ -1,0 +1,34 @@
+﻿# powershell -NoProfile -File 05-measurements/observe-xr.ps1 -Kind xpoccliapiservice.poc-cli-before.platform.nequi.com -Name poc-cli-before-api -TimeoutSec 900
+# start=2026-10-17T21:21:05.5922447-05:00 duration=127.12s exit=2
+[21:22:06] XR Ready=False  recursos=7  no-listos=1
+
+===== Estado final =====
+RestAPI                      apigw-jarvis-co-cbopoccli1-dev                                         synced=True   ready=True
+Group                        poc-logs-jarvis-co-cbopoccli1-dev                                      synced=True   ready=True
+Alias                        alias-jarvis-co-cbopoccli1-us-east-1-dev                               synced=True   ready=True
+Key                          key-jarvis-co-cbopoccli1-us-east-1-dev                                 synced=True   ready=True
+XKMS                         poc-kms-jarvis-co-cbopoccli1-dev                                       synced=True   ready=True
+XAPIGatewayIntegration       poc-health-jarvis-co-cbopoccli1-dev                                    synced=False  ready=False
+XAPIGatewayRestStack         poc-api-jarvis-co-cbopoccli1-dev                                       synced=True   ready=True
+XPocCliApiService            poc-cli-before-api                                                     synced=True   ready=False
+
+===== Feedback (recursos no listos) =====
+--- xapigatewayintegration.aws.platform.nequi.com/poc-health-jarvis-co-cbopoccli1-dev
+  Synced=False ReconcileError: Unsynced resources: integration-health-get
+  Ready=False Creating: Unready resources: integration-health-get, intresp-health-get
+  Responsive=False WatchCircuitOpen: Too many watch events from MethodResponse/methodresp-health-get (sharedservices-jarvis-dev). Allowing events periodically.
+16s         Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "method-health-get" is not yet ready
+16s         Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "intresp-health-get" is not yet ready
+16s         Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "integration-health-get" is not yet valid
+16s         Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "integration-health-get" is not yet ready
+16s         Normal    ComposeResources    xapigatewayintegration/poc-health-jarvis-co-cbopoccli1-dev   Composed resource "methodresp-health-get" is not yet ready
+--- xpoccliapiservice.poc-cli-before.platform.nequi.com/poc-cli-before-api
+  Synced=True ReconcileSuccess: 
+  Ready=False Creating: Unready resources: health
+  Responsive=False WatchCircuitOpen: Too many watch events from Group/poc-logs-jarvis-co-cbopoccli1-dev (sharedservices-jarvis-dev). Allowing events periodically.
+2m9s        Normal    ComposeResources    xpoccliapiservice/poc-cli-before-api   Composed resource "kms" is not yet ready
+2m9s        Normal    ComposeResources    xpoccliapiservice/poc-cli-before-api   Composed resource "health" is not yet valid
+2m9s        Normal    ComposeResources    xpoccliapiservice/poc-cli-before-api   Composed resource "health" is not yet ready
+55s         Warning   ComposeResources    xpoccliapiservice/poc-cli-before-api   cannot apply composed resource "health": XAPIGatewayIntegration.aws.platform.nequi.com "poc-health-jarvis-co-cbopoccli1-dev" is invalid: [spec.parameters.apiResources.health-get.integrationUri: Required value, spec.parameters.apiResources.health-get.integrationHttpMethod: Required value]
+21s         Warning   ComposeResources    xpoccliapiservice/poc-cli-before-api   selected CompositionRevision poc-cli-before-api-service-a47d8f3 does not have a valid function pipeline: pipeline status unknown
+

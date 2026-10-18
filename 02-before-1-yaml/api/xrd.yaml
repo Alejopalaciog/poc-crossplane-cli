@@ -1,0 +1,109 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xpoccliapiservices.poc-cli-before.platform.nequi.com
+  labels:
+    poc.nequi.com/experiment: cli-2.5
+spec:
+  scope: Cluster
+  group: poc-cli-before.platform.nequi.com
+  names:
+    kind: XPocCliApiService
+    plural: xpoccliapiservices
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  type: object
+                  description: API REST con estandares Nequi
+                  properties:
+                    serviceid:
+                      type: string
+                      description: Identificador del servicio en CMDB (ej. NEQ0169)
+                    capacity:
+                      type: string
+                      description: Capacidad duena del servicio
+                    country:
+                      type: string
+                      enum: ["co", "gt", "ts", "pa"]
+                    env:
+                      type: string
+                      enum: ["dev", "qa", "pdn", "sbx", "stg"]
+                    functionality:
+                      type: string
+                      description: Funcionalidad; debe contener 'cbo' (guardarrail IAM del provider)
+                      pattern: "^[a-z0-9]*cbo[a-z0-9]*$"
+                      maxLength: 20
+                    accountId:
+                      type: string
+                      pattern: "^[0-9]{12}$"
+                    region:
+                      type: string
+                      default: us-east-1
+                    providerConfigName:
+                      type: string
+                      default: sharedservices-jarvis-dev
+                    tags:
+                      type: object
+                      additionalProperties:
+                        type: string
+                      default: {}
+                    classification:
+                      type: object
+                      description: Clasificacion de la informacion que expone la API
+                      properties:
+                        confidentiality:
+                          type: string
+                          enum: ["public", "internal", "confidential", "restricted"]
+                        integrity:
+                          type: string
+                          enum: ["critical", "moderate", "tolerable", "low"]
+                        availability:
+                          type: string
+                          enum: ["critical", "moderate", "tolerable", "low"]
+                        pci:
+                          type: boolean
+                          default: false
+                      required: ["confidentiality", "integrity", "availability"]
+                    logs:
+                      type: object
+                      properties:
+                        retentionInDays:
+                          type: integer
+                          description: Si no se indica, 14 (no productivo) o 90 (pdn)
+                    alarms:
+                      type: object
+                      properties:
+                        latencyP99Ms:
+                          type: integer
+                          default: 2000
+                          minimum: 100
+                  required:
+                    - serviceid
+                    - capacity
+                    - country
+                    - env
+                    - functionality
+                    - accountId
+                    - classification
+              required:
+                - parameters
+            status:
+              type: object
+              properties:
+                restApiId:
+                  type: string
+                invokeUrl:
+                  type: string
+                kmsKeyArn:
+                  type: string
+                logGroupName:
+                  type: string

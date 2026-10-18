@@ -1,0 +1,4 @@
+﻿# kubectl apply -f 02-before-1-yaml/api/composition.yaml
+# start=2026-10-17T21:29:31.2748116-05:00 duration=3.8s exit=0
+composition.apiextensions.crossplane.io/poc-cli-before-api-service configured
+

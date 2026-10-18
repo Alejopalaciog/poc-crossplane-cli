@@ -1,0 +1,5 @@
+﻿# ..\..\tools\crossplane-2.5.0.exe dependency add --api-only xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0
+# start=2026-10-17T21:25:24.4233292-05:00 duration=55.34s exit=0
+Adding xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0...
+✓ Adding xpkg.upbound.io/upbound/provider-aws-apigateway:v2.5.0
+

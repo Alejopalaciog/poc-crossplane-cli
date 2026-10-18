@@ -1,0 +1,5 @@
+﻿# ..\..\tools\crossplane-2.5.0.exe dependency add xpkg.upbound.io/crossplane-contrib/function-go-templating:v0.10.0
+# start=2026-10-17T21:25:13.3589620-05:00 duration=6.1s exit=0
+Adding xpkg.upbound.io/crossplane-contrib/function-go-templating:v0.10.0...
+✓ Adding xpkg.upbound.io/crossplane-contrib/function-go-templating:v0.10.0
+

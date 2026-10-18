@@ -1,0 +1,3 @@
+﻿# tools\crank-2.2.6.exe render 02-before-1-yaml\api\xr.yaml 02-before-1-yaml\api\composition.yaml 03-before-2-cli-2.2\functions.yaml -o 01-requirement\mocks\observed-api.yaml -x > 03-before-2-cli-2.2\api\render-out.yaml
+# start=2026-10-17T21:21:38.5643556-05:00 duration=1.6s exit=0
+

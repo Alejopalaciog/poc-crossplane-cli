@@ -1,0 +1,479 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: xapigatewayintegrations.aws.platform.nequi.com
+  ownerReferences:
+  - apiVersion: apiextensions.crossplane.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: CompositeResourceDefinition
+    name: xapigatewayintegrations.aws.platform.nequi.com
+    uid: ""
+spec:
+  group: aws.platform.nequi.com
+  names:
+    categories:
+    - composite
+    kind: XAPIGatewayIntegration
+    plural: xapigatewayintegrations
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .spec.crossplane.compositionRef.name
+      name: COMPOSITION
+      type: string
+    - jsonPath: .spec.crossplane.compositionRevisionRef.name
+      name: COMPOSITIONREVISION
+      priority: 1
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            properties:
+              name:
+                maxLength: 63
+                type: string
+            type: object
+          spec:
+            properties:
+              crossplane:
+                description: Configures how Crossplane will reconcile this composite
+                  resource
+                properties:
+                  compositionRef:
+                    properties:
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  compositionRevisionRef:
+                    properties:
+                      name:
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  compositionRevisionSelector:
+                    properties:
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    required:
+                    - matchLabels
+                    type: object
+                  compositionSelector:
+                    properties:
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        type: object
+                    required:
+                    - matchLabels
+                    type: object
+                  compositionUpdatePolicy:
+                    default: Automatic
+                    enum:
+                    - Automatic
+                    - Manual
+                    type: string
+                  resourceRefs:
+                    items:
+                      properties:
+                        apiVersion:
+                          type: string
+                        kind:
+                          type: string
+                        name:
+                          type: string
+                        namespace:
+                          type: string
+                      required:
+                      - apiVersion
+                      - kind
+                      type: object
+                    type: array
+                    x-kubernetes-list-type: atomic
+                type: object
+              parameters:
+                properties:
+                  apiId:
+                    description: |
+                      Id del API Gateway REST API al que se asociarÃ¡n los mÃ©todos e integraciones. Debe existir previamente.
+                    type: string
+                  apiResources:
+                    additionalProperties:
+                      properties:
+                        apiKeyRequired:
+                          description: |
+                            Si requiere API Key. Este valor es obligatorio debido a controles de seguridad.
+                          type: boolean
+                        arnCredentials:
+                          description: |
+                            ARN del rol IAM que API Gateway asume para invocar el backend. Requerido para integraciones AWS (SQS, Step Functions, etc.)
+                          type: string
+                        authorization:
+                          default: NONE
+                          description: Tipo de autorizaciÃ³n para el mÃ©todo.
+                          enum:
+                          - NONE
+                          - COGNITO_USER_POOLS
+                          - CUSTOM
+                          - AWS_IAM
+                          type: string
+                        authorizationScopes:
+                          default: []
+                          description: Scopes de autorizaciÃ³n (solo para COGNITO_USER_POOLS).
+                          items:
+                            type: string
+                          type: array
+                        connectionType:
+                          default: INTERNET
+                          description: |
+                            Tipo de conexiÃ³n. INTERNET para Lambda/SQS directos, VPC_LINK para integraciones a travÃ©s de VPC Link.
+                          enum:
+                          - INTERNET
+                          - VPC_LINK
+                          type: string
+                        httpMethod:
+                          description: MÃ©todo HTTP del endpoint.
+                          enum:
+                          - POST
+                          - GET
+                          - PUT
+                          - PATCH
+                          - DELETE
+                          - OPTIONS
+                          - ANY
+                          type: string
+                        integrationHttpMethod:
+                          description: |
+                            MÃ©todo HTTP usado en la integraciÃ³n con el backend. Para Lambda con autorizaciÃ³n usar POST.
+                          enum:
+                          - POST
+                          - GET
+                          - PUT
+                          - PATCH
+                          - DELETE
+                          - OPTIONS
+                          - ANY
+                          type: string
+                        integrationRequestParameters:
+                          additionalProperties:
+                            type: string
+                          default: {}
+                          description: |
+                            ParÃ¡metros de request de la integraciÃ³n. Los headers de seguridad se agregan automÃ¡ticamente.
+                          type: object
+                        integrationResponseParameters:
+                          additionalProperties:
+                            type: string
+                          default: {}
+                          description: |
+                            ParÃ¡metros de la respuesta de la integraciÃ³n. Los headers de seguridad se agregan automÃ¡ticamente.
+                          type: object
+                        integrationResponseTemplates:
+                          additionalProperties:
+                            type: string
+                          default: {}
+                          description: |
+                            Templates de mapping para la respuesta de la integraciÃ³n. Clave: content-type, valor: template.
+                          type: object
+                        integrationResponsesErrors:
+                          additionalProperties:
+                            properties:
+                              responseParametersErrors:
+                                additionalProperties:
+                                  type: string
+                                default: {}
+                                description: ParÃ¡metros de la respuesta de error.
+                                type: object
+                              responseTemplatesErrors:
+                                additionalProperties:
+                                  type: string
+                                default: {}
+                                description: Templates de la respuesta de error.
+                                type: object
+                              selectionPatternErrors:
+                                description: PatrÃ³n regex de selecciÃ³n para este
+                                  error.
+                                type: string
+                              statusCodeErrors:
+                                description: CÃ³digo de estado HTTP para el error.
+                                type: string
+                            required:
+                            - statusCodeErrors
+                            type: object
+                          default: {}
+                          description: |
+                            Respuestas de integraciÃ³n adicionales para manejo de errores. Cada clave es un identificador del error.
+                          type: object
+                        integrationTarget:
+                          description: |
+                            ARN del ALB target para VPC Link v2 (override por mÃ©todo). Si no se proporciona, se usa el integrationTarget del nivel superior.
+                          type: string
+                        integrationType:
+                          description: |
+                            Tipo de integraciÃ³n. HTTP/HTTP_PROXY para VPC Link, AWS/AWS_PROXY para Lambda/SQS.
+                          enum:
+                          - HTTP
+                          - HTTP_PROXY
+                          - AWS
+                          - AWS_PROXY
+                          - MOCK
+                          type: string
+                        integrationUri:
+                          description: |
+                            URI de la integraciÃ³n. Para Lambda use el ARN de invocaciÃ³n. Para VPC Link use la URL del backend.
+                          type: string
+                        methodRequestParameters:
+                          additionalProperties:
+                            type: string
+                          default: {}
+                          description: |
+                            ParÃ¡metros de request del mÃ©todo. Clave: nombre del parÃ¡metro, valor: "true"/"false" indicando si es requerido.
+                          type: object
+                        methodResponseParameters:
+                          additionalProperties:
+                            type: string
+                          default: {}
+                          description: |
+                            ParÃ¡metros de la respuesta del mÃ©todo. Los headers de seguridad (Strict-Transport-Security, X-Content-Type-Options) se agregan automÃ¡ticamente.
+                          type: object
+                        methodResponsesErrors:
+                          additionalProperties:
+                            properties:
+                              responseModelsErrors:
+                                additionalProperties:
+                                  type: string
+                                default: {}
+                                description: Modelos de la respuesta de error del
+                                  mÃ©todo.
+                                type: object
+                              responseParametersErrors:
+                                additionalProperties:
+                                  type: string
+                                default: {}
+                                description: ParÃ¡metros de la respuesta de error
+                                  del mÃ©todo.
+                                type: object
+                              statusCodeErrors:
+                                description: CÃ³digo de estado HTTP para el error.
+                                type: string
+                            required:
+                            - statusCodeErrors
+                            type: object
+                          default: {}
+                          description: |
+                            Respuestas de mÃ©todo adicionales para manejo de errores. Cada clave es un identificador del error.
+                          type: object
+                        passthroughBehavior:
+                          description: |
+                            Comportamiento de passthrough para content types no mapeados.
+                          enum:
+                          - WHEN_NO_MATCH
+                          - WHEN_NO_TEMPLATES
+                          - NEVER
+                          type: string
+                        requestTemplates:
+                          additionalProperties:
+                            type: string
+                          default: {}
+                          description: |
+                            Templates de mapping para el request de la integraciÃ³n. Clave: content-type, valor: template.
+                          type: object
+                        resourceId:
+                          description: |
+                            ID del API Gateway Resource donde se crearÃ¡ el mÃ©todo. Use un ID directo o @nombreDelPath para referenciar un path de pathResources.
+                          type: string
+                        responseModels:
+                          additionalProperties:
+                            type: string
+                          default: {}
+                          description: |
+                            Modelos de la respuesta del mÃ©todo. Clave: content-type, valor: nombre del modelo.
+                          type: object
+                        selectionPattern:
+                          description: |
+                            PatrÃ³n regex para seleccionar esta integration response. Ejemplo: "2\\d{2}" para cÃ³digos 2xx.
+                          type: string
+                        statusCode:
+                          description: |
+                            CÃ³digo de estado HTTP principal para la respuesta del mÃ©todo.
+                          type: integer
+                        timeoutMilliseconds:
+                          default: 29000
+                          description: Timeout de la integraciÃ³n en milisegundos.
+                          type: integer
+                      required:
+                      - resourceId
+                      - httpMethod
+                      - apiKeyRequired
+                      - integrationUri
+                      - integrationType
+                      - integrationHttpMethod
+                      - statusCode
+                      type: object
+                    description: |
+                      Mapa de configuraciones para crear mÃ©todos e integraciones en el API Gateway. Cada clave del mapa identifica un mÃ©todo y su integraciÃ³n asociada. Use la notaciÃ³n @nombreDelPath en resourceId para referenciar un path creado en pathResources de este mismo claim.
+                    type: object
+                  authorizerId:
+                    description: |
+                      Id del autorizador de Cognito o Lambda Auth. Requerido cuando authorization es COGNITO_USER_POOLS o CUSTOM.
+                    type: string
+                  env:
+                    description: |
+                      Ambiente de despliegue (dev, qa, stg, pdn). Se usa para resolver dinÃ¡micamente el nombre del VPC Link V2 cuando no se pasa vpcLinkId explÃ­citamente.
+                    enum:
+                    - dev
+                    - qa
+                    - stg
+                    - pdn
+                    - sbx
+                    type: string
+                  integrationTarget:
+                    description: |
+                      ARN del ALB al que se va a llegar con la integraciÃ³n mediante VPC Link v2. Requerido por AWS cuando el VPC Link es v2.
+                    type: string
+                  managementPolicies:
+                    description: |
+                      PolÃ­ticas de gestiÃ³n que se propagan a TODOS los managed resources de la API (paths, methods, integrations, responses). Default ["Observe"] (solo lectura/adopciÃ³n). Para pasar a managed sin borrado usar ["Observe","Create","Update","LateInitialize"]. Nunca "Delete" en la 1Âª adopciÃ³n.
+                    items:
+                      type: string
+                    type: array
+                  pathResources:
+                    additionalProperties:
+                      properties:
+                        parentId:
+                          description: |
+                            ID del resource padre. Use un ID directo de un resource existente o la notaciÃ³n @nombreDelPath para referenciar otro path creado en este mismo claim.
+                          type: string
+                        pathPart:
+                          description: |
+                            El segmento de la URL a crear (ej: "orders", "{orderId}", "items").
+                          type: string
+                        resourceId:
+                          description: |
+                            OPCIONAL. ID real del aws_api_gateway_resource ya existente en AWS (ej: "n2x389"). Si se indica, el path se ADOPTA en modo Observe (managementPolicies: [Observe], external-name = este ID) en vez de crearse. Ãšselo para adoptar paths existentes sin recrearlos. Si se omite, el path se crea normalmente.
+                          type: string
+                      required:
+                      - parentId
+                      - pathPart
+                      type: object
+                    description: |
+                      Mapa de paths (aws_api_gateway_resource) a crear. Cada clave es un identificador lÃ³gico que puede referenciarse desde apiResources usando la notaciÃ³n @nombre. El parentId puede ser el root resource ID del API o un ID de resource existente. Para referenciar un path creado en este mismo claim, use la notaciÃ³n @nombreDelPath.
+                    type: object
+                  providerConfigRef:
+                    description: Reference to the AWS provider configuration
+                    properties:
+                      name:
+                        description: Name of the provider configuration
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  region:
+                    default: us-east-1
+                    description: AWS region where resources will be created
+                    type: string
+                  vpcLinkId:
+                    description: |
+                      Id del VPC Link. Requerido cuando connectionType es VPC_LINK en alguna de las entradas de apiResources. Si no se proporciona, la composiciÃ³n buscarÃ¡ automÃ¡ticamente el VPC Link V2 por nombre usando el patrÃ³n vpclinkv2-infracloud-ts-centralized-{env}.
+                    type: string
+                required:
+                - apiId
+                - apiResources
+                - providerConfigRef
+                type: object
+            required:
+            - parameters
+            type: object
+          status:
+            properties:
+              atProvider:
+                properties:
+                  integrationIds:
+                    additionalProperties:
+                      type: string
+                    description: IDs de las integraciones creadas.
+                    type: object
+                  methodIds:
+                    additionalProperties:
+                      type: string
+                    description: IDs de los mÃ©todos creados.
+                    type: object
+                  resourceIds:
+                    additionalProperties:
+                      type: string
+                    description: IDs de los API Gateway Resources (paths) creados.
+                    type: object
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    observedGeneration:
+                      format: int64
+                      type: integer
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+              resourceLookup:
+                description: |
+                  Metadata del lookup de recursos (estado, errores, timestamp). Escrito por function-jarvis-findresources.
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              vpclink:
+                description: |
+                  Resultado del lookup dinÃ¡mico del VPC Link V2 realizado por function-jarvis-findresources cuando no se pasa vpcLinkId.
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: null
+  storedVersions: null
