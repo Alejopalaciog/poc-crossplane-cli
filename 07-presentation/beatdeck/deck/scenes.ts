@@ -73,6 +73,9 @@ export const SCENES: SceneDef[] = [
         note: 'Solo revisamos 5 de 34 bloques generales: vale la pena pasar la compuerta por todo el catálogo.' },
       { name: 'migración', ref: '02-resultados · adopción', source: '10/10 claim real · 6/10 sin managementPolicies → crearía una llave nueva',
         note: 'La CLI no reemplaza la skill de adopción: le agrega un paso antes del PR.' },
+      { name: 'valor por rol', ref: 'manual · valor por rol / 00-alcance §8',
+        source: 'Equipos de producto · revisores de PR · seguridad y gobierno · plataforma/SRE · migración · agentes AI',
+        note: 'No es solo para quien crea composiciones: cada rol gana algo distinto.' },
     ],
   },
   {

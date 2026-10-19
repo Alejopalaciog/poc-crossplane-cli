@@ -39,7 +39,7 @@ Rule: the source decides **what** is said; the design reference decides **how** 
 | 12 Bugs | 4 bugs | 7.1 | kept | |
 | 13–14 Evidencia | Compuerta, matriz, trace, AWS | 8.1–8.4 | kept | capturas reales |
 | 15 Migración | crear vs adoptar; 10/10 vs 6/10 | 7.2 | kept | |
-| 16 Roles | 6 roles | 9.1 | cut | por tiempo; queda en la wiki y en la versión manual |
+| 16 Roles | 6 roles | 7.3 | kept | agregado a pedido del usuario (19-oct) |
 | 17 Balance | bueno / cuesta / ojo | 9.1 | kept | |
 | 18–19 Ruta | 4 fases | 9.2 | kept | |
 | 20 Cierre | Frase final | 9.3 | kept | |
@@ -62,5 +62,5 @@ Rule: the source decides **what** is said; the design reference decides **how** 
 ## Decisions taken on the speaker's behalf
 
 - Marca Nequi (fondo #200020, acento #DA0081, Poppins) en lugar del tema neutro, para ser coherente con las PoC anteriores.
-- Slide "Valor por rol" se omite en el escenario (sigue en la versión manual y en la wiki).
+- "Valor por rol" se omitió en la primera versión; el usuario pidió incluirla (beat 7.3).
 - La matriz completa de 11 defectos se muestra como captura real (8.2), no se redibuja.
