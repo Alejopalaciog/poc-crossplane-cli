@@ -28,3 +28,23 @@ típicos (CLI 2.2: 6; hoy: 0 antes del cluster), encontró **4 bugs latentes** e
 Docker, `tools/crossplane-2.5.0(.exe)` y `tools/crank-2.2.6(.exe)` (no versionados; ver `00-research`), Python 3.11+
 con PyYAML (`python -m venv .venv && .venv/Scripts/pip install pyyaml`), acceso de lectura a ECR para la función
 privada `function-jarvis-findresources`. En Windows, el build de funciones Python requiere WSL.
+
+## Cómo abrirlo en otro PC
+El repo solo versiona lo necesario (~7 MB). Lo pesado se regenera o descarga (Git Bash, desde la raíz):
+
+```bash
+# 1. CLIs de Crossplane (no versionadas, ~270 MB) — binarios oficiales
+mkdir -p tools
+curl -sfLo tools/crossplane-2.5.0.exe https://cli.crossplane.io/stable/v2.5.0/bin/windows_amd64/crossplane.exe
+curl -sfLo tools/crank-2.2.6.exe https://releases.crossplane.io/stable/v2.2.6/bin/windows_amd64/crank.exe
+# (Linux/WSL: .../bin/linux_amd64/crossplane → tools/crossplane-2.5.0)
+
+# 2. Entorno Python para scripts de medición, compuerta y evidencias
+python -m venv .venv && .venv/Scripts/pip install pyyaml
+
+# 3. Presentación interactiva (beatdeck): librerías de Node y build
+cd 07-presentation/beatdeck && npm install && npm run present
+```
+
+Solo para ver resultados no hace falta nada de lo anterior: `07-presentation/presentacion-manual.html` y
+`08-wiki/` se abren directamente.
