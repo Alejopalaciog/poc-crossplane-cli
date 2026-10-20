@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Resumen PoC Crossplane CLI 2.5</title>
+<style>
+@font-face{font-family:Poppins;font-weight:400;src:url(../beatdeck/node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:Poppins;font-weight:500;src:url(../beatdeck/node_modules/@fontsource/poppins/files/poppins-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:Poppins;font-weight:600;src:url(../beatdeck/node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:Poppins;font-weight:700;src:url(../beatdeck/node_modules/@fontsource/poppins/files/poppins-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:Poppins;font-weight:800;src:url(../beatdeck/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2) format('woff2')}
+:root{--ink:#200020;--card:#2c0a2c;--mag:#DA0081;--mag2:#ff5db5;--soft:#FFE9F5;--txt:#fff;--mut:rgba(255,233,245,.72);--dim:rgba(255,233,245,.45);--hair:rgba(255,255,255,.14);--ok:#3ccf91;--warn:#ffbd2e;--bad:#ff5f6e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden}
+body{background:var(--ink);color:var(--txt);font-family:Poppins,sans-serif;position:relative}
+.glow{position:absolute;right:-260px;top:-260px;width:760px;height:760px;border-radius:50%;background:radial-gradient(circle,rgba(218,0,129,.28),transparent 65%)}
+.wrap{position:absolute;inset:0;padding:40px 72px 36px;display:flex;flex-direction:column}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px}
+.logo{font-weight:800;font-size:30px;letter-spacing:-1px}.logo i{color:var(--mag);font-style:normal}
+.tag{display:inline-block;background:var(--mag);color:#fff;font-weight:600;font-size:18px;padding:4px 14px;border-radius:99px;margin:10px 0 10px}
+h1{font-weight:800;font-size:58px;line-height:1;letter-spacing:-2px}
+h1 span{color:var(--mag2)}
+.sub{font-size:20px;color:var(--mut);margin-top:8px}
+.verdict{background:var(--card);border:2px solid var(--mag);border-radius:22px;padding:16px 26px;width:540px}
+.verdict small{display:block;font-size:17px;font-weight:600;color:var(--mag2);letter-spacing:.12em;text-transform:uppercase}
+.verdict b{display:block;font-size:30px;font-weight:800;line-height:1.1;margin-top:4px}
+.verdict p{font-size:19px;color:var(--mut);margin-top:6px;line-height:1.35}
+.grid{display:grid;grid-template-columns:760px 1fr 430px;gap:22px;flex:1;min-height:0}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:18px 22px}
+h2{font-size:17px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mag2);margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:17px}
+th{text-align:left;font-weight:600;color:var(--dim);font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:0 8px 8px 0}
+td{padding:6px 8px 6px 0;border-top:1px solid var(--hair);vertical-align:top;line-height:1.3}
+td:first-child{font-weight:700;width:135px}
+td.old{color:var(--dim);width:185px}
+td.new{color:#fff}
+.x{color:var(--dim)}
+.n{display:inline-block;font-size:14px;font-weight:700;background:rgba(218,0,129,.25);color:var(--mag2);border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.col{display:flex;flex-direction:column;gap:18px;min-height:0}
+.list{list-style:none;display:grid;gap:7px}
+.list li{font-size:16.5px;line-height:1.3;padding-left:24px;position:relative;color:var(--mut)}
+.list li::before{content:"";position:absolute;left:2px;top:10px;width:10px;height:10px;border-radius:5px;background:var(--mag)}
+.list b{color:#fff;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:15.5px;border:1px solid var(--hair);border-radius:99px;padding:4px 11px;color:var(--mut)}
+.chip b{color:#fff;font-weight:600}
+.kpi{display:grid;gap:10px}
+.k{border-top:1px solid var(--hair);padding-top:9px}
+.k:first-child{border-top:0;padding-top:0}
+.k .v{font-weight:800;font-size:46px;line-height:1;color:var(--mag2);letter-spacing:-1.5px}
+.k .l{font-size:16.5px;color:var(--mut);margin-top:4px;line-height:1.3}
+.k .l b{color:#fff}
+.bars{display:grid;gap:5px;margin-top:8px}
+.bar{display:grid;grid-template-columns:96px 1fr 34px;gap:10px;align-items:center;font-size:16px;color:var(--mut)}
+.trk{height:12px;background:rgba(255,255,255,.08);border-radius:3px}
+.fill{height:100%;border-radius:0 3px 3px 0;background:rgba(255,233,245,.42)}
+.fill.hot{background:var(--mag)}
+.bar span:last-child{font-weight:700;color:#fff;text-align:right}
+footer{display:grid;grid-template-columns:1fr 620px;gap:22px;margin-top:18px}
+.road{display:flex;gap:12px;align-items:stretch}
+.ph{flex:1;background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:10px 14px}
+.ph small{display:block;color:var(--mag2);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.ph b{display:block;font-size:18px;line-height:1.25;margin-top:3px}
+.fric{background:rgba(255,189,46,.08);border:1px solid rgba(255,189,46,.45);border-radius:14px;padding:10px 16px}
+.fric small{display:block;color:var(--warn);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.fric p{font-size:16px;color:var(--mut);line-height:1.35;margin-top:3px}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="logo">nequi<i>.</i></div>
+      <div class="tag">COE · Cloud Platform · PoC 3 · Resultados</div>
+      <h1>Crossplane <span>CLI 2.5</span> vs 2.2</h1>
+      <div class="sub">¿Construimos, probamos y migramos composiciones más rápido, con menos errores y menos créditos de AI?</div>
+    </div>
+    <div class="verdict">
+      <small>Veredicto</small>
+      <b>Sí, adoptar por fases</b>
+      <p>El valor está en <strong style="color:#fff">probar antes de desplegar</strong>: la AI construye, una compuerta local verifica, el cluster confirma.</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- CLI 2.2 vs 2.5 -->
+    <div class="card">
+      <h2>Funcionalidades · CLI 2.2 vs 2.5</h2>
+      <table>
+        <tr><th>Necesidad</th><th>CLI 2.2</th><th>CLI 2.5</th></tr>
+        <tr><td>Previsualizar</td><td class="old">render</td><td class="new">composition render <b>+ anidado</b>, funciones privadas y estados simulados</td></tr>
+        <tr><td>Validar</td><td class="old">beta validate</td><td class="new">resource validate · salida JSON · recursos built-in</td></tr>
+        <tr><td>Crear XRD</td><td class="old x">a mano</td><td class="new">xrd generate desde SimpleSchema <span class="n">27 → 133 líneas</span></td></tr>
+        <tr><td>Scaffold</td><td class="old x">—</td><td class="new">project init · composition generate</td></tr>
+        <tr><td>Funciones</td><td class="old">YAML inline</td><td class="new">Python / Go / KCL con modelos tipados</td></tr>
+        <tr><td>Dependencias</td><td class="old x">—</td><td class="new">dependency add (esquemas de providers)</td></tr>
+        <tr><td>Empaquetar</td><td class="old">xpkg build manual</td><td class="new">project build · Configuration versionada</td></tr>
+        <tr><td>Probar local</td><td class="old x">kind + helm a mano</td><td class="new">project run: Crossplane en KIND, 1 comando</td></tr>
+        <tr><td>Diagnóstico</td><td class="old">beta trace</td><td class="new">resource trace</td></tr>
+        <tr><td>Cluster</td><td class="old">core v2.3.3 ✓</td><td class="new"><b>core v2.3.3 ✓</b> — sin actualizar el cluster</td></tr>
+      </table>
+    </div>
+
+    <!-- Qué se probó + base -->
+    <div class="col">
+      <div class="card">
+        <h2>Qué se probó</h2>
+        <ul class="list">
+          <li><b>3 escenarios</b>, mismo requerimiento: hoy (YAML + cluster) · CLI 2.2 · CLI 2.5 + compuerta local</li>
+          <li><b>Caso API Service Platform</b>: API REST + /health + KMS + logs cifrados + alarmas · 17 recursos, <b>desplegado en EKS</b> (HTTP 200)</li>
+          <li><b>Caso Lambda</b>: destapó bugs y límites de permisos</li>
+          <li><b>11 defectos</b> inyectados: ¿dónde se detecta cada uno?</li>
+          <li><b>Adopción TF → Crossplane</b>: claim real verificado antes del PR</li>
+          <li><b>Python tipada</b> + Crossplane local (<b>project run</b>)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Base tecnológica</h2>
+        <div class="chips">
+          <span class="chip"><b>EKS</b> eks-terraform-ts-dev</span>
+          <span class="chip"><b>Crossplane</b> core v2.3.3</span>
+          <span class="chip"><b>provider-family-aws</b> v2.5.0</span>
+          <span class="chip"><b>Functions</b> go-templating · auto-ready · findresources</span>
+          <span class="chip"><b>Kyverno</b> 1.12</span>
+          <span class="chip"><b>AWS</b> Sandbox</span>
+          <span class="chip"><b>Local</b> Docker · KIND · WSL</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="card">
+      <h2>Resultados</h2>
+      <div class="kpi">
+        <div class="k">
+          <div class="v">11/11</div>
+          <div class="l">errores detectados <b>antes de tocar el cluster</b></div>
+          <div class="bars">
+            <div class="bar"><span>Hoy</span><div class="trk"></div><span>0</span></div>
+            <div class="bar"><span>CLI 2.2</span><div class="trk"><div class="fill" style="width:54.5%"></div></div><span>6</span></div>
+            <div class="bar"><span>CLI 2.5</span><div class="trk"><div class="fill hot" style="width:100%"></div></div><span>11</span></div>
+          </div>
+        </div>
+        <div class="k"><div class="v">~15 s</div><div class="l">por vuelta de prueba local <b>vs ~160 s</b> en el cluster</div></div>
+        <div class="k"><div class="v">~30 %</div><div class="l">de los créditos de AI frente al flujo actual <b>(estimado)</b></div></div>
+        <div class="k"><div class="v">4</div><div class="l"><b>bugs ocultos</b> en bloques generales que ya usamos</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="road">
+      <div class="ph"><small>Fase 1</small><b>Compuerta local en los repos</b></div>
+      <div class="ph"><small>Fase 2</small><b>Compuerta en CI + todo el catálogo</b></div>
+      <div class="ph"><small>Fase 3</small><b>Bloques como paquete + skill Kiro</b></div>
+      <div class="ph"><small>Fase 4</small><b>Funciones tipadas</b></div>
+    </div>
+    <div class="fric">
+      <small>Lo que cuesta</small>
+      <p>Python no compila en Windows (sí en WSL) · XRD Namespaced por defecto · nombres de funciones distintos al cluster · comandos Beta · Docker obligatorio</p>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
