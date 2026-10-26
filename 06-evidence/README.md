@@ -1,7 +1,7 @@
 # 06 · Evidencias
 
 Pantallazos para la wiki de Azure. Cada evidencia se reproduce desde la raíz del repo con
-`python 06-evidence/replay.py N` (multiplataforma; en Windows usar `.venv/Scripts/python`).
+`python 06-evidence/replay.py N` (multiplataforma).
 Guardar las imágenes en `06-evidence/img/` con el nombre indicado.
 
 | ID | Qué muestra | Cómo reproducir | Imagen |

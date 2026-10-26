@@ -1,6 +1,6 @@
 """Reproduce en pantalla las salidas clave de la PoC para tomar pantallazos (evidencia wiki).
 
-Multiplataforma (Linux/macOS/Windows con Git Bash). Desde la raíz del repo:
+Multiplataforma. Desde la raíz del repo:
 
     python 06-evidence/replay.py 1      # E1 versiones de CLI
     python 06-evidence/replay.py 2      # E2 errores vistos en el cluster

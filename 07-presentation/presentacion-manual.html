@@ -292,7 +292,7 @@ a:focus-visible,.fig:focus-visible{outline:3px solid var(--mag);outline-offset:3
   </div>
   <div class="g g3" style="margin-top:22px">
    <div class="card"><h3>3 errores invisibles hoy</h3><p>Sin tag de costeo, retención de 1 día, campo mal escrito ignorado: se despliegan "bien" y nadie se entera.</p></div>
-   <div class="card"><h3>Errores de convivencia</h3><p>Dos equipos con el mismo endpoint chocan. Hoy aparece cuando llega el segundo equipo.</p></div>
+   <div class="card"><h3>Errores de convivencia</h3><p>Dos equipos que exponen la misma ruta (ej. <code>/health</code>) generan recursos de Crossplane con el mismo nombre y chocan. Hoy aparece cuando llega el segundo equipo.</p></div>
    <div class="card"><h3>Errores de orden</h3><p>Un recurso creado antes que su dependencia. Hoy: minutos de reintentos en AWS.</p></div>
   </div>
  </div>
@@ -368,7 +368,7 @@ a:focus-visible,.fig:focus-visible{outline:3px solid var(--mag);outline-offset:3
    <div class="card"><span class="ic">👤</span><h3>Roles IAM</h3><p>Envía un valor vacío a AWS: no se puede crear un rol sin "boundary".</p></div>
    <div class="card"><span class="ic">📄</span><h3>Log groups</h3><p>Usa un campo que no existe: no se pueden crear log groups nuevos.</p></div>
    <div class="card"><span class="ic">🔌</span><h3>Integraciones</h3><p>No soporta integraciones de prueba (MOCK).</p></div>
-   <div class="card hl"><span class="ic">💥</span><h3>Choque entre equipos</h3><p>Dos APIs con el mismo endpoint en el mismo espacio colisionan.</p></div>
+   <div class="card hl"><span class="ic">💥</span><h3>Choque entre equipos</h3><p>Dos APIs con la misma ruta en el mismo namespace generan recursos con el mismo nombre y colisionan.</p></div>
   </div>
   <p class="foot">Solo se revisaron 5 de 34 bloques generales: vale la pena pasar la compuerta por todo el catálogo.</p>
  </div>
@@ -425,50 +425,62 @@ a:focus-visible,.fig:focus-visible{outline:3px solid var(--mag);outline-offset:3
  </div>
 </section>
 
-<!-- 16 ROLES -->
-<section class="s lila" data-sec="Valor por rol" id="roles">
- <div class="wrap">
-  <span class="tag">No solo para quien crea composiciones</span>
-  <h2>Valor por rol</h2>
-  <div class="g g3">
-   <div class="card"><span class="ic">🧑‍💻</span><h3>Equipos de producto</h3><p>Ven qué recursos AWS crearía su solicitud antes de pedirla.</p></div>
-   <div class="card"><span class="ic">🔎</span><h3>Revisores de PR</h3><p>Revisan un resultado claro, no cientos de líneas de plantilla.</p></div>
-   <div class="card"><span class="ic">🛡️</span><h3>Seguridad y gobierno</h3><p>Estándares que se ejecutan en cada cambio, no un documento.</p></div>
-   <div class="card"><span class="ic">🛠️</span><h3>Plataforma / SRE</h3><p>Árbol completo de recursos y auditoría de los bloques generales.</p></div>
-   <div class="card"><span class="ic">🔁</span><h3>Migración</h3><p>Menos riesgo de recrear o borrar recursos existentes.</p></div>
-   <div class="card hl"><span class="ic">🤖</span><h3>Agentes AI</h3><p>Feedback corto y claro: menos turnos, menos créditos.</p></div>
-  </div>
- </div>
-</section>
-
 <!-- 17 BALANCE -->
 <section class="s" data-sec="Balance" id="balance">
  <div class="wrap">
   <span class="tag">Balance</span>
   <h2>Lo bueno, lo que cuesta y el ojo</h2>
   <div class="g g3" style="align-items:start">
-   <div class="card"><h3 style="color:var(--ok)">✅ Lo bueno</h3><p>• Errores detectados en segundos, sin cluster<br>• Estándares de negocio ejecutables<br>• Sin actualizar el cluster<br>• Encontró bugs reales escondidos<br>• Funciones en Python con autocompletado</p></div>
-   <div class="card"><h3 style="color:var(--warn)">🧩 Lo que cuesta</h3><p>• Funciones Python no compilan en Windows (sí en WSL)<br>• Algunos valores por defecto no calzan con nuestro estándar<br>• Bloques generales deben publicarse como paquete<br>• Docker obligatorio<br>• Comandos en Beta</p></div>
+   <div class="card"><h3 style="color:var(--ok)">✅ Lo bueno</h3><p>• Errores detectados en segundos, sin cluster<br>• Estándares de negocio ejecutables<br>• Sin actualizar el cluster<br>• Encontró bugs reales escondidos</p></div>
+   <div class="card"><h3 style="color:var(--warn)">🧩 Lo que cuesta</h3><p>• La mayoría de comandos nuevos están en Beta: pueden cambiar entre versiones, por eso se fija la versión de la CLI</p></div>
    <div class="card"><h3 style="color:var(--bad)">⚠️ Ojo</h3><p>• La compuerta solo ve lo que cubre: un error no cubierto vuelve al costo de hoy<br>• Permisos reales de AWS solo se ven en el cluster<br>• El cluster sigue siendo la verificación final</p></div>
   </div>
  </div>
 </section>
 
+<!-- 17b LO QUE VIENE: SIMULATE -->
+<section class="s soft" data-sec="Lo que viene" id="simulate">
+ <div class="wrap">
+  <span class="tag o">En camino · aún no disponible en la 2.5.0</span>
+  <h2>Lo que viene: un "terraform plan" para Crossplane</h2>
+  <p class="lead"><code>simulate</code> mostrará qué cambiaría un cambio <b>antes de aplicarlo</b>, frente a lo que ya existe en el cluster y en AWS. Hoy la compuerta dice qué <i>crearía</i> una composición. <code>simulate</code> dirá qué se crea, qué cambia, qué se borra, y si AWS obliga a recrear algo.</p>
+  <div class="g g2" style="margin-bottom:18px">
+   <div class="card"><h3>🧱 project simulate</h3><p><b style="color:var(--txt)">Para quien cambia composiciones o funciones.</b> Renderiza de nuevo todos los recursos que usan esa composición y muestra el impacto en cada uno. Es el que más nos sirve para el catálogo.</p><p style="margin-top:8px"><span class="b wa">en revisión</span></p></div>
+   <div class="card"><h3>📦 resource simulate</h3><p><b style="color:var(--txt)">Para recursos AWS concretos.</b> Muestra qué haría aplicar un recurso o una actualización de versión del provider. Sirve para la migración y para las actualizaciones del provider.</p><p style="margin-top:8px"><span class="b mg">en código · alpha</span></p></div>
+  </div>
+  <div class="flow">
+   <div class="node">Diseño aprobado<small>sep 2026</small></div><div class="arr">→</div>
+   <div class="node">resource simulate<small>código · oct 2026</small></div><div class="arr">→</div>
+   <div class="node off">project simulate<small>en revisión</small></div><div class="arr">→</div>
+   <div class="node off">Versión oficial<small>sin fecha</small></div>
+  </div>
+  <div class="note">Por qué importa: Crossplane <b>no recrea</b> un recurso en AWS. Si un cambio exige recrearlo, el recurso queda trabado hasta que alguien intervenga. <code>simulate</code> lo avisaría antes del PR.</div>
+  <p class="foot">No probado en esta PoC: no existía en la versión evaluada. Fuente: repositorio <code>crossplane/cli</code>, PR 181 (diseño), PR 429 (resource simulate) y PR 436 (project simulate).</p>
+ </div>
+</section>
+
 <!-- DIVISOR -->
 <section class="s div" data-sec="Pasos a seguir" id="d3">
- <div class="wrap"><div class="big">03</div><h2 style="margin-top:-40px">Pasos a seguir</h2><p>Adoptar por partes: primero lo que más valor da con menos esfuerzo.</p></div>
+ <div class="wrap"><div class="big">03</div><h2 style="margin-top:-40px">Pasos a seguir</h2><p>Una propuesta para validar con el equipo.</p></div>
 </section>
 
 <!-- 18 HOJA DE RUTA -->
 <section class="s dark" data-sec="Pasos a seguir" id="ruta">
  <div class="wrap">
-  <span class="tag">Hoja de ruta</span>
-  <h2>Veredicto: sí, por fases</h2>
-  <div class="tl" style="margin-top:12px">
-   <div class="it"><small>FASE 1 · SPRINT ACTUAL</small><b>CLI 2.5 + compuerta local en los repos</b><p>Paso obligatorio antes de cada PR de composiciones. Corregir los 4 bugs encontrados.</p></div>
-   <div class="it"><small>FASE 2 · SIGUIENTE SPRINT</small><b>Compuerta en Azure Pipelines y sobre todo el catálogo</b><p>Paso offline en la skill de migración Terraform → Crossplane.</p></div>
-   <div class="it"><small>FASE 3 · TRIMESTRE</small><b>Bloques generales como paquete versionado + skill de Kiro con compuerta</b><p>Dependencias claras entre repos, autocompletado, menos créditos.</p></div>
-   <div class="it"><small>FASE 4 · EVALUACIÓN</small><b>Funciones tipadas para composiciones grandes</b><p>Cuando el equipo trabaje en WSL / devcontainer o el build se haga en CI.</p></div>
+  <span class="tag">Propuesta</span>
+  <h2>CLI 2.5 + una compuerta que aprende</h2>
+  <p class="lead">Se propone usar la CLI 2.5 con una compuerta local antes del cluster. La compuerta no es fija: <b>cada hallazgo se convierte en una regla nueva</b>, y la próxima vez ese error se detecta en segundos.</p>
+  <div class="flow">
+   <div class="node new">Cambio en una composición<small>persona o AI</small></div><div class="arr">→</div>
+   <div class="node">Compuerta local<small>CLI 2.5 + reglas</small></div><div class="arr">→</div>
+   <div class="node">Cluster confirma<small>verificación final</small></div><div class="arr">→</div>
+   <div class="node">Hallazgo nuevo<small>error, bug o estándar</small></div><div class="arr">→</div>
+   <div class="node new">Nueva regla<small>en la compuerta</small></div><div class="arr">↺</div>
+  </div>
+  <div class="g g3">
+   <div class="card"><h3>Arranca con lo de esta PoC</h3><p>11 reglas del estándar Nequi, prueba entre equipos y los 4 bugs encontrados.</p></div>
+   <div class="card"><h3>Crece con el uso</h3><p>Cada error que llegue al cluster, cada bug o cada estándar nuevo se agrega como regla.</p></div>
+   <div class="card"><h3>Atenta a lo que viene</h3><p><code>simulate</code>, el "plan" que hoy falta, cuando salga en versión oficial.</p></div>
   </div>
  </div>
 </section>

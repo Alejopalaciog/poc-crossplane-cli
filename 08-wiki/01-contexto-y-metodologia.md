@@ -38,7 +38,7 @@ con access logs y alarmas de 5XX y latencia. Compone 3 bloques generales (`XAPIG
 - Cluster compartido `eks-terraform-ts-dev` (core Crossplane v2.3.3, providers AWS v2.5.0), cuenta Sandbox 634614730521.
 - Kyverno con 4 políticas en Enforce: verificadas antes de cada apply; ninguna aplica a los recursos de la PoC.
 - Todo lo creado lleva prefijo `poc-cli`, label `poc.nequi.com/experiment=cli-2.5` y tags estándar.
-- Máquina Windows 11 + Docker Desktop (certificados corporativos vía trust store de Windows) + WSL Ubuntu.
+- Máquina local con Docker (render, build de funciones y Crossplane local en KIND).
 
 ## Cómo se midió
 - `05-measurements/measure.ps1`: cronometra cada paso y guarda la salida completa (`runs/`) y una fila en `results.csv`

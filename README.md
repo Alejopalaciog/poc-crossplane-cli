@@ -25,22 +25,23 @@ típicos (CLI 2.2: 6; hoy: 0 antes del cluster), encontró **4 bugs latentes** e
 | `future/` | Plan (no ejecutado) de skill Kiro con la compuerta |
 
 ## Requisitos para reproducir
-Docker, `tools/crossplane-2.5.0(.exe)` y `tools/crank-2.2.6(.exe)` (no versionados; ver `00-research`), Python 3.11+
-con PyYAML (`python -m venv .venv && .venv/Scripts/pip install pyyaml`), acceso de lectura a ECR para la función
-privada `function-jarvis-findresources`. En Windows, el build de funciones Python requiere WSL.
+Docker, `tools/crossplane-2.5.0` y `tools/crank-2.2.6` (no versionados; ver `00-research`), Python 3.11+
+con PyYAML, acceso de lectura a ECR para la función privada `function-jarvis-findresources`.
 
-## Cómo abrirlo en otro PC
-El repo solo versiona lo necesario (~7 MB). Lo pesado se regenera o descarga (Git Bash, desde la raíz):
+## Cómo abrirlo en otro equipo
+El repo solo versiona lo necesario (~7 MB). Lo pesado se regenera o descarga (desde la raíz):
 
 ```bash
-# 1. CLIs de Crossplane (no versionadas, ~270 MB) — binarios oficiales
+# 1. CLIs de Crossplane (no versionadas) — binarios oficiales
+#    OS_ARCH: darwin_arm64 (Mac Apple Silicon), darwin_amd64 (Mac Intel) o linux_amd64
+OS_ARCH=darwin_arm64
 mkdir -p tools
-curl -sfLo tools/crossplane-2.5.0.exe https://cli.crossplane.io/stable/v2.5.0/bin/windows_amd64/crossplane.exe
-curl -sfLo tools/crank-2.2.6.exe https://releases.crossplane.io/stable/v2.2.6/bin/windows_amd64/crank.exe
-# (Linux/WSL: .../bin/linux_amd64/crossplane → tools/crossplane-2.5.0)
+curl -sfLo tools/crossplane-2.5.0 https://cli.crossplane.io/stable/v2.5.0/bin/$OS_ARCH/crossplane
+curl -sfLo tools/crank-2.2.6 https://releases.crossplane.io/stable/v2.2.6/bin/$OS_ARCH/crank
+chmod +x tools/*
 
 # 2. Entorno Python para scripts de medición, compuerta y evidencias
-python -m venv .venv && .venv/Scripts/pip install pyyaml
+python3 -m venv .venv && .venv/bin/pip install pyyaml
 
 # 3. Presentación interactiva (beatdeck): librerías de Node y build
 cd 07-presentation/beatdeck && npm install && npm run present

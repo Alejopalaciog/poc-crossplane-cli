@@ -15,8 +15,8 @@ Siguiente release del core: v2.5 (nov 2026).
 ## 2. Compatibilidad verificada en esta PoC
 
 ```
-crossplane-2.5.0.exe version   → Client v2.5.0 · Server v2.3.3   ✅
-crank-2.2.6.exe version        → Client v2.2.6 · Server v2.3.3   ✅
+crossplane-2.5.0 version   → Client v2.5.0 · Server v2.3.3   ✅
+crank-2.2.6 version        → Client v2.2.6 · Server v2.3.3   ✅
 ```
 Evidencia: `05-measurements/runs/setup/`.
 
@@ -52,7 +52,7 @@ Evidencia: `05-measurements/runs/setup/`.
 ## 6. Contexto Nequi relevante
 - Core del cluster: v2.3.3 (chart). Providers AWS v2.5.0 (family). Funciones: go-templating, P&T, auto-ready, jarvis-findresources (ECR).
 - ~65 composiciones (34 en `jarvis_aws_xrds`, 31 en `jarvis_platform_xrds`), todas YAML go-templating; ninguna usa render/validate en repo ni CI; sin Configuration packages.
-- Docker Desktop en la máquina de pruebas descarga funciones desde `xpkg.upbound.io` sin configuración adicional (usa el trust store de Windows): ~7–9 s por función.
+- Docker Desktop en la máquina de pruebas descarga funciones desde `xpkg.upbound.io` sin configuración adicional: ~7–9 s por función.
 
 ## Fuentes
 - [Introducing the new Crossplane CLI developer experience (blog)](https://blog.crossplane.io/introducing-the-new-crossplane-cli-developer-experience/)

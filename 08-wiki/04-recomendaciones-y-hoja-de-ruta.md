@@ -3,7 +3,7 @@
 ## Veredicto
 **Sí vale la pena adoptar la CLI 2.5, por partes.** El valor está en **validar antes del cluster** (render, render
 anidado, validate, trace) combinado con una **compuerta local** con reglas de negocio. Las funciones Python tipadas y el
-proyecto completo aportan, pero hoy tienen fricciones (Windows, tiempos de build, nombres) que no justifican migrar
+proyecto completo aportan, pero hoy tienen fricciones (tiempos de build, nombres, comandos Beta) que no justifican migrar
 todo el catálogo de una vez.
 
 ## Qué adoptar ya (bajo esfuerzo, alto valor)
@@ -23,7 +23,7 @@ todo el catálogo de una vez.
 8. **Skill/steering de Kiro** que use la compuerta para autovalidarse (plan en `future/kiro-skill-plan.md`).
 
 ## Qué evaluar más adelante
-9. Funciones Python embebidas: cuando el equipo trabaje en WSL/devcontainer o el build se haga en CI.
+9. Funciones Python embebidas: cuando el build de funciones se haga en CI.
 10. `project run` para pruebas de instalación de paquetes (útil cuando existan Configurations).
 
 ## Hoja de ruta sugerida

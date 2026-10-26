@@ -20,7 +20,6 @@ Acción sugerida: issue/PR en `jarvis_aws_xrds` por cada uno; correr la compuert
 ## C. Fricciones de la CLI 2.5 (lo que cuesta)
 | Fricción | Impacto | Mitigación |
 |---|---|---|
-| Build de funciones Python **falla en Windows** (`Empty module name`) | Equipos en Windows no pueden usar funciones Python embebidas | WSL / devcontainer / build en CI Linux |
 | `render` compila funciones embebidas con límite ~60 s | Python (apt+pip) no alcanza → render falla | Reutilizar imagen de `project build`; o preferir go-templating |
 | `xrd generate` crea `scope: Namespaced` por defecto | La plataforma compone XRs *Cluster*: no funciona sin editar | Ajuste manual / plantilla del equipo |
 | `composition generate`/dependencias nombran funciones `crossplane-contrib-function-*` | No coincide con los nombres instalados en el cluster (`function-*`) | Convención de nombres o instalar vía Configuration |

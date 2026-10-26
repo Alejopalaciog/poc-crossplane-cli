@@ -130,7 +130,7 @@ Evidencia: E4.
 | `xrd generate` (SimpleSchema) | 27 líneas simples → 133 líneas de OpenAPI | ✅ Pero lo genera *Namespaced*; hubo que pasarlo a *Cluster* a mano |
 | `composition generate` | Esqueleto de composición | ✅ Aporta poco (solo trae `auto-ready`); nombres de funciones distintos a los del cluster |
 | `dependency add` | Trae esquemas de providers y genera modelos tipados | ✅ No acepta archivos locales → los XRDs generales deben publicarse como paquete |
-| `function generate` (Python) | Función Python con modelos tipados (autocompletado, validación) | ✅ Equivalente a go-templating; **no compila en Windows** (sí en WSL/Linux); el render corta a los 60 s si debe compilarla |
+| `function generate` (Python) | Función Python con modelos tipados (autocompletado, validación) | ✅ Equivalente a go-templating; el build tarda (~3 min la primera vez) y el render corta a los 60 s si debe compilarla |
 | `project build` | Empaqueta todo como Configuration versionado | ✅ En Linux, ~3 min |
 | `project run` | Crossplane local en KIND con el paquete instalado | ✅ ~4 min; `--crossplane-version` falla con prefijo "v" |
 | `composition render` / `resource validate` / `resource trace` | Previsualizar, validar, ver el árbol | ✅ **Es lo de más valor** |

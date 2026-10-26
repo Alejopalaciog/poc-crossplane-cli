@@ -68,7 +68,7 @@ El feedback del cluster (eventos/describe) pesa 580–1.827 tokens por lectura; 
 
 ## Variante Python (función embebida con modelos tipados)
 - Equivalente funcional a go-templating: misma compuerta, 8 recursos, 11/11 reglas.
-- Build: **falla en Windows**, funciona en Linux/WSL (~3 min la primera vez). `render` no la puede compilar en <60 s:
+- Build: ~3 min la primera vez. `render` no la puede compilar en <60 s:
   se resolvió reutilizando la imagen de `project build`.
 - Corre en un Crossplane real (`project run` en KIND): compone los XRs hijos.
 
