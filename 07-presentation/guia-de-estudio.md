@@ -99,7 +99,13 @@ con el equipo, no una decisión tomada.
 
 ## 3. Slide por slide
 
-### Slide 1 · Portada: "Crossplane CLI 2.5 en Nequi"
+La presentación tiene 7 slides. Bajo cada una está el detalle de los temas que agrupa: no todo se dice en voz alta, pero sirve para responder preguntas.
+
+### Slide 1 · Portada y problema: "Crossplane CLI 2.5 en Nequi"
+
+**Qué muestra.** Título, el problema de hoy (para saber si una composición funciona hay que desplegarla) y la pregunta de la PoC. Reúne lo que antes eran portada, contexto y las cuatro preguntas. El flujo de hoy incluye esperar la aprobación del PR y que Argo aplique el cambio.
+
+#### Portada: "Crossplane CLI 2.5 en Nequi"
 
 **Qué dice.** Es la tercera PoC del COE Cloud Platform. Pregunta si construimos y migramos composiciones más rápido,
 con menos errores y menos créditos de AI. Muestra tres cifras: 11/11, ~30 % y 4 bugs.
@@ -117,7 +123,7 @@ con menos errores y menos créditos de AI. Muestra tres cifras: 11/11, ~30 % y 4
 - *¿Por qué "PoC 3"?* Es la tercera del COE sobre Crossplane, con la misma metodología: medir antes y después en el
   entorno real.
 
-### Slide 2 · Contexto: "Hoy, para saber si algo funciona, hay que desplegarlo"
+#### Contexto: "Hoy, para saber si algo funciona, hay que desplegarlo"
 
 **Qué dice.** Migramos de Terraform a Crossplane con unas 65 composiciones hechas en gran parte con AI. El ciclo
 actual es: pedir → la AI escribe → aplicar al cluster → esperar → leer eventos → repetir. Tiene tres dolores: es
@@ -136,18 +142,25 @@ lento, es caro en créditos y deja errores invisibles.
 - *¿De dónde salen los 2–3 minutos?* De lo medido: 127, 144 y 206 s por vuelta. Es el tiempo de reconciliación más
   las llamadas a AWS.
 
-### Slide 3 · Cuatro preguntas
+#### Cuatro preguntas
 
 **Qué dice.** La PoC responde cuatro cosas: ¿menos errores?, ¿más rápido y barato?, ¿ayuda a la migración? y ¿qué
 cuesta?
 
-**Lo que hay detrás.** La cuarta pregunta es la que da credibilidad: se midieron también las fricciones (slide 17).
+**Lo que hay detrás.** La cuarta pregunta es la que da credibilidad: se midieron también las fricciones (slide 6).
 
 **Preguntas probables.**
 - *¿Y la calidad o la alineación con el negocio de lo que construye la AI?* Está cubierta por el contrato de negocio
-  (slide 7): el estándar Nequi convertido en reglas que se ejecutan.
+  (slide 3): el estándar Nequi convertido en reglas que se ejecutan.
 
-### Slide 4 · Qué trae la CLI 2.5: "Un taller local para composiciones"
+### Slide 2 · Lo que nos sirvió de la CLI 2.5: "Cuatro funciones para probar en la máquina"
+
+**Qué muestra.** Solo las funciones que probamos y en las que vimos valor, porque son la base de la compuerta: previsualizar (`composition render`, incluidos bloques generales y funciones privadas), simular el despliegue (render con estados simulados), validar (`resource validate` contra los esquemas de los providers) y que funciona sin actualizar el cluster (CLI independiente desde la v2.4, compatible con core v2.3).
+
+**Preguntas probables.**
+- *¿Y el resto de comandos (`xrd generate`, `project build/run`, funciones en Python)?* Se probaron. `xrd generate` ahorra trabajo (27 → 133 líneas) pero no cambia la detección de errores. Las funciones tipadas y el proyecto completo tienen fricciones que no compensan reescribir 65 composiciones. Por eso no están en la slide.
+
+#### Qué trae la CLI 2.5: "Un taller local para composiciones"
 
 **Qué dice.** Previsualizar, validar, generar y empaquetar. Desde la v2.4 funciona con nuestro core v2.3: no hay que
 actualizar el cluster.
@@ -174,9 +187,11 @@ actualizar el cluster.
   que ya podíamos tener sin cambiar nada. La 2.4 es casi igual a la 2.5.
 - *¿La CLI necesita acceso al cluster?* `render` y `validate` no. `trace` sí, porque lee el cluster.
 
-### Divisor 01 · La prueba
+### Slide 3 · Qué se probó: "Una compuerta local antes del cluster"
 
-### Slide 5 · La prueba: "Necesito exponer una API con los estándares Nequi"
+**Qué muestra.** El requerimiento de prueba, los tres escenarios, el flujo de la compuerta y la división entre lo que aporta la CLI y lo que aportamos nosotros (las 11 reglas del estándar).
+
+#### La prueba: "Necesito exponer una API con los estándares Nequi"
 
 **Qué dice.** La AI construye una composición de plataforma que reutiliza bloques generales: API REST, `/health`,
 llave KMS, logs cifrados y alarmas. Son 17 recursos y se probaron tres escenarios.
@@ -203,7 +218,7 @@ llave KMS, logs cifrados y alarmas. Son 17 recursos y se probaron tres escenario
 - *¿Por qué no se probó con una composición existente?* Sí se tocaron 5 bloques existentes; la composición de
   plataforma es nueva para poder medir el ciclo completo de construcción.
 
-### Slide 6 · Una compuerta local antes del cluster
+#### Una compuerta local antes del cluster
 
 **Qué dice.** En unos 20 segundos y sin AWS, la compuerta simula el despliegue, valida contra bloques y esquemas,
 revisa las reglas de negocio y prueba dos equipos a la vez. Solo después se va al cluster. Aclara qué aporta la CLI y
@@ -237,7 +252,7 @@ qué aportamos nosotros.
 - *¿20, 15 o 30 segundos?* 15 s en caliente, 15–30 s con todas las pruebas y 100 s la primera vez. "~20 s" es el
   número redondo.
 
-### Slide 7 · El estándar Nequi, convertido en reglas que se ejecutan
+#### El estándar Nequi, convertido en reglas que se ejecutan
 
 **Qué dice.** Nadie tiene que leer 400 líneas de plantilla: la compuerta responde si se cumplen la identidad, la
 seguridad, el cumplimiento, la observabilidad y los guardarraíles. 11/11 reglas.
@@ -258,7 +273,7 @@ seguridad, el cumplimiento, la observabilidad y los guardarraíles. 11/11 reglas
 | API-09 | Stage con access logs hacia el log group de la plataforma |
 | API-10 | Sin referencias rotas y con `managementPolicies` que permitan crear |
 
-- **Cuidado: "11/11 reglas" (esta slide) no es lo mismo que "11/11 errores" (slide 8).** Que haya 11 de cada uno es
+- **Cuidado: "11/11 reglas" (esta slide) no es lo mismo que "11/11 errores" (slide 4).** Que haya 11 de cada uno es
   coincidencia. Aquí son las reglas que la composición final cumple; allá, los errores inyectados que se detectaron.
 
 **Preguntas probables.**
@@ -271,9 +286,11 @@ seguridad, el cumplimiento, la observabilidad y los guardarraíles. 11/11 reglas
 - *¿Y las reglas que no pusimos?* El contrato solo verifica lo que se le pide. Ejemplo real: la llave KMS no recibió
   los tags `owner` y `poc` porque nadie lo exigió.
 
-### Divisor 02 · Resultados
+### Slide 4 · Resultados: "Menos errores, más rápido, menos créditos"
 
-### Slide 8 · Errores típicos detectados antes de tocar el cluster
+**Qué muestra.** Tres tarjetas: errores antes del cluster (0 / 6 / 11), segundos por vuelta (~160 vs ~15) y créditos de AI (100 / 77 / 30 %), más la advertencia del 101 %. La matriz, la evidencia y las capturas de AWS ya no son slides: quedan aquí como respaldo si las piden.
+
+#### Errores típicos detectados antes de tocar el cluster
 
 **Qué dice.** Se inyectaron 11 errores, uno a uno. Hoy se detectan 0 antes del cluster, con la 2.2 se detectan 6 y
 con la 2.5 + compuerta se detectan 11. Hay tres grupos de errores: invisibles, de convivencia y de orden.
@@ -303,7 +320,7 @@ con la 2.5 + compuerta se detectan 11. Hay tres grupos de errores: invisibles, d
   - Si dos equipos exponen `/health` en el mismo namespace, los dos intentan crear un objeto con el mismo nombre. El
     segundo falla con "Only one reference can have Controller set to true".
 
-### Slide 9 · ¿Dónde se descubre cada error? (matriz)
+#### ¿Dónde se descubre cada error? (matriz)
 
 | # | Error | Hoy | CLI 2.2 | 2.5 + compuerta: con qué |
 |---|---|---|---|---|
@@ -327,7 +344,7 @@ con la 2.5 + compuerta se detectan 11. Hay tres grupos de errores: invisibles, d
 - *¿Cuánto tarda cada detección?* En la matriz, entre 30 y 112 s por defecto, porque cada uno corrió la compuerta
   completa en frío. En el trabajo diario, con contenedores calientes, son unos 15 s.
 
-### Slide 10 · Cada vuelta de prueba: de minutos a segundos
+#### Cada vuelta de prueba: de minutos a segundos
 
 **Qué dice.** En el cluster una vuelta toma ~160 s; con la compuerta local, ~15 s. El caso completo pasa de ~14 min a
 ~5–7 min.
@@ -348,7 +365,7 @@ con la 2.5 + compuerta se detectan 11. Hay tres grupos de errores: invisibles, d
 - *¿Por qué la primera vez tarda 100 s?* Descarga las imágenes de las funciones (unos 7–9 s cada una) y arranca los
   contenedores.
 
-### Slide 11 · Lo caro no es escribir: es esperar al cluster
+#### Lo caro no es escribir: es esperar al cluster
 
 **Qué dice.** Créditos relativos: 100 %, 77 % y ~30 %; turnos: 28, 22 y 11. Un error escapado devuelve el costo a
 ~100 %.
@@ -376,7 +393,44 @@ con la 2.5 + compuerta se detectan 11. Hay tres grupos de errores: invisibles, d
   cluster y se volvió al costo de siempre. La lección es que el ahorro existe solo si la compuerta cubre el tipo de
   error.
 
-### Slide 12 · 4 bugs ocultos en bloques que ya usamos
+#### Evidencia: la misma compuerta, antes y después
+
+**Qué dice.** Hay dos pantallazos. La compuerta rechaza la composición "antes" por colisión y aprueba "después" en
+~29 s. La matriz muestra 6/11 contra 11/11.
+
+**Lo que hay detrás.**
+- Todo es reproducible con `python 06-evidence/replay.py N`: el paso 5 es la compuerta y el 8 es la matriz.
+- El índice está en `06-evidence/README.md` (E1–E11).
+
+**Preguntas probables.**
+- *¿Lo puedo correr yo?* Sí. Necesitas Docker, la CLI en `tools/`, Python con PyYAML y login de lectura a ECR. El
+  README explica cómo armarlo en otro PC.
+
+#### Desplegado en EKS y AWS: la API responde
+
+**Qué dice.** 17 recursos Ready, `/health` responde HTTP 200, access logs cifrados, retención por ambiente, alarmas y
+tags estándar.
+
+**Lo que hay detrás.**
+- `resource trace` muestra el árbol Ready.
+- La API se llama `apigw-jarvis-co-cbopoccli2-dev` y respondió en ~0,3 s.
+- El log group `/aws/apigateway/access-jarvis-co-cbopoccli2-dev` tiene 14 días de retención y KMS propia.
+- Alarmas: `-5xx` y `-latency`, en estado OK.
+- Tags: `serviceid=NEQ0169`, `capacity=jarvis`, `country=co`, `env=dev`, `deployment=jarvis`.
+- Cuenta Sandbox 634614730521, región us-east-1.
+
+**Preguntas probables.**
+- *¿Sigue desplegado?* No. La limpieza se hizo el 19 de octubre, con tu aprobación: XRs, composiciones y XRDs
+  `poc-cli*` en cascada. Las 3 llaves KMS quedaron en borrado programado, que AWS exige; sus fechas eran 24 y 26 de
+  octubre. El cluster quedó en su línea base: 21 XRDs y la adopción `adopt-kms-cbo-ts-dev` Ready.
+- *¿Por qué una integración MOCK y no un backend real?* Para probar el patrón sin depender de un servicio y porque no
+  hay permisos de Lambda.
+
+### Slide 5 · Hallazgos: "Bugs ocultos y una migración más segura"
+
+**Qué muestra.** Los 4 bugs en bloques generales y el paso nuevo de verificación antes del PR en la adopción Terraform → Crossplane.
+
+#### 4 bugs ocultos en bloques que ya usamos
 
 | # | Bloque | Bug | Efecto | Detecta |
 |---|---|---|---|---|
@@ -401,7 +455,7 @@ con la 2.5 + compuerta se detectan 11. Hay tres grupos de errores: invisibles, d
     Crossplane, y se arregla en una línea.
   - **Log groups**: el bloque usa `forProvider.name`, un campo que no existe en el esquema del provider. `validate` lo
     marca directamente.
-  - **Choque**: es el caso de nombres explicado en la slide 8.
+  - **Choque**: es el caso de nombres explicado en la slide 4.
 - *¿Si están en uso, por qué nadie los vio?* Porque nadie había recorrido esos caminos: crear un rol sin boundary,
   crear un log group nuevo con ese bloque, una integración MOCK o dos APIs con `/health` en el mismo namespace.
 - *¿Afectan producción?* Solo si alguien usa esos caminos. No se revisó qué composiciones de producción los usan; es
@@ -414,40 +468,7 @@ con la 2.5 + compuerta se detectan 11. Hay tres grupos de errores: invisibles, d
 - *¿La CLI 2.2 los detectaba?* La tabla de resultados registra 1 de 4 con la 2.2. El render anidado y la prueba
   multi-instancia son los que destapan el resto.
 
-### Slide 13 · Evidencia: la misma compuerta, antes y después
-
-**Qué dice.** Hay dos pantallazos. La compuerta rechaza la composición "antes" por colisión y aprueba "después" en
-~29 s. La matriz muestra 6/11 contra 11/11.
-
-**Lo que hay detrás.**
-- Todo es reproducible con `python 06-evidence/replay.py N`: el paso 5 es la compuerta y el 8 es la matriz.
-- El índice está en `06-evidence/README.md` (E1–E11).
-
-**Preguntas probables.**
-- *¿Lo puedo correr yo?* Sí. Necesitas Docker, la CLI en `tools/`, Python con PyYAML y login de lectura a ECR. El
-  README explica cómo armarlo en otro PC.
-
-### Slide 14 · Desplegado en EKS y AWS: la API responde
-
-**Qué dice.** 17 recursos Ready, `/health` responde HTTP 200, access logs cifrados, retención por ambiente, alarmas y
-tags estándar.
-
-**Lo que hay detrás.**
-- `resource trace` muestra el árbol Ready.
-- La API se llama `apigw-jarvis-co-cbopoccli2-dev` y respondió en ~0,3 s.
-- El log group `/aws/apigateway/access-jarvis-co-cbopoccli2-dev` tiene 14 días de retención y KMS propia.
-- Alarmas: `-5xx` y `-latency`, en estado OK.
-- Tags: `serviceid=NEQ0169`, `capacity=jarvis`, `country=co`, `env=dev`, `deployment=jarvis`.
-- Cuenta Sandbox 634614730521, región us-east-1.
-
-**Preguntas probables.**
-- *¿Sigue desplegado?* No. La limpieza se hizo el 19 de octubre, con tu aprobación: XRs, composiciones y XRDs
-  `poc-cli*` en cascada. Las 3 llaves KMS quedaron en borrado programado, que AWS exige; sus fechas eran 24 y 26 de
-  octubre. El cluster quedó en su línea base: 21 XRDs y la adopción `adopt-kms-cbo-ts-dev` Ready.
-- *¿Por qué una integración MOCK y no un backend real?* Para probar el patrón sin depender de un servicio y porque no
-  hay permisos de Lambda.
-
-### Slide 15 · Migración: "Evita el error más caro: crear en vez de adoptar"
+#### Migración: "Evita el error más caro: crear en vez de adoptar"
 
 **Qué dice.** La skill de adopción trabaja después de desplegar; la CLI agrega un paso offline antes del PR. El claim
 real da 10/10; con una línea olvidada da 6/10 y crearía una llave nueva con permiso de borrar.
@@ -475,7 +496,11 @@ real da 10/10; con una línea olvidada da 6/10 y crearía una llave nueva con pe
 - *¿Por qué es "el error más caro"?* Porque crea recursos duplicados en producción y, con permiso de borrar, puede
   terminar eliminando el recurso real.
 
-### Slide 16 · Balance: lo bueno, lo que cuesta y el ojo
+### Slide 6 · Balance: "Lo que cuesta y lo que viene"
+
+**Qué muestra.** Comandos en Beta, el ojo (la compuerta solo ve lo que cubre; el cluster sigue siendo la verificación final) y `simulate` como lo que viene.
+
+#### Balance: lo bueno, lo que cuesta y el ojo
 
 **Lo bueno.** Detecta errores en segundos, convierte los estándares en reglas ejecutables, no hay que actualizar el
 cluster y encontró bugs reales.
@@ -503,7 +528,7 @@ sigue siendo la verificación final.
 - *¿Por qué no Go o KCL?* No se probaron. Python fue la opción elegida para la variante tipada; Go y KCL quedan
   abiertos.
 
-### Slide 17 · Lo que viene: `simulate` ("terraform plan" para Crossplane)
+#### Lo que viene: `simulate` ("terraform plan" para Crossplane)
 
 **Qué dice.** `simulate` mostrará qué cambiaría un cambio frente a lo que ya existe, en el cluster y en AWS. Hay dos
 comandos y ninguno está en la 2.5.0.
@@ -536,9 +561,11 @@ comandos y ninguno está en la 2.5.0.
 - *¿Se podría usar `crossplane-diff` hoy?* Sí, es una herramienta comunitaria que existe hoy y solo lee el cluster. No
   se evaluó en esta PoC; es un buen candidato a probar mientras sale `simulate`.
 
-### Divisor 03 · Pasos a seguir
+### Slide 7 · Propuesta: "CLI 2.5 + una compuerta que aprende"
 
-### Slide 18 · Propuesta: "CLI 2.5 + una compuerta que aprende"
+**Qué muestra.** La propuesta con el ciclo que aprende y las tres cifras de cierre.
+
+#### Propuesta: "CLI 2.5 + una compuerta que aprende"
 
 **Qué dice.** Se propone, no se decide, usar la CLI 2.5 con una compuerta local antes del cluster. La compuerta no es
 fija: crece con cada hallazgo. El ciclo es: cambio → compuerta → el cluster confirma → hallazgo nuevo → nueva regla → ↺.
@@ -565,7 +592,7 @@ fija: crece con cada hallazgo. El ciclo es: cambio → compuerta → el cluster 
 - *¿Por qué no adoptar todo (funciones tipadas, proyecto completo) de una vez?* Porque esas partes tienen fricciones
   que no compensan reescribir 65 composiciones. La compuerta funciona sobre las composiciones go-templating actuales.
 
-### Slide 19 · Cierre
+#### Cierre
 
 "Probar antes de desplegar: la AI construye, la compuerta verifica el estándar en segundos y el cluster solo
 confirma." Con las tres cifras: 11/11, ~15 s y ~30 %.
@@ -578,7 +605,7 @@ confirma." Con las tres cifras: 11/11, ~15 s y ~30 %.
 - **¿Usaron `crossplane simulate`, que es como un `terraform plan`?** No existe en la CLI 2.5.0, ni siquiera con los
   comandos alpha habilitados (se verificó en el binario). Está diseñado (PR 181) y `resource simulate` ya tiene código
   en `main` (PR 429), pero no hay versión oficial que lo traiga. Lo más cercano que usamos es el render con recursos
-  observados, que dice qué se crearía pero no compara contra lo que existe. Ver slide 17.
+  observados, que dice qué se crearía pero no compara contra lo que existe. Ver slide 6.
 - **¿Qué es exactamente la compuerta?**
   - Es un script de Python (`05-measurements/local_gate.py`) que llama a la CLI 2.5 y a nuestros chequeos.
   - Analiza el **YAML que produce el render**, es decir, exactamente los recursos que se enviarían al cluster.
@@ -619,6 +646,29 @@ confirma." Con las tres cifras: 11/11, ~15 s y ~30 %.
   resultado" o "corrijo el YAML". No son los mensajes de la persona: una sola petición puede generar decenas de turnos
   internos. En cada turno el modelo vuelve a procesar todo el contexto acumulado, y eso es lo que consume créditos.
   Por eso esperar al cluster es caro: cada consulta de "¿ya terminó?" es un turno completo.
+
+- **¿Los ~160 s incluyen el PR y Argo?** No. Es solo el tiempo de Crossplane y AWS, aplicando directo con kubectl
+  (127, 144 y 206 s medidos). En el flujo real cada vuelta suma la aprobación del PR (depende del equipo) y la espera
+  de Argo (por defecto consulta el repo cada ~3 min si no hay webhook). Hoy fueron 3 vueltas: son 3 veces esas
+  esperas. Con la compuerta los errores se corrigen antes del PR, así que en el mejor caso es 1 sola vuelta. La
+  diferencia real es mayor que la de la slide: la cifra de la slide es conservadora.
+- **¿Cuántos créditos de Kiro gastaría hoy, sin CLI?** El modelo estima tokens, no créditos: ~760 mil tokens
+  procesados en 28 turnos (vs ~230 mil y 11 turnos con la compuerta). Kiro no publica cuántos tokens equivalen a un
+  crédito: cobra por "unidad de trabajo" multiplicada por el modelo (Opus 5.5 = 2,0x). Por eso la PoC da cifras
+  relativas (100 % / 30 %) y no créditos absolutos. Si piden el número, la forma honesta es correr la misma tarea una
+  vez en Kiro con Opus 5.5 y leer los créditos de la sesión. El esfuerzo (medium) cambia los tokens de razonamiento,
+  que el modelo no separa.
+- **¿Los ~4 s de la adopción son la compuerta?** No la compuerta completa. Es un solo render del claim (una llave
+  KMS y su alias) + las reglas de adopción AD-01..05. No hace render anidado, ni pasadas de simulación, ni
+  multi-instancia, ni validación de toda la plataforma: por eso tarda 4 s y la compuerta 15–30 s.
+- **¿La propuesta es solo para cambios o también para composiciones nuevas?** Para ambas. El valor más frecuente
+  está en los cambios (es lo que más pasa y donde un error rompe algo que ya está desplegado), pero una composición
+  nueva pasa por la misma compuerta. La prueba de la PoC fue justamente una composición nueva.
+- **¿Las reglas de negocio son los controles de Kyverno?** No. Las 4 políticas de Kyverno en Enforce actúan en el
+  cluster al aplicar, recurso por recurso. Las reglas de la compuerta son nuestras (Python) y corren antes, sobre el
+  render completo, y miran relaciones entre recursos (por ejemplo, que el stage mande logs al log group de la
+  plataforma). Pueden convivir: si una política de Kyverno se puede revisar en el render, puede volverse regla de la
+  compuerta para detectarla antes.
 
 ### Metodología
 - **¿Cuántas corridas hicieron?** Una por escenario, en 1–2 días. No hay promedios ni varianza. La diferencia es de
@@ -704,7 +754,7 @@ confirma." Con las tres cifras: 11/11, ~15 s y ~30 %.
 
 | Lo que alguien puede notar | Explicación |
 |---|---|
-| "~20 s" (slide 6), "~15 s" (slide 10), "~29 s" (evidencia), 30–112 s (matriz) | 15 s es en caliente; 15–30 s con todas las pruebas; ~29 s la demo antes y después; la matriz corrió cada defecto en frío. La primera vez son 100 s. |
+| "~20 s" (compuerta), "~15 s" (slide 4), "~29 s" (evidencia), 30–112 s (matriz) | 15 s es en caliente; 15–30 s con todas las pruebas; ~29 s la demo antes y después; la matriz corrió cada defecto en frío. La primera vez son 100 s. |
 | "~14 min" en la slide y "~12 min" en la wiki | 12 min hasta Ready; 14 hasta que la API responde, con el diagnóstico. |
 | "~5–7 min" | Estimado con la compuerta completa. La corrida real midió ~12 min porque la colisión se escapó. |
 | 4 bugs en la slide, 5 en la wiki | El 5.º es un default sorpresivo (`Observe`), no un bug. |

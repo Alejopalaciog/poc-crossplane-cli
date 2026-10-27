@@ -18,7 +18,7 @@ típicos (CLI 2.2: 6; hoy: 0 antes del cluster), encontró **4 bugs latentes** e
 | `02-before-1-yaml/` | Antes-1: composición escrita a mano (casos Lambda y API) |
 | `03-before-2-cli-2.2/` | Antes-2: render/validate con CLI 2.2 |
 | `04-after-cli-2.5/` | Después: proyecto CLI 2.5 (go-templating y Python), auditoría de bloques generales, demo de adopción |
-| `05-measurements/` | Scripts de medición, compuerta, contratos, defectos, créditos y `results.csv` |
+| `05-measurements/` | Scripts de medición, compuerta, contratos, defectos, créditos y `results.csv`. Cómo usar y ampliar la compuerta: [`GUIA-COMPUERTA.md`](05-measurements/GUIA-COMPUERTA.md) |
 | `06-evidence/` | Índice de evidencias y `replay.py` para reproducirlas |
 | `07-presentation/` | Presentación ejecutiva en dos versiones: `presentacion-manual.html` (HTML autocontenido, scroll) y `beatdeck/` (interactiva por beats: `npm install && npm run present`) |
 | `08-wiki/` | Documentación técnica para la wiki de Azure |

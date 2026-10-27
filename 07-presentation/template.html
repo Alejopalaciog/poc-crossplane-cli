@@ -119,6 +119,8 @@ table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;back
 .dark .hb .val{color:#fff}
 .dark .hb .lab small{color:#d9bfd6}
 .hb .row:hover .fill{filter:brightness(1.1)}
+.hb.sm .row{grid-template-columns:80px 1fr 62px;margin:8px 0}.hb.sm .trk{height:16px}.hb.sm .val{font-size:16px}
+.hb.sm+p{margin-top:10px}
 .mx td,.mx th{font-size:13px}
 .mx td:nth-child(n+3),.mx th:nth-child(n+3){text-align:center}
 .mx .k{font-weight:400;color:var(--mut);font-size:12px;display:block}
@@ -131,371 +133,154 @@ a:focus-visible,.fig:focus-visible{outline:3px solid var(--mag);outline-offset:3
 </style>
 </head>
 <body>
-<div class="bar"><span class="logo">nequi<i>.</i></span><span class="sec" id="secname">Crossplane CLI 2.5</span></div>
+<div class="bar"><span class="logo">Nequi<i>.</i></span><span class="sec" id="secname">Crossplane CLI 2.5</span></div>
 <div class="prog" id="prog"></div>
 <nav class="dots" id="dots" aria-label="Navegación"></nav>
 <div id="lb" role="dialog" aria-label="Imagen ampliada"><img alt=""></div>
 
-<!-- 1 PORTADA -->
+<!-- 1 PORTADA + PROBLEMA -->
 <section class="s dark" data-sec="Portada" id="portada">
- <div class="wrap hero-grid">
-  <div>
-   <span class="tag">COE · Cloud Platform · PoC 3</span>
-   <h1>Crossplane<br><span class="mag">CLI 2.5</span> en Nequi</h1>
-   <p class="lead" style="margin-top:22px">¿Construimos y migramos composiciones más rápido, con menos errores y menos créditos de AI? Lo probamos en EKS y AWS reales.</p>
-   <div class="pill-row"><span class="b mg">Antes vs. después, medido</span><span class="b mg">AI construye · persona verifica</span><span class="b mg">Migración Terraform → Crossplane</span></div>
-  </div>
-  <div class="card" style="text-align:center;padding:34px">
-   <div class="stat"><b>11/11</b><span>errores típicos detectados antes de tocar el cluster (hoy: 0)</span></div>
-   <hr style="border:0;border-top:1px solid rgba(255,255,255,.15);margin:18px 0">
-   <div class="stat"><b>~30 %</b><span>de los créditos de AI frente al flujo actual*</span></div>
-   <hr style="border:0;border-top:1px solid rgba(255,255,255,.15);margin:18px 0">
-   <div class="stat"><b>4</b><span>bugs ocultos encontrados en bloques que ya usamos</span></div>
-   <p class="foot">* estimado con datos medidos, cuando la validación local cubre el error</p>
-  </div>
- </div>
-</section>
-
-<!-- 2 CONTEXTO -->
-<section class="s lila" data-sec="Contexto" id="contexto">
  <div class="wrap">
-  <span class="tag">Contexto</span>
-  <h2>Hoy, para saber si algo funciona, hay que desplegarlo</h2>
-  <p class="lead">Estamos migrando de Terraform a Crossplane con ~65 composiciones, construidas en gran parte con AI. No hay forma de probarlas sin aplicarlas al cluster.</p>
+  <span class="tag">COE · Cloud Platform · PoC 3</span>
+  <h1>Crossplane<br><span class="mag">CLI 2.5</span> en Nequi</h1>
+  <p class="lead" style="margin-top:22px">Estamos migrando de Terraform a Crossplane con ~65 composiciones. Hoy, para saber si una composición funciona, <b style="color:#fff">hay que desplegarla</b>. ¿La CLI 2.5 nos deja probar antes, con menos errores, menos tiempo y menos créditos de AI?</p>
   <div class="flow">
-   <div class="node">Persona pide<small>"necesito una API"</small></div><div class="arr">→</div>
-   <div class="node">AI escribe<small>cientos de líneas YAML</small></div><div class="arr">→</div>
-   <div class="node">Aplicar al cluster<small>compartido</small></div><div class="arr">→</div>
+   <div class="node">Persona o AI escribe<small>cientos de líneas YAML</small></div><div class="arr">→</div>
+   <div class="node">Esperar el PR<small>aprobación de un par</small></div><div class="arr">→</div>
+   <div class="node">Argo aplica<small>al consultar el repo</small></div><div class="arr">→</div>
    <div class="node">Esperar 2–3 min<small>Crossplane + AWS</small></div><div class="arr">→</div>
    <div class="node off">Leer eventos<small>y adivinar</small></div><div class="arr">↺</div>
   </div>
-  <div class="g g3">
-   <div class="card"><span class="ic">⏱️</span><h3>Lento</h3><p>Cada vuelta de prueba toma minutos y ocupa el cluster compartido.</p></div>
-   <div class="card"><span class="ic">💸</span><h3>Caro en créditos</h3><p>La AI gasta turnos esperando y leyendo eventos largos del cluster.</p></div>
-   <div class="card"><span class="ic">🙈</span><h3>Errores invisibles</h3><p>Algunos errores no fallan: se despliega "bien" pero sin tags, con mala retención o con campos ignorados.</p></div>
-  </div>
+  <div class="pill-row"><span class="b mg">Probado en EKS y AWS reales</span><span class="b mg">Antes vs. después, medido</span><span class="b mg">Incluye migración Terraform → Crossplane</span></div>
  </div>
 </section>
 
-<!-- 3 QUE BUSCAMOS -->
-<section class="s dark" data-sec="Qué buscamos" id="buscamos">
- <div class="wrap">
-  <span class="tag">Qué buscamos</span>
-  <h2>Cuatro preguntas</h2>
-  <p class="lead">La CLI 2.5 promete un ciclo nuevo: previsualizar, validar y probar en la máquina antes de desplegar. ¿Es cierto para nosotros?</p>
-  <div class="g g2">
-   <div class="card hl"><span class="ic">🎯</span><h3>¿Menos errores?</h3><p>¿Detecta antes del cluster lo que hoy descubrimos tarde?</p></div>
-   <div class="card hl" style="background:#8f0a73;border-color:#8f0a73"><span class="ic">⚡</span><h3>¿Más rápido y más barato?</h3><p>¿Menos tiempo por vuelta y menos créditos de AI?</p></div>
-   <div class="card"><span class="ic">🔁</span><h3>¿Ayuda a la migración?</h3><p>¿Le aporta a nuestra skill de adopción Terraform → Crossplane?</p></div>
-   <div class="card"><span class="ic">⚖️</span><h3>¿Qué cuesta?</h3><p>Fricciones, riesgos y trabajo extra: también se miden.</p></div>
-  </div>
- </div>
-</section>
-
-<!-- 4 QUE TRAE -->
+<!-- 2 LO QUE USAMOS DE LA CLI -->
 <section class="s soft" data-sec="La CLI 2.5" id="cli">
  <div class="wrap">
-  <span class="tag">Qué trae la CLI 2.5</span>
-  <h2>Un "taller" local para composiciones</h2>
-  <p class="lead">Y desde la v2.4 funciona con nuestro Crossplane actual (v2.3): <b>no hay que actualizar el cluster</b>.</p>
+  <span class="tag">Lo que nos sirvió de la CLI 2.5</span>
+  <h2>Cuatro funciones para probar en la máquina</h2>
+  <p class="lead">La CLI 2.5 trae muchos comandos. Estos son los que probamos y en los que vimos valor para nosotros: son la base de la compuerta local.</p>
   <div class="g g4">
-   <div class="card"><span class="ic">👀</span><h3>Previsualizar</h3><p><code>render</code>: muestra qué recursos AWS crearía, sin desplegar.</p></div>
-   <div class="card"><span class="ic">✅</span><h3>Validar</h3><p><code>validate</code>: compara contra los esquemas reales de AWS.</p></div>
-   <div class="card"><span class="ic">🧱</span><h3>Generar</h3><p>XRD desde un esquema simple; funciones en Python/Go con autocompletado.</p></div>
-   <div class="card"><span class="ic">📦</span><h3>Empaquetar y probar</h3><p>Paquete versionado y Crossplane local en un comando.</p></div>
+   <div class="card"><span class="ic">👀</span><h3>Previsualizar</h3><p><code>composition render</code>: muestra qué recursos AWS crearía una composición, incluidos los de nuestros bloques generales y funciones privadas.</p></div>
+   <div class="card"><span class="ic">🔁</span><h3>Simular el despliegue</h3><p>Render con estados simulados: recorre las etapas que esperan a otro recurso, como si el cluster ya lo hubiera creado.</p></div>
+   <div class="card"><span class="ic">✅</span><h3>Validar</h3><p><code>resource validate</code>: compara todo lo generado contra los esquemas reales de los providers de AWS.</p></div>
+   <div class="card hl"><span class="ic">🤝</span><h3>Sin actualizar el cluster</h3><p>Desde la v2.4 la CLI es independiente: funciona con nuestro Crossplane actual (v2.3).</p></div>
   </div>
-  <p class="foot">v2.3 (may-2026) modelo de proyecto · v2.4 (jun) independiente del core · v2.5 (ago) mejoras de esquemas y validación. La mayoría de comandos nuevos son Beta.</p>
  </div>
 </section>
 
-<!-- DIVISOR -->
-<section class="s div" data-sec="La prueba" id="d1">
- <div class="wrap"><div class="big">01</div><h2 style="margin-top:-40px">La prueba</h2><p>Mismo requerimiento, tres formas de trabajar, en el cluster y la cuenta AWS reales.</p></div>
-</section>
-
-<!-- 5 LA PRUEBA -->
-<section class="s" data-sec="La prueba" id="prueba">
+<!-- 3 QUE SE PROBO -->
+<section class="s lila" data-sec="Qué se probó" id="prueba">
  <div class="wrap">
-  <span class="tag">La prueba</span>
-  <h2>"Necesito exponer una API con los estándares Nequi"</h2>
-  <p class="lead">La AI construye una composición de plataforma que reutiliza nuestros bloques generales. 17 recursos en total.</p>
-  <div class="flow">
-   <div class="node new">Solicitud<small>servicio, país, ambiente</small></div><div class="arr">→</div>
-   <div class="node">API REST<small>bloque general</small></div><div class="arr">+</div>
-   <div class="node">/health<small>bloque general</small></div><div class="arr">+</div>
-   <div class="node">Llave KMS<small>bloque general</small></div><div class="arr">+</div>
-   <div class="node">Logs cifrados<small>retención por ambiente</small></div><div class="arr">+</div>
-   <div class="node">Alarmas<small>5XX y latencia</small></div>
-  </div>
-  <table class="t">
-   <tr><th>Escenario</th><th>Cómo se trabaja</th><th>Cómo se valida</th></tr>
-   <tr><td>Antes · hoy</td><td>AI + YAML</td><td>Aplicar al cluster y leer eventos</td></tr>
-   <tr><td>Antes · CLI 2.2</td><td>AI + YAML + CLI vieja</td><td>Previsualizar y validar básico, luego cluster</td></tr>
-   <tr><td style="color:var(--mag)">Después · CLI 2.5</td><td>AI + proyecto CLI 2.5</td><td><b>Compuerta local</b> completa, luego cluster</td></tr>
-  </table>
- </div>
-</section>
-
-<!-- 6 CONCEPTO COMPUERTA -->
-<section class="s lila" data-sec="La compuerta" id="compuerta">
- <div class="wrap">
-  <span class="tag">El concepto</span>
+  <span class="tag">Qué se probó</span>
   <h2>Una compuerta local antes del cluster</h2>
-  <p class="lead">Construida sobre la CLI 2.5. En ~20 segundos, en la máquina de la persona o de la AI, sin tocar AWS:</p>
+  <p class="lead">Mismo requerimiento ("exponer una API con los estándares Nequi": 17 recursos sobre nuestros bloques generales), hecho de tres formas: hoy, con la CLI 2.2 y con la CLI 2.5 + compuerta. La compuerta corre en segundos, en la máquina, sin tocar AWS:</p>
   <div class="flow">
    <div class="node new">AI escribe<small>composición</small></div><div class="arr">→</div>
    <div class="node">Simula el despliegue<small>paso a paso</small></div><div class="arr">→</div>
-   <div class="node">Revisa y valida<small>bloques + esquemas AWS</small></div><div class="arr">→</div>
-   <div class="node">Reglas de negocio<small>tags, cifrado, naming</small></div><div class="arr">→</div>
+   <div class="node">Valida<small>esquemas de AWS</small></div><div class="arr">→</div>
+   <div class="node">Reglas de negocio<small>tags, cifrado, retención</small></div><div class="arr">→</div>
    <div class="node">2 equipos a la vez<small>sin choques</small></div><div class="arr">→</div>
    <div class="node new">✅ Recién ahí<small>al cluster</small></div>
   </div>
   <div class="g g2">
-   <div class="card"><h3>Lo que aporta la CLI</h3><p>Previsualizar (incluso los bloques internos y funciones privadas), simular estados y validar contra los esquemas de AWS.</p></div>
-   <div class="card"><h3>Lo que aportamos nosotros</h3><p>Las reglas de negocio y la prueba de convivencia entre equipos. La CLI lo hace posible; el criterio es nuestro.</p></div>
+   <div class="card"><h3>Lo que aporta la CLI 2.5</h3><p>Previsualizar, simular el despliegue y validar contra los esquemas de AWS: las cuatro funciones de la slide anterior.</p></div>
+   <div class="card"><h3>Lo que aportamos nosotros</h3><p>El estándar Nequi convertido en 11 reglas que se ejecutan (identidad, cifrado, retención, alarmas, nombres) y la prueba de convivencia entre equipos. Nadie tiene que leer 400 líneas para saber si cumple.</p></div>
   </div>
  </div>
 </section>
 
-<!-- 7 AI + HUMANO -->
-<section class="s dark" data-sec="AI + persona" id="contrato">
+<!-- 3 RESULTADOS -->
+<section class="s" data-sec="Resultados" id="resultados">
  <div class="wrap">
-  <span class="tag">AI construye · persona verifica</span>
-  <h2>El estándar Nequi, convertido en reglas que se ejecutan</h2>
-  <p class="lead">Nadie tiene que leer 400 líneas de plantilla para saber si lo que hizo la AI cumple. La compuerta lo responde en un segundo.</p>
-  <div class="g g3">
-   <div class="card"><span class="ic">🏷️</span><h3>Identidad</h3><p>serviceid, capacidad, país, ambiente y deployment en todo.</p></div>
-   <div class="card"><span class="ic">🔐</span><h3>Seguridad</h3><p>Logs cifrados con llave propia y rotación activa.</p></div>
-   <div class="card"><span class="ic">📜</span><h3>Cumplimiento</h3><p>Retención: 14 días no productivo, 90 en producción.</p></div>
-   <div class="card"><span class="ic">🚦</span><h3>Observabilidad</h3><p>Alarmas de errores y latencia apuntando a la API.</p></div>
-   <div class="card"><span class="ic">🧭</span><h3>Guardarraíles</h3><p>Nombres que respetan los permisos reales del entorno.</p></div>
-   <div class="card hl"><span class="ic">✔️</span><h3>11 / 11 reglas</h3><p>Resultado legible por cualquier persona, en cada cambio.</p></div>
-  </div>
- </div>
-</section>
-
-<!-- DIVISOR -->
-<section class="s div" data-sec="Resultados" id="d2">
- <div class="wrap"><div class="big">02</div><h2 style="margin-top:-40px">Resultados</h2><p>Medidos con cronómetro, en el cluster EKS y la cuenta AWS de pruebas.</p></div>
-</section>
-
-<!-- 8 DETECCION -->
-<section class="s" data-sec="Resultados · errores" id="errores">
- <div class="wrap">
-  <span class="tag">Menos errores</span>
-  <h2>Errores típicos detectados antes de tocar el cluster</h2>
-  <p class="lead">Se inyectaron 11 errores reales y frecuentes, uno a uno, sobre la composición final.</p>
-  <div class="hb" role="img" aria-label="Errores detectados antes del cluster: hoy 0, CLI 2.2 6, CLI 2.5 con compuerta 11 de 11">
-   <div class="row" title="Hoy: 0 de 11 antes del cluster"><span class="lab">Hoy<small>solo cluster</small></span><span class="trk"><span class="fill ref" style="width:0;min-width:0;display:block"></span></span><span class="val">0</span></div>
-   <div class="row" title="CLI 2.2: 6 de 11"><span class="lab">CLI 2.2</span><span class="trk"><span class="fill ref" style="width:54.5%;display:block"></span></span><span class="val">6</span></div>
-   <div class="row" title="CLI 2.5 + compuerta: 11 de 11"><span class="lab">CLI 2.5<small>+ compuerta</small></span><span class="trk"><span class="fill" style="width:100%;display:block"></span></span><span class="val">11</span></div>
-  </div>
-  <div class="g g3" style="margin-top:22px">
-   <div class="card"><h3>3 errores invisibles hoy</h3><p>Sin tag de costeo, retención de 1 día, campo mal escrito ignorado: se despliegan "bien" y nadie se entera.</p></div>
-   <div class="card"><h3>Errores de convivencia</h3><p>Dos equipos que exponen la misma ruta (ej. <code>/health</code>) generan recursos de Crossplane con el mismo nombre y chocan. Hoy aparece cuando llega el segundo equipo.</p></div>
-   <div class="card"><h3>Errores de orden</h3><p>Un recurso creado antes que su dependencia. Hoy: minutos de reintentos en AWS.</p></div>
-  </div>
- </div>
-</section>
-
-<!-- 9 MATRIZ -->
-<section class="s lila" data-sec="Resultados · errores" id="matriz">
- <div class="wrap">
-  <span class="tag">Detalle</span>
-  <h2>¿Dónde se descubre cada error?</h2>
-  <table class="t mx">
-   <tr><th>#</th><th>Error</th><th>Hoy</th><th>CLI 2.2</th><th>CLI 2.5 + compuerta</th></tr>
-   <tr><td>1</td><td>Campo mal escrito en un bloque</td><td><span class="b ba">Nunca</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>2</td><td>Tipo de dato errado</td><td><span class="b wa">Minutos</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>3</td><td>Falta un dato obligatorio</td><td><span class="b wa">~1 min</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>4</td><td>Valor fuera de catálogo</td><td><span class="b ok">Inmediato</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>5</td><td>Plantilla rota</td><td><span class="b wa">Al reconciliar</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>6</td><td>Falta tag de costeo</td><td><span class="b ba">Nunca</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>7</td><td>Retención de logs de 1 día</td><td><span class="b ba">Nunca</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>8</td><td>Nombre fuera de los permisos</td><td><span class="b wa">Minutos</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>9</td><td>Versión de bloque errada</td><td><span class="b wa">Al reconciliar</span></td><td><span class="b ok">Sí</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>10</td><td>Recurso antes que su dependencia</td><td><span class="b wa">Minutos</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
-   <tr><td>11</td><td>Choque entre dos equipos</td><td><span class="b wa">Al llegar el 2.º</span></td><td><span class="b ba">No</span></td><td><span class="b ok">Sí</span></td></tr>
-  </table>
-  <p class="foot">"Hoy" se documenta con el comportamiento de Kubernetes/Crossplane y los errores reales vistos en la PoC (no se desplegaron los 11 a AWS).</p>
- </div>
-</section>
-
-<!-- 10 TIEMPO -->
-<section class="s" data-sec="Resultados · tiempo" id="tiempo">
- <div class="wrap">
-  <span class="tag">Más rápido</span>
-  <h2>Cada vuelta de prueba: de minutos a segundos</h2>
-  <div class="g g2" style="align-items:center">
-   <div>
-    <div class="hb" role="img" aria-label="Segundos por vuelta: cluster 127 a 206, compuerta local 15">
-     <div class="row" title="Vuelta en el cluster: 127–206 s medidos"><span class="lab">En el cluster<small>apply y esperar</small></span><span class="trk"><span class="fill ref" style="width:100%;display:block"></span></span><span class="val">~160 s</span></div>
-     <div class="row" title="Compuerta local con contenedores calientes: ~15 s"><span class="lab">Compuerta local<small>en la máquina</small></span><span class="trk"><span class="fill" style="width:9%;display:block"></span></span><span class="val">~15 s</span></div>
+  <span class="tag">Resultados</span>
+  <h2>Menos errores, más rápido, menos créditos</h2>
+  <p class="lead">Medido en el cluster EKS y la cuenta AWS de pruebas. La API quedó desplegada y respondiendo.</p>
+  <div class="g g3" style="align-items:start">
+   <div class="card">
+    <h3>🎯 Errores antes del cluster</h3>
+    <div class="hb sm" role="img" aria-label="Errores detectados antes del cluster: hoy 0, CLI 2.2 6, CLI 2.5 11 de 11">
+     <div class="row"><span class="lab">Hoy</span><span class="trk"><span class="fill ref" style="width:0;min-width:0;display:block"></span></span><span class="val">0</span></div>
+     <div class="row"><span class="lab">CLI 2.2</span><span class="trk"><span class="fill ref" style="width:54.5%;display:block"></span></span><span class="val">6</span></div>
+     <div class="row"><span class="lab">CLI 2.5</span><span class="trk"><span class="fill" style="width:100%;display:block"></span></span><span class="val">11</span></div>
     </div>
-    <p class="foot">Medido: 127, 144 y 206 s en el cluster; 15–30 s la compuerta (100 s la primera vez, descargando imágenes).</p>
+    <p>De 11 errores típicos inyectados. Tres de ellos hoy son invisibles: sin tag de costeo, logs con 1 día de retención o un campo mal escrito se despliegan "bien".</p>
    </div>
-   <div class="tl">
-    <div class="it"><small>HOY · ~14 MIN</small><b>3 vueltas en el cluster</b><p>Cada error se descubre en AWS, tras esperar y leer eventos.</p></div>
-    <div class="it"><small>CLI 2.5 · ~5–7 MIN</small><b>2 vueltas locales + 1 despliegue</b><p>Los errores se corrigen en la máquina; el cluster solo confirma.</p></div>
+   <div class="card">
+    <h3>⚡ Segundos por vuelta de prueba</h3>
+    <div class="hb sm" role="img" aria-label="Segundos por vuelta: cluster ~160, compuerta ~15">
+     <div class="row"><span class="lab">Cluster*</span><span class="trk"><span class="fill ref" style="width:100%;display:block"></span></span><span class="val">160</span></div>
+     <div class="row"><span class="lab">Compuerta</span><span class="trk"><span class="fill" style="width:9%;display:block"></span></span><span class="val">15</span></div>
+    </div>
+    <p>El mismo cambio necesitó 3 vueltas en el cluster hoy, y con la CLI 2.5, 2 vueltas locales y 1 despliegue que solo confirma.</p>
+    <p style="margin-top:8px;font-size:13px">* Solo el tiempo de Crossplane y AWS, aplicando directo. En el flujo real <b style="color:var(--txt)">cada vuelta suma además la aprobación del PR y la espera de Argo</b>: la compuerta ahorra esas esperas.</p>
+   </div>
+   <div class="card">
+    <h3>💸 Créditos de AI (estimado)</h3>
+    <div class="hb sm" role="img" aria-label="Créditos relativos: hoy 100, CLI 2.2 77, CLI 2.5 30">
+     <div class="row"><span class="lab">Hoy</span><span class="trk"><span class="fill ref" style="width:100%;display:block"></span></span><span class="val">100 %</span></div>
+     <div class="row"><span class="lab">CLI 2.2</span><span class="trk"><span class="fill ref" style="width:77%;display:block"></span></span><span class="val">77 %</span></div>
+     <div class="row"><span class="lab">CLI 2.5</span><span class="trk"><span class="fill" style="width:30%;display:block"></span></span><span class="val">30 %</span></div>
+    </div>
+    <p>Lo caro no es escribir, es esperar al cluster: cada turno de la AI reenvía todo el contexto.</p>
+   </div>
+  </div>
+  <div class="note" style="margin-top:20px"><b>Ojo:</b> el ahorro existe solo si la compuerta cubre el tipo de error. En la corrida real, un error no cubierto llegó al cluster y el costo volvió a ~100 %.</div>
+ </div>
+</section>
+
+<!-- 4 HALLAZGOS -->
+<section class="s dark" data-sec="Hallazgos" id="hallazgos">
+ <div class="wrap">
+  <span class="tag">Lo que apareció en el camino</span>
+  <h2>Bugs ocultos y una migración más segura</h2>
+  <div class="g g2" style="align-items:start;margin-top:10px">
+   <div class="card">
+    <h3>🐞 4 bugs en bloques generales que ya usamos</h3>
+    <p>Roles IAM que no se pueden crear, log groups que no se pueden crear, integraciones de prueba (MOCK) no soportadas y dos APIs con la misma ruta que chocan entre sí. La CLI 2.5 los encuentra en segundos, sin desplegar.</p>
+    <p style="margin-top:10px">Solo se revisaron 5 de 34 bloques: vale la pena pasar todo el catálogo.</p>
+   </div>
+   <div class="card">
+    <h3>🔁 Migración Terraform → Crossplane</h3>
+    <p>Un paso nuevo antes del PR, de ~4 s, para la skill de adopción. Con el claim real: 10/10. Si la AI olvida una línea, el claim <b style="color:#fff">crearía una llave nueva en vez de adoptar la existente</b>, y la verificación lo detecta.</p>
+    <p style="margin-top:10px">No reemplaza la skill: se complementan.</p>
    </div>
   </div>
  </div>
 </section>
 
-<!-- 11 CREDITOS -->
-<section class="s soft" data-sec="Resultados · créditos" id="creditos">
- <div class="wrap">
-  <span class="tag">Menos créditos de AI</span>
-  <h2>Lo caro no es escribir: es esperar al cluster</h2>
-  <p class="lead">Cada turno de la AI vuelve a enviar todo el contexto. Menos turnos esperando y diagnosticando = menos créditos.</p>
-  <div class="hb" role="img" aria-label="Créditos relativos: hoy 100, CLI 2.2 77, CLI 2.5 con compuerta 30">
-   <div class="row" title="Hoy: 28 turnos, 100 %"><span class="lab">Hoy<small>28 turnos</small></span><span class="trk"><span class="fill ref" style="width:100%;display:block"></span></span><span class="val">100 %</span></div>
-   <div class="row" title="CLI 2.2: 22 turnos, 77 %"><span class="lab">CLI 2.2<small>22 turnos</small></span><span class="trk"><span class="fill ref" style="width:77%;display:block"></span></span><span class="val">77 %</span></div>
-   <div class="row" title="CLI 2.5 + compuerta: 11 turnos, 30 %"><span class="lab">CLI 2.5<small>11 turnos</small></span><span class="trk"><span class="fill" style="width:30%;display:block"></span></span><span class="val">30 %</span></div>
-  </div>
-  <div class="note" style="margin-top:20px"><b>Ojo:</b> en la corrida real, un error no cubierto por la primera versión de la compuerta se escapó al cluster y el costo volvió a ~100 %. <b>El ahorro existe solo si la compuerta cubre el tipo de error</b>; por eso cada error nuevo se convierte en una regla.</div>
-  <p class="foot">Estimación con datos medidos (iteraciones, esperas, tamaño del feedback) y supuestos explícitos (contexto 15k tokens, consulta cada 30 s). No es la factura de Kiro.</p>
- </div>
-</section>
-
-<!-- 12 BUGS -->
-<section class="s dark" data-sec="Hallazgos" id="bugs">
- <div class="wrap">
-  <span class="tag">Hallazgo inesperado</span>
-  <h2>4 bugs ocultos en bloques que ya usamos</h2>
-  <p class="lead">Aparecieron al reutilizar nuestros bloques generales en un camino nuevo. La CLI 2.5 encuentra los 4 en segundos, sin desplegar.</p>
-  <div class="g g4">
-   <div class="card"><span class="ic">👤</span><h3>Roles IAM</h3><p>Envía un valor vacío a AWS: no se puede crear un rol sin "boundary".</p></div>
-   <div class="card"><span class="ic">📄</span><h3>Log groups</h3><p>Usa un campo que no existe: no se pueden crear log groups nuevos.</p></div>
-   <div class="card"><span class="ic">🔌</span><h3>Integraciones</h3><p>No soporta integraciones de prueba (MOCK).</p></div>
-   <div class="card hl"><span class="ic">💥</span><h3>Choque entre equipos</h3><p>Dos APIs con la misma ruta en el mismo namespace generan recursos con el mismo nombre y colisionan.</p></div>
-  </div>
-  <p class="foot">Solo se revisaron 5 de 34 bloques generales: vale la pena pasar la compuerta por todo el catálogo.</p>
- </div>
-</section>
-
-<!-- 13 EVIDENCIA -->
-<section class="s" data-sec="Evidencia" id="evidencia">
- <div class="wrap">
-  <span class="tag">Evidencia</span>
-  <h2>La misma compuerta, antes y después</h2>
-  <div class="g g2" style="margin-top:10px;align-items:start">
-   <figure class="fig"><img src="{{img:5.png}}" alt="Compuerta local: rechaza la composición de Antes por colisión y aprueba la de Después"><figcaption>Compuerta local: rechaza "Antes" (choque entre equipos) y aprueba "Después" en ~29 s, sin cluster.</figcaption></figure>
-   <figure class="fig"><img src="{{img:8.png}}" alt="Matriz de detección de defectos"><figcaption>Matriz de detección: CLI 2.2 = 6/11 · CLI 2.5 + compuerta = 11/11.</figcaption></figure>
-  </div>
-  <p class="foot">Clic en una imagen para ampliarla.</p>
- </div>
-</section>
-
-<!-- 14 DESPLIEGUE REAL -->
-<section class="s soft" data-sec="Evidencia" id="real">
- <div class="wrap">
-  <span class="tag">Funciona de verdad</span>
-  <h2>Desplegado en EKS y AWS: la API responde</h2>
-  <div class="g g3" style="margin-top:10px;align-items:start">
-   <figure class="fig"><img src="{{img:7.png}}" alt="Árbol de recursos Ready y API respondiendo HTTP 200"><figcaption>17 recursos Ready y <code>/health</code> respondiendo HTTP 200.</figcaption></figure>
-   <figure class="fig"><img src="{{img:aws2.png}}" alt="Stage dev con access logs activos"><figcaption>Stage con access logs activos.</figcaption></figure>
-   <figure class="fig"><img src="{{img:aws5.png}}" alt="Evento de access log"><figcaption>Cada llamada queda registrada (cifrada con llave propia).</figcaption></figure>
-   <figure class="fig"><img src="{{img:aws4.png}}" alt="Log group con KMS y retención"><figcaption>Retención por ambiente y cifrado KMS.</figcaption></figure>
-   <figure class="fig"><img src="{{img:aws6.png}}" alt="Alarmas 5XX y latencia en OK"><figcaption>Alarmas de errores y latencia.</figcaption></figure>
-   <figure class="fig"><img src="{{img:aws8.png}}" alt="Tags estándar en la llave KMS"><figcaption>Tags estándar de gobierno.</figcaption></figure>
-  </div>
- </div>
-</section>
-
-<!-- 15 MIGRACION -->
-<section class="s" data-sec="Migración" id="migracion">
- <div class="wrap">
-  <span class="tag">Migración Terraform → Crossplane</span>
-  <h2>Evita el error más caro: crear en vez de adoptar</h2>
-  <p class="lead">Nuestra skill de adopción trabaja después de desplegar. La CLI le agrega un paso <b>antes del PR</b>.</p>
-  <div class="flow">
-   <div class="node">AI edita el claim<small>cierra el gap</small></div><div class="arr">→</div>
-   <div class="node new">Verificación offline<small>CLI 2.5 · ~4 s · NUEVO</small></div><div class="arr">→</div>
-   <div class="node">PR / Argo</div><div class="arr">→</div>
-   <div class="node">Skill: gap y preflight<small>sobre el cluster</small></div><div class="arr">→</div>
-   <div class="node">Persona activa<small>gate humano</small></div>
-  </div>
-  <div class="g" style="grid-template-columns:1fr 1fr 1.6fr;align-items:start">
-   <div class="card"><div class="stat"><b>10/10</b><span>claim real de adopción: correcto</span></div></div>
-   <div class="card"><div class="stat"><b style="color:var(--bad)">6/10</b><span>si la AI olvida una línea: <strong style="color:var(--txt)">crearía una llave nueva</strong> con permiso de borrar, en vez de adoptar la existente</span></div></div>
-   <figure class="fig"><img src="{{img:4.png}}" alt="Verificación offline del claim de adopción"><figcaption>Claim real verificado y variante insegura detectada antes del PR.</figcaption></figure>
-  </div>
-  <p class="foot">La CLI no reemplaza la skill: el análisis de brechas necesita el estado real de AWS. Se complementan.</p>
- </div>
-</section>
-
-<!-- 17 BALANCE -->
-<section class="s" data-sec="Balance" id="balance">
+<!-- 5 BALANCE + LO QUE VIENE -->
+<section class="s soft" data-sec="Balance" id="balance">
  <div class="wrap">
   <span class="tag">Balance</span>
-  <h2>Lo bueno, lo que cuesta y el ojo</h2>
+  <h2>Lo que cuesta y lo que viene</h2>
   <div class="g g3" style="align-items:start">
-   <div class="card"><h3 style="color:var(--ok)">✅ Lo bueno</h3><p>• Errores detectados en segundos, sin cluster<br>• Estándares de negocio ejecutables<br>• Sin actualizar el cluster<br>• Encontró bugs reales escondidos</p></div>
-   <div class="card"><h3 style="color:var(--warn)">🧩 Lo que cuesta</h3><p>• La mayoría de comandos nuevos están en Beta: pueden cambiar entre versiones, por eso se fija la versión de la CLI</p></div>
-   <div class="card"><h3 style="color:var(--bad)">⚠️ Ojo</h3><p>• La compuerta solo ve lo que cubre: un error no cubierto vuelve al costo de hoy<br>• Permisos reales de AWS solo se ven en el cluster<br>• El cluster sigue siendo la verificación final</p></div>
+   <div class="card"><h3 style="color:var(--warn)">🧩 Lo que cuesta</h3><p>La mayoría de comandos nuevos están en Beta: pueden cambiar entre versiones, por eso se fija la versión de la CLI.</p></div>
+   <div class="card"><h3 style="color:var(--bad)">⚠️ Ojo</h3><p>La compuerta solo ve lo que cubre. Los permisos reales de AWS solo se ven en el cluster, que sigue siendo la verificación final.</p></div>
+   <div class="card"><h3 style="color:var(--mag)">🔭 Lo que viene: <code>simulate</code></h3><p>Un "terraform plan" para Crossplane: qué se crea, cambia o borra frente a lo que ya existe, y si AWS obligaría a recrear algo. Está en desarrollo (<code>resource simulate</code> en alpha, <code>project simulate</code> en revisión); aún no sale en versión oficial.</p></div>
   </div>
  </div>
 </section>
 
-<!-- 17b LO QUE VIENE: SIMULATE -->
-<section class="s soft" data-sec="Lo que viene" id="simulate">
- <div class="wrap">
-  <span class="tag o">En camino · aún no disponible en la 2.5.0</span>
-  <h2>Lo que viene: un "terraform plan" para Crossplane</h2>
-  <p class="lead"><code>simulate</code> mostrará qué cambiaría un cambio <b>antes de aplicarlo</b>, frente a lo que ya existe en el cluster y en AWS. Hoy la compuerta dice qué <i>crearía</i> una composición. <code>simulate</code> dirá qué se crea, qué cambia, qué se borra, y si AWS obliga a recrear algo.</p>
-  <div class="g g2" style="margin-bottom:18px">
-   <div class="card"><h3>🧱 project simulate</h3><p><b style="color:var(--txt)">Para quien cambia composiciones o funciones.</b> Renderiza de nuevo todos los recursos que usan esa composición y muestra el impacto en cada uno. Es el que más nos sirve para el catálogo.</p><p style="margin-top:8px"><span class="b wa">en revisión</span></p></div>
-   <div class="card"><h3>📦 resource simulate</h3><p><b style="color:var(--txt)">Para recursos AWS concretos.</b> Muestra qué haría aplicar un recurso o una actualización de versión del provider. Sirve para la migración y para las actualizaciones del provider.</p><p style="margin-top:8px"><span class="b mg">en código · alpha</span></p></div>
-  </div>
-  <div class="flow">
-   <div class="node">Diseño aprobado<small>sep 2026</small></div><div class="arr">→</div>
-   <div class="node">resource simulate<small>código · oct 2026</small></div><div class="arr">→</div>
-   <div class="node off">project simulate<small>en revisión</small></div><div class="arr">→</div>
-   <div class="node off">Versión oficial<small>sin fecha</small></div>
-  </div>
-  <div class="note">Por qué importa: Crossplane <b>no recrea</b> un recurso en AWS. Si un cambio exige recrearlo, el recurso queda trabado hasta que alguien intervenga. <code>simulate</code> lo avisaría antes del PR.</div>
-  <p class="foot">No probado en esta PoC: no existía en la versión evaluada. Fuente: repositorio <code>crossplane/cli</code>, PR 181 (diseño), PR 429 (resource simulate) y PR 436 (project simulate).</p>
- </div>
-</section>
-
-<!-- DIVISOR -->
-<section class="s div" data-sec="Pasos a seguir" id="d3">
- <div class="wrap"><div class="big">03</div><h2 style="margin-top:-40px">Pasos a seguir</h2><p>Una propuesta para validar con el equipo.</p></div>
-</section>
-
-<!-- 18 HOJA DE RUTA -->
-<section class="s dark" data-sec="Pasos a seguir" id="ruta">
+<!-- 6 PROPUESTA -->
+<section class="s dark" data-sec="Propuesta" id="propuesta">
  <div class="wrap">
   <span class="tag">Propuesta</span>
   <h2>CLI 2.5 + una compuerta que aprende</h2>
-  <p class="lead">Se propone usar la CLI 2.5 con una compuerta local antes del cluster. La compuerta no es fija: <b>cada hallazgo se convierte en una regla nueva</b>, y la próxima vez ese error se detecta en segundos.</p>
+  <p class="lead">La AI construye, la compuerta verifica el estándar en segundos y el cluster solo confirma. <b>Cada hallazgo se convierte en una regla nueva</b>: la próxima vez ese error se detecta antes del cluster.</p>
   <div class="flow">
-   <div class="node new">Cambio en una composición<small>persona o AI</small></div><div class="arr">→</div>
+   <div class="node new">Composición nueva o cambio<small>persona o AI</small></div><div class="arr">→</div>
    <div class="node">Compuerta local<small>CLI 2.5 + reglas</small></div><div class="arr">→</div>
    <div class="node">Cluster confirma<small>verificación final</small></div><div class="arr">→</div>
    <div class="node">Hallazgo nuevo<small>error, bug o estándar</small></div><div class="arr">→</div>
    <div class="node new">Nueva regla<small>en la compuerta</small></div><div class="arr">↺</div>
   </div>
-  <div class="g g3">
-   <div class="card"><h3>Arranca con lo de esta PoC</h3><p>11 reglas del estándar Nequi, prueba entre equipos y los 4 bugs encontrados.</p></div>
-   <div class="card"><h3>Crece con el uso</h3><p>Cada error que llegue al cluster, cada bug o cada estándar nuevo se agrega como regla.</p></div>
-   <div class="card"><h3>Atenta a lo que viene</h3><p><code>simulate</code>, el "plan" que hoy falta, cuando salga en versión oficial.</p></div>
-  </div>
- </div>
-</section>
-
-<!-- 19 CIERRE -->
-<section class="s dark" data-sec="Cierre" id="cierre">
- <div class="wrap">
-  <span class="tag">En una frase</span>
-  <p class="quote">La CLI 2.5 nos deja <span class="mag">probar antes de desplegar</span>: la AI construye, la compuerta verifica el estándar en segundos y el cluster solo confirma.</p>
-  <div class="g g3" style="margin-top:32px">
+  <div class="g g3" style="margin-top:12px">
    <div class="stat"><b>11/11</b><span>errores antes del cluster</span></div>
    <div class="stat"><b>~15 s</b><span>por vuelta (antes ~160 s)</span></div>
    <div class="stat"><b>~30 %</b><span>créditos de AI (estimado)</span></div>
   </div>
-  <p class="foot" style="margin-top:28px">Repositorio de la PoC: <code>poc-crossplane-cli</code> · Documentación técnica: <code>08-wiki/</code> · Evidencias: <code>06-evidence/</code></p>
  </div>
 </section>
 
