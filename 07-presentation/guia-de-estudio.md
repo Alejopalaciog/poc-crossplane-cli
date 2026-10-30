@@ -125,7 +125,7 @@ con menos errores y menos créditos de AI. Muestra tres cifras: 11/11, ~30 % y 4
 
 #### Contexto: "Hoy, para saber si algo funciona, hay que desplegarlo"
 
-**Qué dice.** Migramos de Terraform a Crossplane con unas 65 composiciones hechas en gran parte con AI. El ciclo
+**Qué dice.** Estamos llevando nuestra infra a Crossplane. Si preguntan el detalle: venimos de Terraform y son unas 65 composiciones, hechas en gran parte con AI (la slide ya no lo dice). El ciclo
 actual es: pedir → la AI escribe → aplicar al cluster → esperar → leer eventos → repetir. Tiene tres dolores: es
 lento, es caro en créditos y deja errores invisibles.
 
